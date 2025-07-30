@@ -23,6 +23,13 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
     - **Request Body:** None.
     - **Response (200):** An array of `Roadmap` objects.
 
+## **Resource: Roadmap Steps (`/api/roadmap-steps`)**
+
+- **`PATCH /:id/plan`**
+    - **Description:** Updates or creates the implementation plan for a roadmap step.
+    - **Request Body:** `{ "situation"?: "string", "trigger": "string", "action": "string" }`
+    - **Response (200):** The updated `RoadmapStep` object with the new plan.
+
 ## **Resource: Application Logs (`/api/logs`)**
 
 - **`POST /`**
@@ -33,6 +40,7 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
     - **Description:** Fetches all of the user's application logs.
     - **Request Body:** None.
     - **Response (200):** An array of `ApplicationLog` objects.
+
 
 ## **Resource: Knowledge Content (`/api/knowledge`)**
 

@@ -59,13 +59,17 @@ This section defines the core data entities for the LattixIQ application. These 
 
 ## **3. RoadmapStep**
 
-- **Purpose:** Represents a single, ordered step within a Roadmap, linking to a specific Mental Model or Bias.
+- **Purpose:** Represents a single, ordered step within a Roadmap, linking to a specific Mental Model or Bias. Also stores the user's implementation plan for this step.
 - **Key Attributes:**
     - `id` (UUID): Primary key.
     - `roadmap_id` (UUID): Foreign key linking to the `Roadmap` table.
     - `knowledge_content_id` (UUID): Foreign key linking to the `KnowledgeContent` table.
     - `status` (Enum: `locked`, `unlocked`, `completed`): The user's progress on this step.
     - `order` (Integer): The numerical order of the step within the roadmap (e.g., 1, 2, 3...).
+    - `plan_situation` (Text, Nullable): The context where the user plans to apply the concept (e.g., "During morning team meetings").
+    - `plan_trigger` (Text, Nullable): The specific cue that will prompt the action (e.g., "When I feel the urge to interrupt").
+    - `plan_action` (Text, Nullable): The intended response (e.g., "I'll write my thought down and wait for a pause").
+    - `plan_created_at` (Timestamp, Nullable): When the plan was created.
 - **TypeScript Interface:**
     
     ```tsx
@@ -75,10 +79,14 @@ This section defines the core data entities for the LattixIQ application. These 
       knowledgeContentId: string;
       status: 'locked' | 'unlocked' | 'completed';
       order: number;
+      planSituation?: string;
+      planTrigger?: string;
+      planAction?: string;
+      planCreatedAt?: string;
     }
     ```
     
-- **Relationships:** A RoadmapStep `belongs to` a Roadmap, `has one` KnowledgeContent item.
+- **Relationships:** A RoadmapStep `belongs to` a Roadmap, `has one` KnowledgeContent item, `has many` ApplicationLogs.
 
 ## **4. ApplicationLog**
 
@@ -164,6 +172,7 @@ This section defines the core data entities for the LattixIQ application. These 
     ```
     
 - **Relationships:** `belongs to` one KnowledgeContent item.
+
 
 ## **Vector Database Integration**
 

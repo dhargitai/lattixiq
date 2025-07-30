@@ -4,7 +4,7 @@
 
 ### Technical Summary:
 
-This project will be a modern, serverless fullstack application built on Next.js and hosted on Vercel. User authentication and data persistence will be managed by Supabase, leveraging its Postgres database with Row-Level Security for data isolation. The frontend will be a responsive single-page application built with shadcn/ui and Tailwind CSS. AI-powered personalization for roadmap generation and journal analysis will be handled via the Vercel AI SDK. Stripe will be integrated for premium subscription payments. This architecture is designed for scalability, rapid development, and a seamless developer experience.
+This project will be a modern, serverless fullstack application built on Next.js and hosted on Netlify. User authentication and data persistence will be managed by Supabase, leveraging its Postgres database with Row-Level Security for data isolation. The frontend will be a responsive single-page application built with shadcn/ui and Tailwind CSS. AI-powered personalization for roadmap generation and journal analysis will be handled via the Vercel AI SDK. Stripe will be integrated for premium subscription payments. This architecture is designed for scalability, rapid development, and a seamless developer experience.
 
 #### **High-Level Architecture Diagram:**
 
@@ -14,9 +14,9 @@ graph TD
         A[Browser / Mobile]
     end
 
-    subgraph Vercel Platform
+    subgraph Netlify Platform
         B[Next.js Frontend]
-        C[Edge Middleware]
+        C[Edge Functions]
         D[Serverless Functions / API Routes]
         E[Vercel AI SDK]
     end
@@ -71,18 +71,18 @@ This section serves as the definitive, single source of truth for all technologi
 | Category | Technology | Version | Purpose | Rationale |
 | --- | --- | --- | --- | --- |
 | **Frontend Language** | TypeScript | `~5.5.3` | Primary language for type safety in the frontend. | Ensures code quality, improves developer experience, and reduces runtime errors. |
-| **Frontend Framework** | Next.js | `~15.0.0` | The core React framework for the application. | Provides a robust foundation with server-side rendering, static site generation, API routes, and a seamless developer experience. Aligns with Vercel platform. |
+| **Frontend Framework** | Next.js | `~15.0.0` | The core React framework for the application. | Provides a robust foundation with server-side rendering, static site generation, API routes, and a seamless developer experience. Works excellently with Netlify deployment. |
 | **UI Components** | shadcn/ui | `~2.0.0` | The component library for building the user interface. | Provides accessible, unstyled components that can be fully customized with Tailwind, perfectly matching our "Serene Minimalist" aesthetic. |
 | **Styling** | Tailwind CSS | `~4.0.0` | The utility-first CSS framework for all styling. | Enables rapid, consistent UI development and is the native styling solution for shadcn/ui. |
 | **State Management** | Zustand | `~4.5.2` | For managing complex, shared client-side state. | A simple, fast, and scalable state management solution that avoids the boilerplate of more complex libraries. Will be used only where Next.js's native state management is insufficient. |
-| **Backend** | Next.js API Routes | `~15.0.0` | For creating serverless API endpoints. | Tightly integrated with the frontend, providing a unified TypeScript codebase and simplifying the developer workflow. Deploys as serverless functions on Vercel. |
+| **Backend** | Next.js API Routes | `~15.0.0` | For creating serverless API endpoints. | Tightly integrated with the frontend, providing a unified TypeScript codebase and simplifying the developer workflow. Deploys as serverless functions on Netlify. |
 | **Database** | Supabase (Postgres) | `~15.x` | The primary database for all user data. | A powerful, open-source relational database. Supabase provides a managed solution with excellent tooling and Row-Level Security (RLS) for data privacy. |
 | **Authentication** | Supabase Auth | `~2.0.0` | Handles all user authentication (Social & OTP). | Provides a secure, all-in-one solution for social logins (Google/Apple) and passwordless OTP, as required by the UI/UX spec. Integrates directly with database RLS. |
 | **Payments** | Stripe SDK | `latest` | For processing premium subscription payments. | Industry standard for payments, providing robust APIs, security, and a pre-built customer portal to manage subscriptions. |
 | **AI** | Vercel AI SDK | `~3.2.0` | For interacting with LLMs for personalization. | Simplifies streaming UI responses and connecting to various AI models, providing a seamless integration for our AI-powered features. |
 | **Unit/Integration Tests** | Vitest | `~1.6.0` | For testing components and functions. | A modern, fast test runner. Its powerful in-memory mocking capabilities are ideal for creating the **sandboxed test environment** you require. |
 | **E2E Testing** | Playwright | `~1.45.0` | For end-to-end testing of user flows. | A powerful browser automation tool that enables robust testing of both **happy and unhappy user paths** across different browsers. |
-| **CI/CD** | GitHub Actions | `latest` | For continuous integration and deployment. | Native integration with GitHub. We will create workflows to run tests, linting, and deploy automatically to Vercel, ensuring quality control. |
+| **CI/CD** | GitHub Actions + Netlify | `latest` | For continuous integration and deployment. | GitHub Actions for testing and quality checks. Netlify handles automatic deployments from the main branch, providing preview deployments for PRs. |
 | **Notifications** | To be determined | `N/A` | Handles sending app-related notification emails and push notifications. | We will build an abstracted `NotificationService` that can use any provider (e.g., Resend, Twilio) as an implementation detail, ensuring flexibility. |
 
 ## **3. Data Models**
@@ -146,13 +146,17 @@ This section defines the core data entities for the LattixIQ application. These 
 
 ### **3. RoadmapStep**
 
-- **Purpose:** Represents a single, ordered step within a Roadmap, linking to a specific Mental Model or Bias.
+- **Purpose:** Represents a single, ordered step within a Roadmap, linking to a specific Mental Model or Bias. Also stores the user's implementation plan for this step.
 - **Key Attributes:**
     - `id` (UUID): Primary key.
     - `roadmap_id` (UUID): Foreign key linking to the `Roadmap` table.
     - `knowledge_content_id` (UUID): Foreign key linking to the `KnowledgeContent` table.
     - `status` (Enum: `locked`, `unlocked`, `completed`): The user's progress on this step.
     - `order` (Integer): The numerical order of the step within the roadmap (e.g., 1, 2, 3...).
+    - `plan_situation` (Text, Nullable): The context where the user plans to apply the concept (e.g., "During morning team meetings").
+    - `plan_trigger` (Text, Nullable): The specific cue that will prompt the action (e.g., "When I feel the urge to interrupt").
+    - `plan_action` (Text, Nullable): The intended response (e.g., "I'll write my thought down and wait for a pause").
+    - `plan_created_at` (Timestamp, Nullable): When the plan was created.
 - **TypeScript Interface:**
     
     ```tsx
@@ -162,10 +166,14 @@ This section defines the core data entities for the LattixIQ application. These 
       knowledgeContentId: string;
       status: 'locked' | 'unlocked' | 'completed';
       order: number;
+      planSituation?: string;
+      planTrigger?: string;
+      planAction?: string;
+      planCreatedAt?: string;
     }
     ```
     
-- **Relationships:** A RoadmapStep `belongs to` a Roadmap, `has one` KnowledgeContent item.
+- **Relationships:** A RoadmapStep `belongs to` a Roadmap, `has one` KnowledgeContent item, `has many` ApplicationLogs.
 
 ### **4. ApplicationLog**
 
@@ -286,6 +294,13 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
     - **Request Body:** None.
     - **Response (200):** An array of `Roadmap` objects.
 
+### **Resource: Roadmap Steps (`/api/roadmap-steps`)**
+
+- **`PATCH /:id/plan`**
+    - **Description:** Updates or creates the implementation plan for a roadmap step.
+    - **Request Body:** `{ "situation"?: "string", "trigger": "string", "action": "string" }`
+    - **Response (200):** The updated `RoadmapStep` object with the new plan.
+
 ### **Resource: Application Logs (`/api/logs`)**
 
 - **`POST /`**
@@ -296,6 +311,7 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
     - **Description:** Fetches all of the user's application logs.
     - **Request Body:** None.
     - **Response (200):** An array of `ApplicationLog` objects.
+
 
 ### **Resource: Knowledge Content (`/api/knowledge`)**
 
@@ -495,8 +511,8 @@ CREATE TABLE "public"."goal_examples" ( "id" uuid PRIMARY KEY DEFAULT gen_random
 -- Represents a user's personalized learning journey
 CREATE TABLE "public"."roadmaps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "user_id" uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE, "goal_description" text, "status" roadmap_status DEFAULT 'active'::roadmap_status, "created_at" timestamptz DEFAULT now(), "completed_at" timestamptz
 );
--- Represents a single step within a roadmap
-CREATE TABLE "public"."roadmap_steps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "roadmap_id" uuid NOT NULL REFERENCES public.roadmaps(id) ON DELETE CASCADE, "knowledge_content_id" uuid NOT NULL REFERENCES public.knowledge_content(id), "status" roadmap_step_status DEFAULT 'locked'::roadmap_step_status, "order" smallint NOT NULL
+-- Represents a single step within a roadmap, including the user's implementation plan
+CREATE TABLE "public"."roadmap_steps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "roadmap_id" uuid NOT NULL REFERENCES public.roadmaps(id) ON DELETE CASCADE, "knowledge_content_id" uuid NOT NULL REFERENCES public.knowledge_content(id), "status" roadmap_step_status DEFAULT 'locked'::roadmap_step_status, "order" smallint NOT NULL, "plan_situation" text, "plan_trigger" text, "plan_action" text, "plan_created_at" timestamptz
 );
 -- Stores the user's journal reflections
 CREATE TABLE "public"."application_logs" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "user_id" uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE, "roadmap_step_id" uuid NOT NULL REFERENCES public.roadmap_steps(id) ON DELETE CASCADE, "situation_text" text, "learning_text" text, "effectiveness_rating" smallint, "ai_sentiment" ai_sentiment, "ai_topics" text[], "created_at" timestamptz DEFAULT now()
@@ -654,6 +670,7 @@ CREATE POLICY "Authenticated users can read goal examples"
 ON public.goal_examples FOR SELECT
 USING (auth.role() = 'authenticated');
 ```
+
 
 ## **8. Frontend Architecture**
 

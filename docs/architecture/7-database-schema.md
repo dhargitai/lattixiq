@@ -38,8 +38,8 @@ CREATE TABLE "public"."goal_examples" ( "id" uuid PRIMARY KEY DEFAULT gen_random
 -- Represents a user's personalized learning journey
 CREATE TABLE "public"."roadmaps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "user_id" uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE, "goal_description" text, "status" roadmap_status DEFAULT 'active'::roadmap_status, "created_at" timestamptz DEFAULT now(), "completed_at" timestamptz
 );
--- Represents a single step within a roadmap
-CREATE TABLE "public"."roadmap_steps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "roadmap_id" uuid NOT NULL REFERENCES public.roadmaps(id) ON DELETE CASCADE, "knowledge_content_id" uuid NOT NULL REFERENCES public.knowledge_content(id), "status" roadmap_step_status DEFAULT 'locked'::roadmap_step_status, "order" smallint NOT NULL
+-- Represents a single step within a roadmap, including the user's implementation plan
+CREATE TABLE "public"."roadmap_steps" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "roadmap_id" uuid NOT NULL REFERENCES public.roadmaps(id) ON DELETE CASCADE, "knowledge_content_id" uuid NOT NULL REFERENCES public.knowledge_content(id), "status" roadmap_step_status DEFAULT 'locked'::roadmap_step_status, "order" smallint NOT NULL, "plan_situation" text, "plan_trigger" text, "plan_action" text, "plan_created_at" timestamptz
 );
 -- Stores the user's journal reflections
 CREATE TABLE "public"."application_logs" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "user_id" uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE, "roadmap_step_id" uuid NOT NULL REFERENCES public.roadmap_steps(id) ON DELETE CASCADE, "situation_text" text, "learning_text" text, "effectiveness_rating" smallint, "ai_sentiment" ai_sentiment, "ai_topics" text[], "created_at" timestamptz DEFAULT now()
@@ -197,3 +197,4 @@ CREATE POLICY "Authenticated users can read goal examples"
 ON public.goal_examples FOR SELECT
 USING (auth.role() = 'authenticated');
 ```
+

@@ -2,12 +2,12 @@
 
 ## **Deployment Strategy**
 
-We will use a Git-based, continuous deployment model powered by Vercel and GitHub.
+We will use a Git-based, continuous deployment model powered by Netlify and GitHub.
 
-- **Vercel for Frontend & API Routes:**
+- **Netlify for Frontend & API Routes:**
     1. The `main` branch in our GitHub repository will represent the production application.
-    2. When a developer opens a Pull Request (PR), Vercel will automatically build and deploy a unique **Preview Environment**. This allows us to review and test every change in a live, isolated setting before it reaches production.
-    3. When a PR is approved and merged into `main`, Vercel will automatically trigger a **Production Deployment**, pushing the changes live.
+    2. When a developer opens a Pull Request (PR), Netlify will automatically build and deploy a unique **Preview Environment**. This allows us to review and test every change in a live, isolated setting before it reaches production.
+    3. When a PR is approved and merged into `main`, Netlify will automatically trigger a **Production Deployment**, pushing the changes live.
 - **Supabase for Database Migrations:**
     - Database schema changes are **not** deployed automatically with the application code.
     - Developers will create migration files locally using the Supabase CLI. These files will be committed to the `/supabase/migrations/` directory in our repository.
