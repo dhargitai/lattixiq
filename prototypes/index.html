@@ -13,154 +13,309 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #F8F9FA;
-            color: #333;
+            background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+            color: #2C3E50;
             line-height: 1.6;
             padding: 40px 20px;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .app-logo {
-            font-size: 64px;
-            margin-bottom: 16px;
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .app-title {
-            font-size: 36px;
+            font-size: 40px;
             font-weight: 700;
-            color: #212529;
-            margin-bottom: 8px;
+            color: #1A202C;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
         }
 
         .subtitle {
-            font-size: 20px;
-            color: #6C757D;
-            margin-bottom: 32px;
+            font-size: 22px;
+            color: #718096;
+            margin-bottom: 36px;
+            font-weight: 500;
         }
 
         .description {
-            max-width: 600px;
-            margin: 0 auto 48px;
+            max-width: 680px;
+            margin: 0 auto 56px;
             text-align: center;
-            font-size: 16px;
-            color: #495057;
+            font-size: 18px;
+            color: #4A5568;
             line-height: 1.8;
         }
 
+        /* Screens Grid */
         .screens-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 24px;
-            margin-bottom: 48px;
+            margin-bottom: 56px;
         }
 
         .screen-card {
             background-color: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .screen-card:nth-child(1) { animation-delay: 0.1s; }
+        .screen-card:nth-child(2) { animation-delay: 0.2s; }
+        .screen-card:nth-child(3) { animation-delay: 0.3s; }
+        .screen-card:nth-child(4) { animation-delay: 0.4s; }
+        .screen-card:nth-child(5) { animation-delay: 0.5s; }
+        .screen-card:nth-child(6) { animation-delay: 0.6s; }
+        .screen-card:nth-child(7) { animation-delay: 0.7s; }
+        .screen-card:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .screen-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(66, 153, 225, 0.1), transparent);
+            transition: left 0.5s ease;
         }
 
         .screen-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .screen-card:hover::before {
+            left: 100%;
         }
 
         .screen-number {
             display: inline-block;
-            background-color: #007BFF;
+            background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             text-align: center;
-            line-height: 32px;
+            line-height: 36px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
         }
 
         .screen-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
-            color: #212529;
-            margin-bottom: 8px;
+            color: #1A202C;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
         }
 
         .screen-description {
-            font-size: 14px;
-            color: #6C757D;
-            line-height: 1.5;
+            font-size: 15px;
+            color: #718096;
+            line-height: 1.6;
         }
 
+        /* Flow Section */
         .flow-section {
             background-color: white;
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            animation: fadeIn 0.8s ease-out 0.8s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .flow-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #212529;
-            margin-bottom: 16px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
         }
 
         .flow-description {
-            font-size: 16px;
-            color: #495057;
+            font-size: 17px;
+            color: #4A5568;
             line-height: 1.8;
-            margin-bottom: 16px;
+            margin-bottom: 28px;
         }
 
         .flow-steps {
             list-style: none;
             padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .flow-step {
+            background-color: #F7FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            gap: 12px;
             font-size: 16px;
-            color: #495057;
+            color: #2D3748;
+            transition: all 0.2s ease;
+        }
+
+        .flow-step:hover {
+            border-color: #4299E1;
+            background-color: #EBF8FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.15);
+        }
+
+        .flow-step strong {
+            color: #1A202C;
+            font-weight: 600;
         }
 
         .flow-arrow {
-            color: #007BFF;
-            margin: 0 8px;
+            color: #4299E1;
+            font-size: 20px;
         }
 
+        /* Features Section */
+        .features-section {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .features-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            color: #48BB78;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 16px;
+            color: #4A5568;
+            line-height: 1.6;
+        }
+
+        /* Notes */
         .notes {
-            background-color: #E3F2FD;
-            border-left: 4px solid #007BFF;
-            padding: 20px;
-            border-radius: 4px;
-            margin-top: 32px;
+            background: linear-gradient(135deg, #EBF4FF 0%, #E6F7FF 100%);
+            border-left: 4px solid #4299E1;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 40px;
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.08);
         }
 
         .notes-title {
             font-weight: 600;
-            color: #1565C0;
-            margin-bottom: 8px;
+            color: #2B6CB0;
+            margin-bottom: 12px;
+            font-size: 18px;
         }
 
         .notes-text {
-            color: #1976D2;
-            line-height: 1.6;
+            color: #3182CE;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .flow-steps {
+                flex-direction: column;
+            }
+
+            .flow-step {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -173,8 +328,8 @@
         </div>
 
         <p class="description">
-            These prototypes demonstrate the user experience and interface design for LattixIQ, 
-            a mental wellness app that helps users overcome procrastination and build better habits 
+            Experience the refined user interface for LattixIQ—a mental wellness app designed with 
+            <strong>calming simplicity</strong> to help users overcome procrastination and build better habits 
             through personalized roadmaps of mental models.
         </p>
 
@@ -182,87 +337,120 @@
             <a href="login.html" class="screen-card">
                 <div class="screen-number">1</div>
                 <h2 class="screen-title">Login</h2>
-                <p class="screen-description">Passwordless authentication with email OTP and social login options</p>
+                <p class="screen-description">Seamless passwordless authentication with email OTP and social login options</p>
+            </a>
+            
+            <a href="onboarding.html" class="screen-card">
+                <div class="screen-number">2</div>
+                <h2 class="screen-title">Onboarding</h2>
+                <p class="screen-description">Goal selection flow to capture user's challenge and generate personalized roadmaps</p>
             </a>
 
             <a href="roadmap.html" class="screen-card">
-                <div class="screen-number">2</div>
-                <h2 class="screen-title">Roadmap (Home)</h2>
-                <p class="screen-description">Visual journey showing completed, current, and locked steps</p>
+                <div class="screen-number">3</div>
+                <h2 class="screen-title">Roadmap View</h2>
+                <p class="screen-description">Visual journey showing your progress with completed, current, and upcoming steps</p>
+            </a>
+            
+            <a href="my-toolkit.html" class="screen-card">
+                <div class="screen-number">4</div>
+                <h2 class="screen-title">My Toolkit (Hub)</h2>
+                <p class="screen-description">Primary home screen with active roadmap and access to all learned tools</p>
             </a>
 
             <a href="learn.html" class="screen-card">
-                <div class="screen-number">3</div>
+                <div class="screen-number">5</div>
                 <h2 class="screen-title">Learn</h2>
-                <p class="screen-description">Focused learning experience for each mental model</p>
+                <p class="screen-description">Focused, distraction-free learning experience for each mental model</p>
             </a>
 
             <a href="plan.html" class="screen-card">
-                <div class="screen-number">4</div>
+                <div class="screen-number">6</div>
                 <h2 class="screen-title">Plan</h2>
-                <p class="screen-description">Create actionable If-Then implementation intentions</p>
+                <p class="screen-description">Create actionable If-Then plans with reminder settings and contextual guidance</p>
             </a>
 
             <a href="reflect.html" class="screen-card">
-                <div class="screen-number">5</div>
+                <div class="screen-number">7</div>
                 <h2 class="screen-title">Reflect</h2>
-                <p class="screen-description">Journal your experience and rate effectiveness</p>
-            </a>
-
-            <a href="my-toolkit.html" class="screen-card">
-                <div class="screen-number">6</div>
-                <h2 class="screen-title">My Toolkit</h2>
-                <p class="screen-description">Hub for completed roadmaps and learned models</p>
+                <p class="screen-description">Journal your experience and unlock the next step with star ratings</p>
             </a>
 
             <a href="settings.html" class="screen-card">
-                <div class="screen-number">7</div>
+                <div class="screen-number">8</div>
                 <h2 class="screen-title">Settings</h2>
-                <p class="screen-description">Account management and notification preferences</p>
+                <p class="screen-description">Manage your account and customize daily reminder preferences</p>
             </a>
         </div>
 
         <div class="flow-section">
-            <h2 class="flow-title">Core User Flow</h2>
+            <h2 class="flow-title">Updated User Journey</h2>
             <p class="flow-description">
-                The primary learning loop that drives user engagement and habit formation:
+                The refined user flow ensures a smooth progression from goal setting to sustained learning. 
+                My Toolkit serves as the permanent home base after onboarding:
             </p>
-            <ol class="flow-steps">
-                <li class="flow-step">
-                    <strong>1. Roadmap</strong>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <strong>New User:</strong>
                     <span class="flow-arrow">→</span>
-                    Click on current step
-                </li>
-                <li class="flow-step">
-                    <strong>2. Learn</strong>
+                    <span>Onboarding → Direct to Roadmap</span>
+                </div>
+                <div class="flow-step">
+                    <strong>Returning User:</strong>
                     <span class="flow-arrow">→</span>
-                    Read about the mental model
-                </li>
-                <li class="flow-step">
-                    <strong>3. Plan</strong>
+                    <span>My Toolkit Hub → Active Roadmap</span>
+                </div>
+                <div class="flow-step">
+                    <strong>Core Loop:</strong>
                     <span class="flow-arrow">→</span>
-                    Create your If-Then intention
-                </li>
-                <li class="flow-step">
-                    <strong>4. Apply</strong>
+                    <span>Learn → Plan → Apply → Reflect</span>
+                </div>
+                <div class="flow-step">
+                    <strong>After Completion:</strong>
                     <span class="flow-arrow">→</span>
-                    Take action in real life
-                </li>
-                <li class="flow-step">
-                    <strong>5. Reflect</strong>
-                    <span class="flow-arrow">→</span>
-                    Journal and unlock next step
-                </li>
-            </ol>
+                    <span>Return to My Toolkit Hub</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2 class="features-title">Design Principles in Action</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">✨</span>
+                    <div class="feature-text">
+                        <strong>Serene Minimalist</strong> aesthetic with generous white space and limited color palette
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <div class="feature-text">
+                        <strong>High Clarity</strong> design ensures users always know their next step
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🌱</span>
+                    <div class="feature-text">
+                        <strong>Supportive Guidance</strong> with contextual help and encouraging feedback
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎉</span>
+                    <div class="feature-text">
+                        <strong>Celebrate Progress</strong> with subtle animations and visual rewards
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="notes">
-            <div class="notes-title">Interactive Features:</div>
+            <div class="notes-title">🚀 Interactive Features</div>
             <div class="notes-text">
-                • Click through the screens to experience the user flow<br>
-                • Forms have basic validation and save data to localStorage<br>
-                • Toggle switches and star ratings are functional<br>
-                • Navigation between screens simulates a real app experience
+                • Complete onboarding flow with goal capture and roadmap generation<br>
+                • Active roadmap display in My Toolkit hub with current step tracking<br>
+                • Updated notification settings with daily reminder time selection<br>
+                • All screens fully interactive with form validation and state persistence<br>
+                • Responsive design optimized for mobile-first experience with smooth animations
             </div>
         </div>
     </div>

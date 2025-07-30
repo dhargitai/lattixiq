@@ -13,182 +13,461 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #F8F9FA;
-            color: #333;
+            background-color: #FAFBFC;
+            color: #2C3E50;
             line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* Header */
         .header {
             background-color: white;
             padding: 16px 20px;
-            border-bottom: 1px solid #E9ECEF;
+            border-bottom: 1px solid #E1E4E8;
             display: flex;
             align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .back-btn {
             background: none;
             border: none;
             font-size: 16px;
-            color: #007BFF;
+            color: #4299E1;
             cursor: pointer;
-            padding: 8px;
-            margin-right: 12px;
+            padding: 8px 16px 8px 8px;
             display: flex;
             align-items: center;
+            gap: 8px;
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 8px;
         }
 
         .back-btn:hover {
-            text-decoration: underline;
+            background-color: #F7FAFC;
+            color: #3182CE;
         }
 
+        .back-icon {
+            font-size: 18px;
+        }
+
+        /* Content */
         .content {
             flex: 1;
-            padding: 32px 20px;
-            max-width: 600px;
+            padding: 32px 20px 80px;
+            max-width: 640px;
             width: 100%;
             margin: 0 auto;
         }
 
         .plan-container {
             background-color: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .plan-title {
             font-size: 28px;
-            font-weight: 600;
-            color: #212529;
+            font-weight: 700;
+            color: #1A202C;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .divider {
-            height: 2px;
-            background-color: #007BFF;
+            height: 3px;
+            background: linear-gradient(to right, #4299E1, #3182CE);
             width: 60px;
             margin-bottom: 24px;
+            border-radius: 2px;
         }
 
         .plan-instruction {
             font-size: 18px;
-            color: #495057;
-            margin-bottom: 24px;
+            color: #4A5568;
+            margin-bottom: 32px;
+            line-height: 1.6;
         }
 
+        /* Dynamic Guidance */
+        .guidance-box {
+            background-color: #F0F9FF;
+            border: 1px solid #BEE3F8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .guidance-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+        }
+
+        .guidance-text {
+            font-size: 16px;
+            color: #2B6CB0;
+            line-height: 1.6;
+            font-weight: 500;
+            padding-right: 40px;
+        }
+
+        .guidance-text em {
+            font-style: normal;
+            font-weight: 600;
+            color: #2563EB;
+        }
+
+        /* Form */
         .form-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .form-label {
             font-size: 16px;
             font-weight: 600;
-            color: #212529;
-            margin-bottom: 8px;
+            color: #2D3748;
+            margin-bottom: 10px;
             display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px;
             font-size: 16px;
-            border: 2px solid #E9ECEF;
-            border-radius: 8px;
-            transition: border-color 0.2s ease;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
+            background-color: #FAFBFC;
+            line-height: 1.6;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #007BFF;
+            border-color: #4299E1;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
         }
 
-        .guidance-text {
-            font-size: 14px;
-            color: #6C757D;
-            margin-top: 8px;
+        .form-input::placeholder {
+            color: #A0AEC0;
             font-style: italic;
         }
 
-        .examples-link {
-            color: #007BFF;
-            text-decoration: none;
+        .helper-text {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* Reminder Section */
+        .reminder-section {
+            margin: 32px 0;
+        }
+
+        .reminder-title {
             font-size: 16px;
-            display: inline-block;
-            margin: 16px 0;
-            cursor: pointer;
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .examples-link:hover {
-            text-decoration: underline;
-        }
-
-        .examples-container {
-            display: none;
-            background-color: #F8F9FA;
-            border-left: 4px solid #007BFF;
+        .reminder-container {
+            background-color: #FAFBFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
             padding: 20px;
-            margin: 16px 0;
-            border-radius: 4px;
         }
 
-        .example {
+        .reminder-option {
             margin-bottom: 16px;
         }
 
-        .example:last-child {
-            margin-bottom: 0;
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
         }
 
-        .example-label {
-            font-weight: 600;
-            color: #212529;
+        .toggle-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2D3748;
         }
 
-        .example-text {
-            color: #495057;
-            font-style: italic;
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
         }
 
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #CBD5E0;
+            border-radius: 32px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #48BB78;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+        }
+
+        .reminder-time {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .reminder-time.disabled {
+            opacity: 0.5;
+        }
+
+        .time-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2D3748;
+        }
+
+        .time-select {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            background-color: white;
+            color: #2D3748;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .time-select:focus {
+            outline: none;
+            border-color: #48BB78;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+
+        /* Save Button */
         .save-btn {
-            background-color: #007BFF;
+            background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
             color: white;
             border: none;
-            padding: 16px 32px;
+            padding: 16px 40px;
             font-size: 18px;
-            font-weight: 500;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: 10px;
             cursor: pointer;
             display: block;
-            margin: 32px auto 0;
-            transition: background-color 0.2s ease, transform 0.2s ease;
+            margin: 40px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.25);
         }
 
         .save-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 153, 225, 0.35);
         }
 
+        .save-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.25);
+        }
+
+        .save-btn:disabled {
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #718096;
+            z-index: 10;
+        }
+
+        .progress-text {
+            font-weight: 500;
+        }
+
+        .progress-step {
+            color: #4299E1;
+            font-weight: 600;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1A202C;
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 16px;
+            color: #4A5568;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .modal-btn {
+            background-color: #4299E1;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-btn:hover {
+            background-color: #3182CE;
+        }
+
+        /* Responsive Design */
         @media (min-width: 768px) {
             .content {
-                padding: 48px 32px;
+                padding: 48px 32px 100px;
             }
 
             .plan-container {
-                padding: 48px;
+                padding: 56px 48px;
+            }
+
+            .plan-title {
+                font-size: 32px;
             }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <a href="learn.html" class="back-btn">← Back to Learn</a>
+        <a href="learn.html" class="back-btn">
+            <span class="back-icon">←</span>
+            Back to Learn
+        </a>
     </header>
 
     <main class="content">
@@ -197,7 +476,7 @@
             <div class="divider"></div>
             
             <p class="plan-instruction">
-                Use "Inversion" to plan how you'll avoid procrastination triggers.
+                Use "Activation Energy" to plan your first step.
             </p>
 
             <form id="planForm">
@@ -206,10 +485,9 @@
                     <textarea 
                         id="ifInput" 
                         class="form-input" 
-                        placeholder="e.g., &quot;I'm about to start working on my important project...&quot;"
+                        placeholder="It's 9 AM and I need to start my report..."
                         required
                     ></textarea>
-                    <p class="guidance-text">Your 'IF' should be the moment before a big decision. Think about when you typically procrastinate.</p>
                 </div>
 
                 <div class="form-section">
@@ -217,26 +495,43 @@
                     <textarea 
                         id="thenInput" 
                         class="form-input" 
-                        placeholder="e.g., &quot;List three things that would guarantee failure, then do the opposite&quot;"
+                        placeholder="Open the doc and write for just 5 minutes."
                         required
                     ></textarea>
-                    <p class="guidance-text">Your 'THEN' should be the action of identifying and avoiding failure triggers.</p>
                 </div>
 
-                <a class="examples-link" onclick="toggleExamples()">See examples</a>
-
-                <div id="examplesContainer" class="examples-container">
-                    <div class="example">
-                        <span class="example-label">IF:</span>
-                        <span class="example-text">"I sit down to write my report..."</span><br>
-                        <span class="example-label">THEN I WILL:</span>
-                        <span class="example-text">"Ask myself: What would guarantee I don't finish? Then remove those distractions first."</span>
-                    </div>
-                    <div class="example">
-                        <span class="example-label">IF:</span>
-                        <span class="example-text">"I'm about to start my workout..."</span><br>
-                        <span class="example-label">THEN I WILL:</span>
-                        <span class="example-text">"List what would make me skip it (phone notifications, uncomfortable clothes, no water), then prevent each one."</span>
+                <div class="reminder-section">
+                    <h3 class="reminder-title">REMINDER</h3>
+                    <div class="reminder-container">
+                        <div class="reminder-option">
+                            <label class="toggle-label">
+                                <span class="toggle-text">Daily Reminder</span>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="reminderToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="reminder-time" id="reminderTime">
+                            <label for="timeSelect" class="time-label">Remind me at:</label>
+                            <select id="timeSelect" class="time-select">
+                                <option value="06:00">6:00 AM</option>
+                                <option value="07:00">7:00 AM</option>
+                                <option value="08:00">8:00 AM</option>
+                                <option value="09:00" selected>9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                                <option value="18:00">6:00 PM</option>
+                                <option value="19:00">7:00 PM</option>
+                                <option value="20:00">8:00 PM</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -245,28 +540,118 @@
         </div>
     </main>
 
-    <script>
-        function toggleExamples() {
-            const container = document.getElementById('examplesContainer');
-            container.style.display = container.style.display === 'block' ? 'none' : 'block';
-        }
+    <div class="progress-indicator">
+        <span class="progress-text">Step <span class="progress-step">3 of 4</span> • Plan</span>
+    </div>
 
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <div class="success-icon">🎯</div>
+            <h2 class="modal-title">Great Plan!</h2>
+            <p class="modal-text">
+                Your plan has been saved. Now go apply it in real life!<br><br>
+                Return to the roadmap when you're ready to reflect on your experience.
+            </p>
+            <button class="modal-btn" onclick="goToRoadmap()">Back to Roadmap</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle reminder time visibility
+        const reminderToggle = document.getElementById('reminderToggle');
+        const reminderTime = document.getElementById('reminderTime');
+        
+        reminderToggle.addEventListener('change', function() {
+            if (this.checked) {
+                reminderTime.classList.remove('disabled');
+                document.getElementById('timeSelect').disabled = false;
+            } else {
+                reminderTime.classList.add('disabled');
+                document.getElementById('timeSelect').disabled = true;
+            }
+        });
+
+        // Form submission
         document.getElementById('planForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const ifValue = document.getElementById('ifInput').value;
-            const thenValue = document.getElementById('thenInput').value;
             
-            // Store the plan (in a real app, this would save to a database)
-            localStorage.setItem('currentPlan', JSON.stringify({
+            const ifValue = document.getElementById('ifInput').value.trim();
+            const thenValue = document.getElementById('thenInput').value.trim();
+            
+            // Validate minimum length
+            if (ifValue.length < 10 || thenValue.length < 10) {
+                alert('Please provide more detailed plans for both IF and THEN sections.');
+                return;
+            }
+            
+            // Get reminder settings
+            const reminderEnabled = document.getElementById('reminderToggle').checked;
+            const reminderTime = reminderEnabled ? document.getElementById('timeSelect').value : null;
+            
+            // Save the plan
+            const plan = {
                 if: ifValue,
                 then: thenValue,
-                model: 'Inversion',
-                timestamp: new Date().toISOString()
-            }));
+                model: 'Activation Energy',
+                step: 1,
+                reminder: {
+                    enabled: reminderEnabled,
+                    time: reminderTime
+                },
+                timestamp: new Date().toISOString(),
+                roadmap: localStorage.getItem('activeRoadmap') || 'stop-procrastinating'
+            };
             
-            alert('Great! Your plan has been saved. Now go apply it in real life. Return to the roadmap when you\'re ready to reflect on your experience.');
-            window.location.href = 'roadmap.html';
+            localStorage.setItem('step1-plan', JSON.stringify(plan));
+            
+            // Add to plans array
+            const allPlans = JSON.parse(localStorage.getItem('allPlans') || '[]');
+            allPlans.push(plan);
+            localStorage.setItem('allPlans', JSON.stringify(allPlans));
+            
+            // Show success modal
+            document.getElementById('successModal').style.display = 'block';
         });
+
+        // Modal functions
+        function closeModal(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        function goToRoadmap() {
+            window.location.href = 'roadmap.html';
+        }
+
+        // Auto-resize textareas
+        const textareas = document.querySelectorAll('.form-input');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.max(100, this.scrollHeight) + 'px';
+            });
+        });
+
+        // Load saved plan if exists
+        const savedPlan = JSON.parse(localStorage.getItem('step1-plan') || '{}');
+        if (savedPlan.if) {
+            document.getElementById('ifInput').value = savedPlan.if;
+        }
+        if (savedPlan.then) {
+            document.getElementById('thenInput').value = savedPlan.then;
+        }
+        if (savedPlan.reminder) {
+            document.getElementById('reminderToggle').checked = savedPlan.reminder.enabled;
+            if (savedPlan.reminder.time) {
+                document.getElementById('timeSelect').value = savedPlan.reminder.time;
+            }
+            if (!savedPlan.reminder.enabled) {
+                reminderTime.classList.add('disabled');
+                document.getElementById('timeSelect').disabled = true;
+            }
+        }
     </script>
 </body>
 </html>

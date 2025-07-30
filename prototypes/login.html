@@ -13,8 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #F8F9FA;
-            color: #333;
+            background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+            color: #2C3E50;
             line-height: 1.6;
             min-height: 100vh;
             display: flex;
@@ -23,43 +23,81 @@
             padding: 20px;
         }
 
+        /* Login Container */
         .login-container {
             background-color: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 48px 32px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            max-width: 420px;
             width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* Decorative element */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(66, 153, 225, 0.05) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* App Branding */
         .app-logo {
-            font-size: 48px;
+            font-size: 56px;
             margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .app-name {
             font-size: 32px;
             font-weight: 700;
-            color: #212529;
+            color: #1A202C;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
         }
 
         .app-tagline {
             font-size: 18px;
-            color: #6C757D;
+            color: #718096;
             margin-bottom: 48px;
+            position: relative;
+            z-index: 1;
         }
 
+        /* Social Login Section */
         .social-login-section {
             margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
         }
 
         .social-btn {
             width: 100%;
             padding: 14px 20px;
-            border: 1px solid #DEE2E6;
-            border-radius: 8px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 500;
             background-color: white;
@@ -69,28 +107,64 @@
             justify-content: center;
             gap: 12px;
             margin-bottom: 12px;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            transition: all 0.3s ease;
             text-decoration: none;
-            color: #212529;
+            color: #2D3748;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background-color: rgba(66, 153, 225, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
         }
 
         .social-btn:hover {
-            background-color: #F8F9FA;
-            border-color: #ADB5BD;
+            border-color: #CBD5E0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .social-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .social-btn:hover::after {
+            width: 300px;
+            height: 300px;
         }
 
         .social-icon {
             width: 20px;
             height: 20px;
             font-size: 20px;
+            position: relative;
+            z-index: 1;
         }
 
+        .social-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Divider */
         .divider {
             display: flex;
             align-items: center;
             margin: 32px 0;
-            color: #6C757D;
+            color: #A0AEC0;
             font-size: 14px;
+            position: relative;
+            z-index: 1;
         }
 
         .divider::before,
@@ -98,21 +172,25 @@
             content: '';
             flex: 1;
             height: 1px;
-            background-color: #DEE2E6;
+            background: linear-gradient(to right, transparent, #E2E8F0, transparent);
         }
 
         .divider-text {
             padding: 0 16px;
+            font-weight: 500;
         }
 
+        /* Email Section */
         .email-section {
             margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
         }
 
         .input-label {
             font-size: 14px;
-            font-weight: 500;
-            color: #495057;
+            font-weight: 600;
+            color: #4A5568;
             text-align: left;
             display: block;
             margin-bottom: 8px;
@@ -122,58 +200,109 @@
             width: 100%;
             padding: 12px 16px;
             font-size: 16px;
-            border: 2px solid #E9ECEF;
-            border-radius: 8px;
-            transition: border-color 0.2s ease;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background-color: #FAFBFC;
         }
 
         .email-input:focus {
             outline: none;
-            border-color: #007BFF;
+            border-color: #4299E1;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
         }
 
+        .email-input::placeholder {
+            color: #A0AEC0;
+        }
+
+        /* Continue Button */
         .continue-btn {
             width: 100%;
             padding: 14px 20px;
-            background-color: #007BFF;
+            background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
         }
 
         .continue-btn:hover {
-            background-color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+        }
+
+        .continue-btn:hover::before {
+            left: 100%;
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(66, 153, 225, 0.4);
         }
 
         .continue-btn:disabled {
-            background-color: #6C757D;
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* OTP State Styles */
         .otp-section {
             display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .otp-message {
             font-size: 16px;
-            color: #495057;
+            color: #4A5568;
             margin-bottom: 16px;
-            line-height: 1.5;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         .change-email {
-            color: #007BFF;
+            color: #4299E1;
             text-decoration: none;
             font-size: 14px;
             cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
 
         .change-email:hover {
+            color: #3182CE;
             text-decoration: underline;
         }
 
@@ -182,36 +311,91 @@
             justify-content: center;
             gap: 8px;
             margin: 32px 0;
+            position: relative;
+            z-index: 1;
         }
 
         .otp-input {
             width: 48px;
             height: 56px;
             font-size: 24px;
+            font-weight: 600;
             text-align: center;
-            border: 2px solid #E9ECEF;
-            border-radius: 8px;
-            transition: border-color 0.2s ease;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background-color: #FAFBFC;
         }
 
         .otp-input:focus {
             outline: none;
-            border-color: #007BFF;
+            border-color: #4299E1;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            transform: scale(1.05);
+        }
+
+        .otp-input.filled {
+            border-color: #48BB78;
+            background-color: #F0FFF4;
         }
 
         .resend-code {
-            color: #007BFF;
+            color: #4299E1;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
             margin-bottom: 24px;
             display: inline-block;
             cursor: pointer;
+            transition: color 0.2s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .resend-code:hover {
+            color: #3182CE;
             text-decoration: underline;
         }
 
+        .resend-code.disabled {
+            color: #A0AEC0;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        /* Success Animation */
+        @keyframes checkmark {
+            0% {
+                stroke-dashoffset: 50;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            margin: 20px auto;
+            display: none;
+        }
+
+        .success-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .checkmark {
+            stroke: #48BB78;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+            animation: checkmark 0.5s ease-out forwards;
+        }
+
+        /* Responsive Design */
         @media (min-width: 768px) {
             .login-container {
                 padding: 64px 48px;
@@ -228,13 +412,13 @@
         <!-- Email Login State -->
         <div id="emailState">
             <div class="social-login-section">
-                <button class="social-btn" onclick="alert('Google login would be implemented here')">
+                <button class="social-btn" onclick="handleSocialLogin('google')">
                     <span class="social-icon">G</span>
-                    Continue with Google
+                    <span>Continue with Google</span>
                 </button>
-                <button class="social-btn" onclick="alert('Apple login would be implemented here')">
+                <button class="social-btn" onclick="handleSocialLogin('apple')">
                     <span class="social-icon">🍎</span>
-                    Continue with Apple
+                    <span>Continue with Apple</span>
                 </button>
             </div>
 
@@ -251,6 +435,7 @@
                         class="email-input" 
                         placeholder="your@email.com"
                         required
+                        autocomplete="email"
                     >
                 </div>
 
@@ -261,25 +446,32 @@
         <!-- OTP Verification State -->
         <div id="otpState" class="otp-section">
             <p class="otp-message">
-                We've sent a 6-digit code to your email.<br>
+                We've sent a 6-digit code to <strong id="emailDisplay"></strong><br>
                 Enter it below to log in.<br>
                 <a class="change-email" onclick="switchToEmailState()">(Change email)</a>
             </p>
 
             <form id="otpForm">
                 <div class="otp-inputs">
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
                 </div>
 
-                <a class="resend-code" onclick="resendCode()">Resend code</a>
+                <a class="resend-code" id="resendLink" onclick="resendCode()">Resend code</a>
 
                 <button type="submit" class="continue-btn">Log In</button>
             </form>
+
+            <div class="success-icon" id="successIcon">
+                <svg viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="25" fill="none" stroke="#E6FFFA" stroke-width="2"/>
+                    <path class="checkmark" d="M14 27l8 8 16-16"/>
+                </svg>
+            </div>
         </div>
     </div>
 
@@ -291,9 +483,19 @@
             
             // Save email for OTP verification
             localStorage.setItem('loginEmail', email);
+            document.getElementById('emailDisplay').textContent = email;
             
-            // Switch to OTP state
-            switchToOtpState();
+            // Disable button briefly
+            const btn = e.target.querySelector('.continue-btn');
+            btn.disabled = true;
+            btn.textContent = 'Sending code...';
+            
+            // Simulate API call
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = 'Continue with Email';
+                switchToOtpState();
+            }, 1000);
         });
 
         // OTP form submission
@@ -305,24 +507,73 @@
             const otp = Array.from(otpInputs).map(input => input.value).join('');
             
             if (otp.length === 6) {
-                // Simulate successful login
-                alert('Login successful! Redirecting to your roadmap...');
-                window.location.href = 'roadmap.html';
+                // Show success animation
+                const btn = e.target.querySelector('.continue-btn');
+                btn.disabled = true;
+                btn.textContent = 'Verifying...';
+                
+                setTimeout(() => {
+                    document.getElementById('successIcon').style.display = 'block';
+                    btn.textContent = 'Success!';
+                    
+                    // Redirect after animation
+                    setTimeout(() => {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        window.location.href = 'roadmap.html';
+                    }, 1000);
+                }, 500);
             }
         });
 
-        // Handle OTP input auto-advance
+        // Handle OTP input
         const otpInputs = document.querySelectorAll('.otp-input');
         otpInputs.forEach((input, index) => {
+            // Auto-advance on input
             input.addEventListener('input', function() {
-                if (this.value && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
+                if (this.value) {
+                    this.classList.add('filled');
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    } else {
+                        // Auto-submit when all fields are filled
+                        const allFilled = Array.from(otpInputs).every(inp => inp.value);
+                        if (allFilled) {
+                            document.getElementById('otpForm').requestSubmit();
+                        }
+                    }
+                } else {
+                    this.classList.remove('filled');
                 }
             });
 
+            // Handle backspace
             input.addEventListener('keydown', function(e) {
                 if (e.key === 'Backspace' && !this.value && index > 0) {
                     otpInputs[index - 1].focus();
+                    otpInputs[index - 1].value = '';
+                    otpInputs[index - 1].classList.remove('filled');
+                }
+            });
+
+            // Handle paste
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                const digits = pastedData.split('');
+                
+                digits.forEach((digit, i) => {
+                    if (i < otpInputs.length && /^\d$/.test(digit)) {
+                        otpInputs[i].value = digit;
+                        otpInputs[i].classList.add('filled');
+                    }
+                });
+                
+                // Focus the next empty input or submit
+                const nextEmpty = Array.from(otpInputs).findIndex(inp => !inp.value);
+                if (nextEmpty !== -1) {
+                    otpInputs[nextEmpty].focus();
+                } else {
+                    document.getElementById('otpForm').requestSubmit();
                 }
             });
         });
@@ -333,6 +584,9 @@
             
             // Focus first OTP input
             otpInputs[0].focus();
+            
+            // Start resend timer
+            startResendTimer();
         }
 
         function switchToEmailState() {
@@ -340,16 +594,80 @@
             document.getElementById('emailState').style.display = 'block';
             
             // Clear OTP inputs
-            otpInputs.forEach(input => input.value = '');
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            // Reset success icon
+            document.getElementById('successIcon').style.display = 'none';
+        }
+
+        let resendTimer;
+        function startResendTimer() {
+            let seconds = 30;
+            const resendLink = document.getElementById('resendLink');
+            
+            resendLink.classList.add('disabled');
+            
+            resendTimer = setInterval(() => {
+                if (seconds > 0) {
+                    resendLink.textContent = `Resend code (${seconds}s)`;
+                    seconds--;
+                } else {
+                    clearInterval(resendTimer);
+                    resendLink.textContent = 'Resend code';
+                    resendLink.classList.remove('disabled');
+                }
+            }, 1000);
         }
 
         function resendCode() {
-            alert('A new code has been sent to your email!');
-            
-            // Clear OTP inputs
-            otpInputs.forEach(input => input.value = '');
-            otpInputs[0].focus();
+            const resendLink = document.getElementById('resendLink');
+            if (!resendLink.classList.contains('disabled')) {
+                // Clear OTP inputs
+                otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+                otpInputs[0].focus();
+                
+                // Show feedback
+                const originalText = resendLink.textContent;
+                resendLink.textContent = 'Code sent!';
+                
+                setTimeout(() => {
+                    resendLink.textContent = originalText;
+                    startResendTimer();
+                }, 1500);
+            }
         }
+
+        function handleSocialLogin(provider) {
+            const btn = event.target.closest('.social-btn');
+            const originalContent = btn.innerHTML;
+            
+            // Show loading state
+            btn.innerHTML = `<span style="display: inline-block; animation: spin 1s linear infinite;">⟳</span> Connecting...`;
+            btn.disabled = true;
+            
+            // Simulate OAuth flow
+            setTimeout(() => {
+                alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login would redirect to OAuth provider`);
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // Add spinning animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

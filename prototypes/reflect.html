@@ -13,201 +13,422 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background-color: #F8F9FA;
-            color: #333;
+            background-color: #FAFBFC;
+            color: #2C3E50;
             line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* Header */
         .header {
             background-color: white;
             padding: 16px 20px;
-            border-bottom: 1px solid #E9ECEF;
+            border-bottom: 1px solid #E1E4E8;
             display: flex;
             align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .back-btn {
             background: none;
             border: none;
             font-size: 16px;
-            color: #007BFF;
+            color: #4299E1;
             cursor: pointer;
-            padding: 8px;
-            margin-right: 12px;
+            padding: 8px 16px 8px 8px;
             display: flex;
             align-items: center;
+            gap: 8px;
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 8px;
         }
 
         .back-btn:hover {
-            text-decoration: underline;
+            background-color: #F7FAFC;
+            color: #3182CE;
         }
 
+        .back-icon {
+            font-size: 18px;
+        }
+
+        /* Content */
         .content {
             flex: 1;
-            padding: 32px 20px;
-            max-width: 600px;
+            padding: 32px 20px 80px;
+            max-width: 640px;
             width: 100%;
             margin: 0 auto;
         }
 
         .reflect-container {
             background-color: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .reflect-title {
             font-size: 28px;
-            font-weight: 600;
-            color: #212529;
+            font-weight: 700;
+            color: #1A202C;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .divider {
-            height: 2px;
-            background-color: #007BFF;
+            height: 3px;
+            background: linear-gradient(to right, #48BB78, #38A169);
             width: 60px;
             margin-bottom: 24px;
+            border-radius: 2px;
         }
 
+        /* Plan Reminder */
         .plan-reminder {
-            background-color: #E3F2FD;
-            border-left: 4px solid #007BFF;
-            padding: 16px;
-            margin-bottom: 24px;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFFA 100%);
+            border-left: 4px solid #48BB78;
+            padding: 20px;
+            margin-bottom: 32px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-reminder::before {
+            content: '🎯';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.3;
         }
 
         .plan-reminder-title {
             font-size: 14px;
             font-weight: 600;
-            color: #1565C0;
-            margin-bottom: 4px;
+            color: #22543D;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .plan-text {
             font-size: 16px;
-            color: #1976D2;
+            color: #2F855A;
             font-style: italic;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         .reflect-question {
-            font-size: 18px;
-            color: #212529;
-            margin-bottom: 16px;
+            font-size: 20px;
+            color: #2D3748;
+            margin-bottom: 24px;
             font-weight: 500;
         }
 
+        /* Form */
         .form-section {
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
 
         .form-label {
             font-size: 16px;
             font-weight: 600;
-            color: #212529;
-            margin-bottom: 8px;
+            color: #2D3748;
+            margin-bottom: 10px;
             display: block;
         }
 
         .reflection-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px;
             font-size: 16px;
-            border: 2px solid #E9ECEF;
-            border-radius: 8px;
-            transition: border-color 0.2s ease;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
             resize: vertical;
-            min-height: 120px;
+            min-height: 140px;
+            background-color: #FAFBFC;
+            line-height: 1.6;
         }
 
         .reflection-input:focus {
             outline: none;
-            border-color: #007BFF;
+            border-color: #48BB78;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
         }
 
+        .reflection-input::placeholder {
+            color: #A0AEC0;
+            font-style: italic;
+        }
+
+        .char-count {
+            font-size: 14px;
+            color: #718096;
+            text-align: right;
+            margin-top: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .char-count.valid {
+            color: #48BB78;
+        }
+
+        /* Rating Section */
         .rating-section {
-            margin: 32px 0;
+            margin: 40px 0;
+            text-align: center;
         }
 
         .rating-label {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            color: #212529;
-            margin-bottom: 16px;
+            color: #2D3748;
+            margin-bottom: 20px;
             display: block;
         }
 
         .star-rating {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .star {
-            font-size: 36px;
-            color: #E9ECEF;
+            font-size: 40px;
+            color: #E2E8F0;
             cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
+            transition: all 0.2s ease;
+            user-select: none;
         }
 
-        .star:hover,
-        .star.active {
-            color: #FFC107;
+        .star:hover {
+            color: #F6E05E;
             transform: scale(1.1);
         }
 
-        .complete-btn {
-            background-color: #28A745;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 18px;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-            display: block;
-            margin: 32px auto 0;
-            transition: background-color 0.2s ease, transform 0.2s ease;
+        .star.active {
+            color: #F6AD55;
+            transform: scale(1.15);
+            animation: starPop 0.3s ease-out;
         }
 
-        .complete-btn:hover {
-            background-color: #218838;
-            transform: translateY(-1px);
+        @keyframes starPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.15); }
+        }
+
+        .rating-feedback {
+            font-size: 14px;
+            color: #718096;
+            height: 20px;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Complete Button */
+        .complete-btn {
+            background: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complete-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .complete-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.35);
+        }
+
+        .complete-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .complete-btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(72, 187, 120, 0.25);
         }
 
         .complete-btn:disabled {
-            background-color: #6C757D;
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
-        .char-count {
+        /* Progress Indicator */
+        .progress-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             font-size: 14px;
-            color: #6C757D;
-            text-align: right;
-            margin-top: 4px;
+            color: #718096;
+            z-index: 10;
         }
 
+        .progress-text {
+            font-weight: 500;
+        }
+
+        .progress-step {
+            color: #48BB78;
+            font-weight: 600;
+        }
+
+        /* Success Animation */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 20px;
+            padding: 48px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: successSlideUp 0.5s ease-out;
+        }
+
+        @keyframes successSlideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .success-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            animation: successBounce 0.6s ease-out 0.2s;
+        }
+
+        @keyframes successBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 12px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: #4A5568;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .success-btn {
+            background-color: #48BB78;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .success-btn:hover {
+            background-color: #38A169;
+        }
+
+        /* Responsive Design */
         @media (min-width: 768px) {
             .content {
-                padding: 48px 32px;
+                padding: 48px 32px 100px;
             }
 
             .reflect-container {
-                padding: 48px;
+                padding: 56px 48px;
+            }
+
+            .reflect-title {
+                font-size: 32px;
+            }
+
+            .star {
+                font-size: 44px;
             }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <a href="roadmap.html" class="back-btn">← Back to Roadmap</a>
+        <a href="roadmap.html" class="back-btn">
+            <span class="back-icon">←</span>
+            Back to Roadmap
+        </a>
     </header>
 
     <main class="content">
@@ -244,21 +465,39 @@
                         <span class="star" data-rating="4">★</span>
                         <span class="star" data-rating="5">★</span>
                     </div>
+                    <div class="rating-feedback" id="ratingFeedback"></div>
                 </div>
 
-                <button type="submit" class="complete-btn" id="completeBtn" disabled>Complete & Unlock Next Step</button>
+                <button type="submit" class="complete-btn" id="completeBtn" disabled>
+                    Complete & Unlock Next Step
+                </button>
             </form>
         </div>
     </main>
+
+    <div class="progress-indicator">
+        <span class="progress-text">Step <span class="progress-step">4 of 4</span> • Reflect</span>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">Excellent Work!</h2>
+            <p class="success-text">
+                You've successfully completed this step. The next mental model in your roadmap is now unlocked!
+            </p>
+            <button class="success-btn" onclick="goToRoadmap()">Continue to Roadmap</button>
+        </div>
+    </div>
 
     <script>
         let selectedRating = 0;
 
         // Load saved plan
-        const savedPlan = localStorage.getItem('currentPlan');
-        if (savedPlan) {
-            const plan = JSON.parse(savedPlan);
-            document.getElementById('planText').textContent = `"${plan.then}"`;
+        const savedPlan = JSON.parse(localStorage.getItem('step2-plan') || '{}');
+        if (savedPlan.then) {
+            document.getElementById('planText').textContent = savedPlan.then;
         } else {
             document.getElementById('planText').textContent = 'No plan found. Please create a plan first.';
         }
@@ -271,20 +510,63 @@
         reflectionInput.addEventListener('input', function() {
             const length = this.value.length;
             const minLength = 50;
-            charCount.textContent = `${length} / ${minLength} minimum`;
+            
+            if (length >= minLength) {
+                charCount.textContent = `${length} characters`;
+                charCount.classList.add('valid');
+            } else {
+                charCount.textContent = `${length} / ${minLength} minimum`;
+                charCount.classList.remove('valid');
+            }
             
             updateSubmitButton();
         });
 
-        // Star rating
+        // Star rating with feedback
         const stars = document.querySelectorAll('.star');
+        const ratingFeedback = document.getElementById('ratingFeedback');
+        const feedbackMessages = {
+            1: "Not helpful at all",
+            2: "Slightly helpful",
+            3: "Moderately helpful",
+            4: "Very helpful",
+            5: "Extremely helpful!"
+        };
+
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 selectedRating = parseInt(this.getAttribute('data-rating'));
                 updateStars();
                 updateSubmitButton();
+                showRatingFeedback();
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const hoverRating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(hoverRating);
+                ratingFeedback.textContent = feedbackMessages[hoverRating];
+                ratingFeedback.style.opacity = '1';
             });
         });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            updateStars();
+            if (selectedRating > 0) {
+                showRatingFeedback();
+            } else {
+                ratingFeedback.style.opacity = '0';
+            }
+        });
+
+        function highlightStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = '#F6E05E';
+                } else {
+                    star.style.color = '#E2E8F0';
+                }
+            });
+        }
 
         function updateStars() {
             stars.forEach((star, index) => {
@@ -294,6 +576,11 @@
                     star.classList.remove('active');
                 }
             });
+        }
+
+        function showRatingFeedback() {
+            ratingFeedback.textContent = feedbackMessages[selectedRating];
+            ratingFeedback.style.opacity = '1';
         }
 
         function updateSubmitButton() {
@@ -308,12 +595,18 @@
         document.getElementById('reflectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Save reflection (in a real app, this would save to a database)
+            // Disable button to prevent double submission
+            completeBtn.disabled = true;
+            completeBtn.textContent = 'Saving...';
+            
+            // Save reflection
             const reflection = {
                 text: reflectionInput.value,
                 rating: selectedRating,
                 model: 'Inversion',
-                timestamp: new Date().toISOString()
+                step: 2,
+                timestamp: new Date().toISOString(),
+                roadmap: localStorage.getItem('activeRoadmap') || 'stop-procrastinating'
             };
             
             // Get existing reflections or create new array
@@ -321,11 +614,41 @@
             existingReflections.push(reflection);
             localStorage.setItem('reflections', JSON.stringify(existingReflections));
             
-            // Show success message with animation
-            alert('Excellent work! You\'ve successfully completed this step. The next mental model in your roadmap is now unlocked!');
+            // Update roadmap completion status
+            localStorage.setItem('step2-completed', 'true');
             
-            // Redirect to roadmap
+            // Check for testimonial triggers
+            updateTestimonialTriggers(existingReflections);
+            
+            // Show success animation
+            setTimeout(() => {
+                document.getElementById('successOverlay').style.display = 'block';
+            }, 500);
+        });
+
+        function updateTestimonialTriggers(reflections) {
+            // Check if this is the first roadmap completion
+            const stepsCompleted = reflections.filter(r => r.roadmap === (localStorage.getItem('activeRoadmap') || 'stop-procrastinating')).length;
+            if (stepsCompleted === 4) { // Assuming 4 steps per roadmap
+                localStorage.setItem('firstRoadmapCompleted', 'true');
+            }
+            
+            // Check for consecutive high ratings
+            const recentRatings = reflections.slice(-12).map(r => r.rating); // Last 3 roadmaps (4 steps each)
+            const highRatings = recentRatings.filter(r => r >= 4).length;
+            if (highRatings >= 9) { // 75% high ratings
+                localStorage.setItem('consecutiveHighRatings', '3');
+            }
+        }
+
+        function goToRoadmap() {
             window.location.href = 'roadmap.html';
+        }
+
+        // Auto-resize textarea
+        reflectionInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(140, this.scrollHeight) + 'px';
         });
     </script>
 </body>

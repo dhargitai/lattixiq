@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - Onboarding</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #FAFBFC;
+            color: #2C3E50;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 24px 20px;
+            border-bottom: 1px solid #E1E4E8;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .app-logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1A202C;
+            letter-spacing: -0.5px;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 32px 20px 80px;
+            max-width: 640px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .onboarding-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 32px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFFA 100%);
+            border: 1px solid #D6F5D6;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .how-it-works-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: background-color 0.2s ease;
+        }
+
+        .how-it-works-header:hover {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .how-it-works-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #22543D;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .expand-icon {
+            font-size: 12px;
+            color: #48BB78;
+            transition: transform 0.3s ease;
+        }
+
+        .how-it-works.expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .how-it-works-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .how-it-works.expanded .how-it-works-content {
+            max-height: 200px;
+            padding: 0 20px 20px;
+        }
+
+        .how-it-works-text {
+            font-size: 15px;
+            color: #2F855A;
+            line-height: 1.6;
+        }
+
+        /* Form */
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .goal-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+            background-color: #FAFBFC;
+            line-height: 1.6;
+        }
+
+        .goal-input:focus {
+            outline: none;
+            border-color: #48BB78;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+
+        .goal-input::placeholder {
+            color: #A0AEC0;
+            font-style: italic;
+        }
+
+        .char-hint {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* Create Button */
+        .create-btn {
+            background: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.25);
+            position: relative;
+            overflow: hidden;
+            min-width: 280px;
+        }
+
+        .create-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .create-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.35);
+        }
+
+        .create-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .create-btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(72, 187, 120, 0.25);
+        }
+
+        .create-btn:disabled {
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Success Animation */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 20px;
+            padding: 48px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: successSlideUp 0.5s ease-out;
+        }
+
+        @keyframes successSlideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .success-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            animation: successBounce 0.6s ease-out 0.2s;
+        }
+
+        @keyframes successBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 12px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: #4A5568;
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .content {
+                padding: 48px 32px 100px;
+            }
+
+            .onboarding-container {
+                padding: 56px 48px;
+            }
+
+            .question-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="app-logo">LattixIQ</h1>
+    </header>
+
+    <main class="content">
+        <div class="onboarding-container">
+            <h2 class="question-title" id="questionTitle">What is your single biggest challenge right now?</h2>
+            
+            <div class="how-it-works expanded" id="howItWorks">
+                <div class="how-it-works-header" onclick="toggleExplainer()">
+                    <div class="how-it-works-title">
+                        <span class="expand-icon" id="expandIcon">▶</span>
+                        How this works
+                    </div>
+                </div>
+                <div class="how-it-works-content">
+                    <p class="how-it-works-text">
+                        We'll use your goal to build a personalized roadmap of powerful mental models. Instead of just reading, you'll learn proven frameworks to solve your exact problem.
+                    </p>
+                </div>
+            </div>
+
+            <form id="onboardingForm">
+                <div class="form-section">
+                    <label for="goalInput" class="form-label">Describe your goal or problem:</label>
+                    <textarea 
+                        id="goalInput" 
+                        class="goal-input" 
+                        placeholder='e.g., "I want to stop procrastinating on my big projects at work."'
+                        required
+                        minlength="10"
+                    ></textarea>
+                    <div class="char-hint" id="charHint">Be specific - this helps us create a better roadmap</div>
+                </div>
+
+                <button type="submit" class="create-btn" id="createBtn">
+                    Create My Roadmap
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="success-icon">🚀</div>
+            <h2 class="success-title">Building Your Roadmap!</h2>
+            <p class="success-text">
+                We're creating a personalized learning path just for you...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Check if returning user
+        const isReturningUser = localStorage.getItem('hasCompletedOnboarding') === 'true';
+        
+        // Update UI for returning users
+        if (isReturningUser) {
+            document.getElementById('questionTitle').textContent = 'What is your next challenge?';
+            document.getElementById('howItWorks').classList.remove('expanded');
+        }
+
+        // Toggle How It Works
+        function toggleExplainer() {
+            const explainer = document.getElementById('howItWorks');
+            explainer.classList.toggle('expanded');
+        }
+
+        // Auto-resize textarea
+        const goalInput = document.getElementById('goalInput');
+        goalInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(120, this.scrollHeight) + 'px';
+            
+            // Update char hint based on length
+            const length = this.value.trim().length;
+            const charHint = document.getElementById('charHint');
+            
+            if (length === 0) {
+                charHint.textContent = 'Be specific - this helps us create a better roadmap';
+                charHint.style.color = '#718096';
+            } else if (length < 20) {
+                charHint.textContent = 'Add more detail for a better personalized roadmap';
+                charHint.style.color = '#E53E3E';
+            } else {
+                charHint.textContent = 'Great! This will help us build the right roadmap for you';
+                charHint.style.color = '#48BB78';
+            }
+        });
+
+        // Form submission
+        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const goal = goalInput.value.trim();
+            
+            if (goal.length < 10) {
+                alert('Please provide more detail about your challenge');
+                return;
+            }
+            
+            // Disable button and show loading state
+            const createBtn = document.getElementById('createBtn');
+            createBtn.disabled = true;
+            createBtn.textContent = 'Creating Your Roadmap...';
+            
+            // Save goal and mark onboarding as complete
+            localStorage.setItem('userGoal', goal);
+            localStorage.setItem('hasCompletedOnboarding', 'true');
+            localStorage.setItem('activeRoadmap', goal.toLowerCase().replace(/\s+/g, '-').substring(0, 30));
+            
+            // Show success animation
+            setTimeout(() => {
+                document.getElementById('successOverlay').style.display = 'block';
+                
+                // Redirect to roadmap after animation
+                setTimeout(() => {
+                    window.location.href = 'roadmap.html';
+                }, 2000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
