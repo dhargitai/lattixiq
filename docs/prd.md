@@ -8,7 +8,7 @@ Date: July 28, 2025
 
 ## 1. **Introduction & Executive Summary**
 
-The "Growth Roadmap" is a mobile-accessible web application designed to solve the critical "knowing-doing gap" in personal development. The app provides users with a structured, action-oriented system to internalize powerful mental models and overcome cognitive biases. By creating personalized learning journeys tied to real-world goals, the app transforms passive knowledge into applied wisdom, serving as a comprehensive "Rationality Toolkit" for mastering one's own thinking.
+The "LattixIQ" is a mobile-accessible web application designed to solve the critical "knowing-doing gap" in personal development. The app provides users with a structured, action-oriented system to internalize powerful mental models and overcome cognitive biases. By creating personalized learning journeys tied to real-world goals, the app transforms passive knowledge into applied wisdom, serving as a comprehensive "Rationality Toolkit" for mastering one's own thinking.
 
 ## 2. **Product Goal & Vision**
 
@@ -35,22 +35,18 @@ The "Growth Roadmap" is a mobile-accessible web application designed to solve th
             **Content Vectorization:** All 100 mental models and the lists of cognitive biases/fallacies from the provided documents will be pre-processed into their own semantic vector embeddings. 2
             
         - **Semantic Matching:** The system will use cosine similarity to find the mental models and biases most conceptually relevant to the user's stated goal, ensuring a much more nuanced and accurate match than simple keywords.
-        - **Roadmap Curation:** An algorithm will select the top 5-7 most relevant items to create a logical "Growth Roadmap," prioritizing foundational concepts first.
+        - **Roadmap Curation:** An algorithm will select the top 5-7 most relevant items to create a logical "LattixIQ Roadmap," prioritizing foundational concepts first.
     3. **Roadmap Visualization:** The app will display the personalized roadmap visually, with later steps blurred or locked to create a sense of progression and encourage completion.
 
 ### **Epic 2: The Core "Learn, Plan, Act, Reflect" Loop**
 
 - **User Story:** As a learner, I want to understand a concept, create a concrete plan to apply it, and reflect on my experience to solidify my learning and unlock the next step.
 - **Functional Requirements:**
-    1. 
-        
-        **Learn Screen:** Provides a concise, actionable summary of the current mental model or cognitive bias, with content sourced from the provided documents. 3 The focus is on practical application.
+    1. **Learn Screen:** Provides a concise, actionable summary of the current mental model or cognitive bias, with content sourced from the provided documents. 3 The focus is on practical application.
         
     2. **Plan Screen:**
         - For **Mental Models**, this is a structured "If-Then" form to create an **Implementation Intention**.
-        - For
-            
-            **Cognitive Biases**, this is a "Spotting Mission" prompt (e.g., "Your mission is to observe and identify one instance of **Confirmation Bias** 4 in your own thinking or in the media today.").
+        - For **Cognitive Biases**, this is a "Spotting Mission" prompt (e.g., "Your mission is to observe and identify one instance of **Confirmation Bias** 4 in your own thinking or in the media today.").
             
     3. **Reflect Screen (The Application Log):** To unlock the next step, the user must complete a structured journal entry, which includes a text description of their application/observation, what they learned, and a self-rated effectiveness score (1-5).
 
@@ -71,7 +67,7 @@ The "Growth Roadmap" is a mobile-accessible web application designed to solve th
 A **Freemium Subscription Model** will be used to maximize user acquisition and long-term value.
 
 - **Free Tier:**
-    - Full access to the Onboarding and the user's **first** complete Growth Roadmap.
+    - Full access to the Onboarding and the user's **first** complete LattixIQ Roadmap.
 - **Premium Tier (Monthly/Annual Subscription):**
     - **Mental Model & Bias Library:** Unlocks the full library of content. 5
     - **Unlimited Roadmaps:** Create custom roadmaps or choose from advanced pre-built ones (e.g., "Roadmap for Effective Leadership").

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - My Toolkit</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #F8F9FA;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #E9ECEF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Testimonial Card */
+        .testimonial-card {
+            background-color: #E3F2FD;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #90CAF9;
+            position: relative;
+        }
+
+        .testimonial-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #1976D2;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .testimonial-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 8px;
+            padding-right: 32px;
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            color: #1976D2;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-widget {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6C757D;
+            font-style: italic;
+        }
+
+        /* Toolkit Section */
+        .toolkit-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6C757D;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .toolkit-item {
+            background-color: white;
+            border: 1px solid #E9ECEF;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .toolkit-item:hover {
+            border-color: #007BFF;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+        }
+
+        .toolkit-row {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolkit-label {
+            font-size: 16px;
+            color: #212529;
+            font-weight: 500;
+        }
+
+        .toolkit-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6C757D;
+        }
+
+        .count-badge {
+            background-color: #E9ECEF;
+            color: #495057;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .chevron {
+            font-size: 14px;
+            color: #ADB5BD;
+        }
+
+        .primary-action {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .primary-action:hover {
+            border-color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .primary-action .toolkit-label {
+            color: white;
+        }
+
+        .primary-action .chevron {
+            color: white;
+        }
+
+        .bottom-nav {
+            background-color: white;
+            border-top: 1px solid #E9ECEF;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 24px;
+            text-decoration: none;
+            color: #6C757D;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item:hover {
+            color: #007BFF;
+        }
+
+        .nav-item.active {
+            color: #007BFF;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                padding: 32px;
+            }
+
+            .testimonial-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">My Toolkit</h1>
+    </header>
+
+    <main class="content">
+        <!-- Testimonial Card (conditional) -->
+        <div class="testimonial-card" id="testimonialCard">
+            <button class="testimonial-close" onclick="closeTestimonial()">×</button>
+            <h2 class="testimonial-title">Congratulations on finishing your first roadmap!</h2>
+            <p class="testimonial-text">
+                We'd love to hear about your experience. If you have a moment, we'd love to hear about your experience.
+            </p>
+            <div class="testimonial-widget">
+                [Embedded Senja Testimonial Collector Widget]
+            </div>
+        </div>
+
+        <!-- Toolkit Options -->
+        <div class="toolkit-section">
+            <h2 class="section-title">MY TOOLKIT</h2>
+            
+            <div class="toolkit-item primary-action" onclick="alert('Goal selection screen would appear here')">
+                <div class="toolkit-row">
+                    <span class="toolkit-label">Start a New Roadmap</span>
+                    <span class="toolkit-value">
+                        <span class="chevron">›</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="toolkit-item" onclick="showLearnedModels()">
+                <div class="toolkit-row">
+                    <span class="toolkit-label">My Learned Models</span>
+                    <span class="toolkit-value">
+                        <span class="count-badge">5</span>
+                        <span class="chevron">›</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="toolkit-item" onclick="showCompletedRoadmaps()">
+                <div class="toolkit-row">
+                    <span class="toolkit-label">My Completed Roadmaps</span>
+                    <span class="toolkit-value">
+                        <span class="count-badge">1</span>
+                        <span class="chevron">›</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="my-toolkit.html" class="nav-item active">
+            <div class="nav-icon">🛠️</div>
+            <div class="nav-label">My Toolkit</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">Settings</div>
+        </a>
+    </nav>
+
+    <script>
+        function closeTestimonial() {
+            const card = document.getElementById('testimonialCard');
+            card.style.display = 'none';
+            
+            // Save that the user dismissed the card
+            localStorage.setItem('testimonialDismissed', 'true');
+        }
+
+        function showLearnedModels() {
+            alert('This would show a list of all mental models you\'ve learned:\n\n' +
+                  '✓ Activation Energy\n' +
+                  '✓ Inversion\n' +
+                  '✓ Deprival-Superreaction\n' +
+                  '✓ Commitment Consistency\n' +
+                  '✓ Implementation Intention');
+        }
+
+        function showCompletedRoadmaps() {
+            alert('This would show your completed roadmaps:\n\n' +
+                  '1. Stop Procrastinating\n' +
+                  '   Completed: ' + new Date().toLocaleDateString() + '\n' +
+                  '   Models learned: 5\n' +
+                  '   Average effectiveness: 4.2/5');
+        }
+
+        // Check if testimonial should be shown
+        document.addEventListener('DOMContentLoaded', function() {
+            const testimonialDismissed = localStorage.getItem('testimonialDismissed');
+            const hasCompletedRoadmap = localStorage.getItem('reflections'); // Check if user has reflections
+            
+            if (testimonialDismissed === 'true' || !hasCompletedRoadmap) {
+                document.getElementById('testimonialCard').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

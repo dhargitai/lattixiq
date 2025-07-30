@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - Reflect</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #F8F9FA;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #E9ECEF;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #007BFF;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            flex: 1;
+            padding: 32px 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .reflect-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .reflect-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: #007BFF;
+            width: 60px;
+            margin-bottom: 24px;
+        }
+
+        .plan-reminder {
+            background-color: #E3F2FD;
+            border-left: 4px solid #007BFF;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .plan-reminder-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 4px;
+        }
+
+        .plan-text {
+            font-size: 16px;
+            color: #1976D2;
+            font-style: italic;
+        }
+
+        .reflect-question {
+            font-size: 18px;
+            color: #212529;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .reflection-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        .rating-section {
+            margin: 32px 0;
+        }
+
+        .rating-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .star {
+            font-size: 36px;
+            color: #E9ECEF;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #FFC107;
+            transform: scale(1.1);
+        }
+
+        .complete-btn {
+            background-color: #28A745;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 32px auto 0;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .complete-btn:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+
+        .complete-btn:disabled {
+            background-color: #6C757D;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .char-count {
+            font-size: 14px;
+            color: #6C757D;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                padding: 48px 32px;
+            }
+
+            .reflect-container {
+                padding: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="roadmap.html" class="back-btn">← Back to Roadmap</a>
+    </header>
+
+    <main class="content">
+        <div class="reflect-container">
+            <h1 class="reflect-title">Log Your Application</h1>
+            <div class="divider"></div>
+            
+            <div class="plan-reminder" id="planReminder">
+                <div class="plan-reminder-title">Your Plan:</div>
+                <div class="plan-text" id="planText">Loading your plan...</div>
+            </div>
+
+            <p class="reflect-question">How did your plan go?</p>
+
+            <form id="reflectForm">
+                <div class="form-section">
+                    <label for="reflectionInput" class="form-label">Describe what happened:</label>
+                    <textarea 
+                        id="reflectionInput" 
+                        class="reflection-input" 
+                        placeholder="Share your experience applying the Inversion model. What worked? What didn't? What did you learn?"
+                        required
+                        minlength="50"
+                    ></textarea>
+                    <div class="char-count" id="charCount">0 / 50 minimum</div>
+                </div>
+
+                <div class="rating-section">
+                    <label class="rating-label">How effective was this model for you?</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="complete-btn" id="completeBtn" disabled>Complete & Unlock Next Step</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        let selectedRating = 0;
+
+        // Load saved plan
+        const savedPlan = localStorage.getItem('currentPlan');
+        if (savedPlan) {
+            const plan = JSON.parse(savedPlan);
+            document.getElementById('planText').textContent = `"${plan.then}"`;
+        } else {
+            document.getElementById('planText').textContent = 'No plan found. Please create a plan first.';
+        }
+
+        // Character counter
+        const reflectionInput = document.getElementById('reflectionInput');
+        const charCount = document.getElementById('charCount');
+        const completeBtn = document.getElementById('completeBtn');
+
+        reflectionInput.addEventListener('input', function() {
+            const length = this.value.length;
+            const minLength = 50;
+            charCount.textContent = `${length} / ${minLength} minimum`;
+            
+            updateSubmitButton();
+        });
+
+        // Star rating
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                updateStars();
+                updateSubmitButton();
+            });
+        });
+
+        function updateStars() {
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function updateSubmitButton() {
+            const textLength = reflectionInput.value.length;
+            const hasMinText = textLength >= 50;
+            const hasRating = selectedRating > 0;
+            
+            completeBtn.disabled = !(hasMinText && hasRating);
+        }
+
+        // Form submission
+        document.getElementById('reflectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Save reflection (in a real app, this would save to a database)
+            const reflection = {
+                text: reflectionInput.value,
+                rating: selectedRating,
+                model: 'Inversion',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Get existing reflections or create new array
+            const existingReflections = JSON.parse(localStorage.getItem('reflections') || '[]');
+            existingReflections.push(reflection);
+            localStorage.setItem('reflections', JSON.stringify(existingReflections));
+            
+            // Show success message with animation
+            alert('Excellent work! You\'ve successfully completed this step. The next mental model in your roadmap is now unlocked!');
+            
+            // Redirect to roadmap
+            window.location.href = 'roadmap.html';
+        });
+    </script>
+</body>
+</html>

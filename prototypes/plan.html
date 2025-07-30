@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - Plan</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #F8F9FA;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #E9ECEF;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #007BFF;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            flex: 1;
+            padding: 32px 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .plan-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .plan-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: #007BFF;
+            width: 60px;
+            margin-bottom: 24px;
+        }
+
+        .plan-instruction {
+            font-size: 18px;
+            color: #495057;
+            margin-bottom: 24px;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        .guidance-text {
+            font-size: 14px;
+            color: #6C757D;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .examples-link {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+            margin: 16px 0;
+            cursor: pointer;
+        }
+
+        .examples-link:hover {
+            text-decoration: underline;
+        }
+
+        .examples-container {
+            display: none;
+            background-color: #F8F9FA;
+            border-left: 4px solid #007BFF;
+            padding: 20px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .example {
+            margin-bottom: 16px;
+        }
+
+        .example:last-child {
+            margin-bottom: 0;
+        }
+
+        .example-label {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .example-text {
+            color: #495057;
+            font-style: italic;
+        }
+
+        .save-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 32px auto 0;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                padding: 48px 32px;
+            }
+
+            .plan-container {
+                padding: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="learn.html" class="back-btn">← Back to Learn</a>
+    </header>
+
+    <main class="content">
+        <div class="plan-container">
+            <h1 class="plan-title">Create Your Plan</h1>
+            <div class="divider"></div>
+            
+            <p class="plan-instruction">
+                Use "Inversion" to plan how you'll avoid procrastination triggers.
+            </p>
+
+            <form id="planForm">
+                <div class="form-section">
+                    <label for="ifInput" class="form-label">IF:</label>
+                    <textarea 
+                        id="ifInput" 
+                        class="form-input" 
+                        placeholder="e.g., &quot;I'm about to start working on my important project...&quot;"
+                        required
+                    ></textarea>
+                    <p class="guidance-text">Your 'IF' should be the moment before a big decision. Think about when you typically procrastinate.</p>
+                </div>
+
+                <div class="form-section">
+                    <label for="thenInput" class="form-label">THEN I WILL:</label>
+                    <textarea 
+                        id="thenInput" 
+                        class="form-input" 
+                        placeholder="e.g., &quot;List three things that would guarantee failure, then do the opposite&quot;"
+                        required
+                    ></textarea>
+                    <p class="guidance-text">Your 'THEN' should be the action of identifying and avoiding failure triggers.</p>
+                </div>
+
+                <a class="examples-link" onclick="toggleExamples()">See examples</a>
+
+                <div id="examplesContainer" class="examples-container">
+                    <div class="example">
+                        <span class="example-label">IF:</span>
+                        <span class="example-text">"I sit down to write my report..."</span><br>
+                        <span class="example-label">THEN I WILL:</span>
+                        <span class="example-text">"Ask myself: What would guarantee I don't finish? Then remove those distractions first."</span>
+                    </div>
+                    <div class="example">
+                        <span class="example-label">IF:</span>
+                        <span class="example-text">"I'm about to start my workout..."</span><br>
+                        <span class="example-label">THEN I WILL:</span>
+                        <span class="example-text">"List what would make me skip it (phone notifications, uncomfortable clothes, no water), then prevent each one."</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">Save Plan & Take Action</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function toggleExamples() {
+            const container = document.getElementById('examplesContainer');
+            container.style.display = container.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.getElementById('planForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ifValue = document.getElementById('ifInput').value;
+            const thenValue = document.getElementById('thenInput').value;
+            
+            // Store the plan (in a real app, this would save to a database)
+            localStorage.setItem('currentPlan', JSON.stringify({
+                if: ifValue,
+                then: thenValue,
+                model: 'Inversion',
+                timestamp: new Date().toISOString()
+            }));
+            
+            alert('Great! Your plan has been saved. Now go apply it in real life. Return to the roadmap when you\'re ready to reflect on your experience.');
+            window.location.href = 'roadmap.html';
+        });
+    </script>
+</body>
+</html>

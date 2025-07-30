@@ -7,10 +7,8 @@
     1. **Goal Input:** The user will be prompted to define a goal via a simple UI. They can select from categories (e.g., "Stop Procrastinating," "Think More Clearly") or describe their goal in a free-text field.
     2. **AI-Powered Roadmap Generation:**
         - **Semantic Analysis:** The user's free-text input will be converted into a semantic vector embedding.
-        - 
-            
-            **Content Vectorization:** All 100 mental models and the lists of cognitive biases/fallacies from the provided documents will be pre-processed into their own semantic vector embeddings. 2
-            
+        - **Content Vectorization:** All 100 mental models and the lists of cognitive biases/fallacies from the provided documents will be pre-processed into their own semantic vector embeddings.
+
         - **Semantic Matching:** The system will use cosine similarity to find the mental models and biases most conceptually relevant to the user's stated goal, ensuring a much more nuanced and accurate match than simple keywords.
         - **Roadmap Curation:** An algorithm will select the top 5-7 most relevant items to create a logical "Growth Roadmap," prioritizing foundational concepts first.
     3. **Roadmap Visualization:** The app will display the personalized roadmap visually, with later steps blurred or locked to create a sense of progression and encourage completion.
@@ -25,9 +23,7 @@
         
     2. **Plan Screen:**
         - For **Mental Models**, this is a structured "If-Then" form to create an **Implementation Intention**.
-        - For
-            
-            **Cognitive Biases**, this is a "Spotting Mission" prompt (e.g., "Your mission is to observe and identify one instance of **Confirmation Bias** 4 in your own thinking or in the media today.").
+        - For **Cognitive Biases**, this is a "Spotting Mission" prompt (e.g., "Your mission is to observe and identify one instance of **Confirmation Bias** 4 in your own thinking or in the media today.").
             
     3. **Reflect Screen (The Application Log):** To unlock the next step, the user must complete a structured journal entry, which includes a text description of their application/observation, what they learned, and a self-rated effectiveness score (1-5).
 
@@ -41,4 +37,4 @@
         - **Topics/Themes:** `Career`, `Self-Doubt`, `Productivity`, etc.
         - **Key Concepts:** `Imposter Syndrome`, `perfectionism`, `decision paralysis`.
     3. **Personalized Alerts & Recommendations:** A rule-based engine will use the structured AI analysis to provide proactive guidance.
-        - *Example:* `IF Topic = 'Self-Doubt' AND Sentiment = 'Negative' for >2 entries in a week, THEN suggest a new roadmap on 'Building Confidence' featuring models like 'Excessive Self-Regard Tendency' [cite: 2039-2041] as a learning module.`
+        - *Example:* `IF Topic = 'Self-Doubt' AND Sentiment = 'Negative' for >2 entries in a week, THEN suggest a new roadmap on 'Building Confidence' featuring models like 'Excessive Self-Regard Tendency'.`

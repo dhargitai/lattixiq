@@ -72,9 +72,7 @@ Here is the revised diagram showing this more complete, long-term user flow:
     
         G -- Start New --> A
     ```
-    
 
-![image.png](attachment:9742d4dd-c4ee-442a-b084-14cd5b86eddd:image.png)
 
 ## **3. User Flows**
 
@@ -138,7 +136,7 @@ This is the user's main dashboard, showing their active journey.
 
 ```
 .-----------------------------------------------------.
-| [Growth Roadmap]              [?] Help              |
+| [LattixIQ]              [?] Help              |
 |-----------------------------------------------------|
 |                                                     |
 |  Your Roadmap: Stop Procrastinating                 |

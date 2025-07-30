@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #F8F9FA;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 48px 32px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .app-logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .app-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .app-tagline {
+            font-size: 18px;
+            color: #6C757D;
+            margin-bottom: 48px;
+        }
+
+        .social-login-section {
+            margin-bottom: 32px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid #DEE2E6;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            text-decoration: none;
+            color: #212529;
+        }
+
+        .social-btn:hover {
+            background-color: #F8F9FA;
+            border-color: #ADB5BD;
+        }
+
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            font-size: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 32px 0;
+            color: #6C757D;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #DEE2E6;
+        }
+
+        .divider-text {
+            padding: 0 16px;
+        }
+
+        .email-section {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            text-align: left;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .continue-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .continue-btn:disabled {
+            background-color: #6C757D;
+            cursor: not-allowed;
+        }
+
+        /* OTP State Styles */
+        .otp-section {
+            display: none;
+        }
+
+        .otp-message {
+            font-size: 16px;
+            color: #495057;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .change-email {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .change-email:hover {
+            text-decoration: underline;
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 32px 0;
+        }
+
+        .otp-input {
+            width: 48px;
+            height: 56px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        .resend-code {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 24px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .resend-code:hover {
+            text-decoration: underline;
+        }
+
+        @media (min-width: 768px) {
+            .login-container {
+                padding: 64px 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="app-logo">🧠</div>
+        <h1 class="app-name">LattixIQ</h1>
+        <p class="app-tagline">Your roadmap to a clearer mind.</p>
+
+        <!-- Email Login State -->
+        <div id="emailState">
+            <div class="social-login-section">
+                <button class="social-btn" onclick="alert('Google login would be implemented here')">
+                    <span class="social-icon">G</span>
+                    Continue with Google
+                </button>
+                <button class="social-btn" onclick="alert('Apple login would be implemented here')">
+                    <span class="social-icon">🍎</span>
+                    Continue with Apple
+                </button>
+            </div>
+
+            <div class="divider">
+                <span class="divider-text">or</span>
+            </div>
+
+            <form id="emailForm">
+                <div class="email-section">
+                    <label for="emailInput" class="input-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="emailInput" 
+                        class="email-input" 
+                        placeholder="your@email.com"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="continue-btn">Continue with Email</button>
+            </form>
+        </div>
+
+        <!-- OTP Verification State -->
+        <div id="otpState" class="otp-section">
+            <p class="otp-message">
+                We've sent a 6-digit code to your email.<br>
+                Enter it below to log in.<br>
+                <a class="change-email" onclick="switchToEmailState()">(Change email)</a>
+            </p>
+
+            <form id="otpForm">
+                <div class="otp-inputs">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+                </div>
+
+                <a class="resend-code" onclick="resendCode()">Resend code</a>
+
+                <button type="submit" class="continue-btn">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Email form submission
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            
+            // Save email for OTP verification
+            localStorage.setItem('loginEmail', email);
+            
+            // Switch to OTP state
+            switchToOtpState();
+        });
+
+        // OTP form submission
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect OTP values
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (otp.length === 6) {
+                // Simulate successful login
+                alert('Login successful! Redirecting to your roadmap...');
+                window.location.href = 'roadmap.html';
+            }
+        });
+
+        // Handle OTP input auto-advance
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        function switchToOtpState() {
+            document.getElementById('emailState').style.display = 'none';
+            document.getElementById('otpState').style.display = 'block';
+            
+            // Focus first OTP input
+            otpInputs[0].focus();
+        }
+
+        function switchToEmailState() {
+            document.getElementById('otpState').style.display = 'none';
+            document.getElementById('emailState').style.display = 'block';
+            
+            // Clear OTP inputs
+            otpInputs.forEach(input => input.value = '');
+        }
+
+        function resendCode() {
+            alert('A new code has been sent to your email!');
+            
+            // Clear OTP inputs
+            otpInputs.forEach(input => input.value = '');
+            otpInputs[0].focus();
+        }
+    </script>
+</body>
+</html>

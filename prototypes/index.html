@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LattixIQ - UX Prototypes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #F8F9FA;
+            color: #333;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .app-logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .app-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #6C757D;
+            margin-bottom: 32px;
+        }
+
+        .description {
+            max-width: 600px;
+            margin: 0 auto 48px;
+            text-align: center;
+            font-size: 16px;
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .screen-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .screen-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .screen-number {
+            display: inline-block;
+            background-color: #007BFF;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .screen-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .screen-description {
+            font-size: 14px;
+            color: #6C757D;
+            line-height: 1.5;
+        }
+
+        .flow-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .flow-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 16px;
+        }
+
+        .flow-description {
+            font-size: 16px;
+            color: #495057;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .flow-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .flow-arrow {
+            color: #007BFF;
+            margin: 0 8px;
+        }
+
+        .notes {
+            background-color: #E3F2FD;
+            border-left: 4px solid #007BFF;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 32px;
+        }
+
+        .notes-title {
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 8px;
+        }
+
+        .notes-text {
+            color: #1976D2;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="app-logo">🧠</div>
+            <h1 class="app-title">LattixIQ UX Prototypes</h1>
+            <p class="subtitle">Interactive HTML Prototypes</p>
+        </div>
+
+        <p class="description">
+            These prototypes demonstrate the user experience and interface design for LattixIQ, 
+            a mental wellness app that helps users overcome procrastination and build better habits 
+            through personalized roadmaps of mental models.
+        </p>
+
+        <div class="screens-grid">
+            <a href="login.html" class="screen-card">
+                <div class="screen-number">1</div>
+                <h2 class="screen-title">Login</h2>
+                <p class="screen-description">Passwordless authentication with email OTP and social login options</p>
+            </a>
+
+            <a href="roadmap.html" class="screen-card">
+                <div class="screen-number">2</div>
+                <h2 class="screen-title">Roadmap (Home)</h2>
+                <p class="screen-description">Visual journey showing completed, current, and locked steps</p>
+            </a>
+
+            <a href="learn.html" class="screen-card">
+                <div class="screen-number">3</div>
+                <h2 class="screen-title">Learn</h2>
+                <p class="screen-description">Focused learning experience for each mental model</p>
+            </a>
+
+            <a href="plan.html" class="screen-card">
+                <div class="screen-number">4</div>
+                <h2 class="screen-title">Plan</h2>
+                <p class="screen-description">Create actionable If-Then implementation intentions</p>
+            </a>
+
+            <a href="reflect.html" class="screen-card">
+                <div class="screen-number">5</div>
+                <h2 class="screen-title">Reflect</h2>
+                <p class="screen-description">Journal your experience and rate effectiveness</p>
+            </a>
+
+            <a href="my-toolkit.html" class="screen-card">
+                <div class="screen-number">6</div>
+                <h2 class="screen-title">My Toolkit</h2>
+                <p class="screen-description">Hub for completed roadmaps and learned models</p>
+            </a>
+
+            <a href="settings.html" class="screen-card">
+                <div class="screen-number">7</div>
+                <h2 class="screen-title">Settings</h2>
+                <p class="screen-description">Account management and notification preferences</p>
+            </a>
+        </div>
+
+        <div class="flow-section">
+            <h2 class="flow-title">Core User Flow</h2>
+            <p class="flow-description">
+                The primary learning loop that drives user engagement and habit formation:
+            </p>
+            <ol class="flow-steps">
+                <li class="flow-step">
+                    <strong>1. Roadmap</strong>
+                    <span class="flow-arrow">→</span>
+                    Click on current step
+                </li>
+                <li class="flow-step">
+                    <strong>2. Learn</strong>
+                    <span class="flow-arrow">→</span>
+                    Read about the mental model
+                </li>
+                <li class="flow-step">
+                    <strong>3. Plan</strong>
+                    <span class="flow-arrow">→</span>
+                    Create your If-Then intention
+                </li>
+                <li class="flow-step">
+                    <strong>4. Apply</strong>
+                    <span class="flow-arrow">→</span>
+                    Take action in real life
+                </li>
+                <li class="flow-step">
+                    <strong>5. Reflect</strong>
+                    <span class="flow-arrow">→</span>
+                    Journal and unlock next step
+                </li>
+            </ol>
+        </div>
+
+        <div class="notes">
+            <div class="notes-title">Interactive Features:</div>
+            <div class="notes-text">
+                • Click through the screens to experience the user flow<br>
+                • Forms have basic validation and save data to localStorage<br>
+                • Toggle switches and star ratings are functional<br>
+                • Navigation between screens simulates a real app experience
+            </div>
+        </div>
+    </div>
+</body>
+</html>
