@@ -14,7 +14,37 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  ...storybook.configs["flat/recommended"]
+  ...storybook.configs["flat/recommended"],
+  {
+    rules: {
+      // Enforce functional programming principles
+      "no-var": "error",
+      "prefer-const": "error",
+      "no-param-reassign": "error",
+      "prefer-destructuring": "warn",
+      "prefer-template": "warn",
+      "object-shorthand": "warn",
+      "arrow-body-style": ["warn", "as-needed"],
+      // TypeScript specific rules
+      "@typescript-eslint/consistent-type-imports": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { "argsIgnorePattern": "^_" }
+      ],
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      // React specific rules
+      "react/function-component-definition": [
+        "warn",
+        {
+          "namedComponents": "arrow-function",
+          "unnamedComponents": "arrow-function"
+        }
+      ],
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn"
+    }
+  }
 ];
 
 export default eslintConfig;

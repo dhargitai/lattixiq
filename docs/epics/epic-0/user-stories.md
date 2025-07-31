@@ -1,11 +1,13 @@
 # User Stories
 
 ## Story 0.1: Initialize Next.js Project with TypeScript
+
 **As a** developer  
 **I want** a properly configured Next.js project  
 **So that** I can begin building the application with type safety
 
 **Acceptance Criteria:**
+
 - [ ] Next.js 15+ project created with App Router
 - [ ] TypeScript configured with strict mode
 - [ ] ESLint and Prettier configured
@@ -13,6 +15,7 @@
 - [ ] Initial README with setup instructions
 
 **Technical Tasks:**
+
 1. Verify existing Next.js project setup
 2. Configure `tsconfig.json` with strict settings
 3. Set up `.eslintrc.json` with Next.js and TypeScript rules
@@ -24,11 +27,13 @@
 ---
 
 ## Story 0.2: Configure Tailwind CSS and shadcn/ui
+
 **As a** developer  
 **I want** a configured design system  
 **So that** I can build consistent UI components quickly
 
 **Acceptance Criteria:**
+
 - [ ] Tailwind CSS v4 properly configured
 - [ ] shadcn/ui CLI installed and configured
 - [ ] Base theme variables defined
@@ -36,6 +41,7 @@
 - [ ] Dark mode support configured
 
 **Technical Tasks:**
+
 1. Configure `tailwind.config.ts` with custom theme
 2. Install shadcn/ui: `npx shadcn-ui@latest init`
 3. Define CSS variables in `app/globals.css`
@@ -47,19 +53,22 @@
 ---
 
 ## Story 0.3: Set Up Supabase Project and Authentication
+
 **As a** user  
 **I want** secure authentication  
 **So that** my data is protected and personalized
 
 **Acceptance Criteria:**
+
 - [ ] Supabase project created
 - [ ] Environment variables configured
 - [ ] Supabase client initialized
 - [ ] Auth middleware implemented
-- [ ] Email/Magic Link authentication working
+- [ ] Email/OTP authentication working
 - [ ] Connection verified via Supabase MCP
 
 **Technical Tasks:**
+
 1. Create Supabase project at supabase.com
 2. Add environment variables to `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
@@ -67,7 +76,7 @@
 3. Install Supabase packages: `npm install @supabase/supabase-js @supabase/ssr`
 4. Create `/lib/supabase/client.ts` and `/lib/supabase/server.ts`
 5. Implement auth middleware in `/middleware.ts`
-6. Create `/app/(auth)/login/page.tsx` with magic link form
+6. Create `/app/(auth)/login/page.tsx` with OTP form
 7. Verify connection using Supabase MCP tools
 
 **Story Points:** 5
@@ -75,11 +84,13 @@
 ---
 
 ## Story 0.4: Implement Database Schema and Migrations
+
 **As a** developer  
 **I want** a properly structured database  
 **So that** I can store and retrieve application data efficiently
 
 **Acceptance Criteria:**
+
 - [ ] All custom ENUM types created
 - [ ] pgvector extension enabled for embeddings
 - [ ] All core tables created per data model specification
@@ -89,6 +100,7 @@
 - [ ] Migrations can be run locally
 
 **Technical Tasks:**
+
 1. Create `/supabase/migrations/` directory
 2. Create migration for custom ENUM types:
    - `subscription_status`
@@ -113,11 +125,13 @@
 ---
 
 ## Story 0.5: Set Up CI/CD Pipeline with Netlify
+
 **As a** development team  
 **I want** automated testing and deployment  
 **So that** we maintain code quality and can deploy reliably
 
 **Acceptance Criteria:**
+
 - [ ] GitHub Actions workflow created for testing
 - [ ] Tests run on every PR
 - [ ] Linting and type checking automated
@@ -125,6 +139,7 @@
 - [ ] Main branch auto-deploys to production via Netlify
 
 **Technical Tasks:**
+
 1. Create `.github/workflows/ci.yml` for testing only
 2. Configure test steps:
    - Checkout code
@@ -145,11 +160,13 @@
 ---
 
 ## Story 0.6: Implement Testing Infrastructure
+
 **As a** developer  
 **I want** a complete testing setup  
 **So that** I can ensure code quality and prevent regressions
 
 **Acceptance Criteria:**
+
 - [ ] Vitest configured for unit tests
 - [ ] React Testing Library set up
 - [ ] Playwright configured for E2E tests
@@ -157,6 +174,7 @@
 - [ ] Test commands added to package.json
 
 **Technical Tasks:**
+
 1. Install testing dependencies:
    ```bash
    npm install -D vitest @testing-library/react @testing-library/user-event @vitejs/plugin-react playwright
@@ -172,11 +190,13 @@
 ---
 
 ## Story 0.7: Create Developer Documentation
+
 **As a** new developer  
 **I want** comprehensive setup documentation  
 **So that** I can quickly start contributing to the project
 
 **Acceptance Criteria:**
+
 - [ ] README updated with full setup instructions
 - [ ] Architecture decision records (ADRs) created
 - [ ] API documentation template created
@@ -184,6 +204,7 @@
 - [ ] Code style guide documented
 
 **Technical Tasks:**
+
 1. Update README with:
    - Prerequisites
    - Setup steps

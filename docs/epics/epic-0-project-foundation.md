@@ -1,15 +1,18 @@
 # Epic 0: Project Foundation & Infrastructure
 
 ## Epic Overview
+
 **Title:** Project Foundation & Infrastructure Setup
 **Priority:** Critical - Must be completed before any feature development
 **Estimated Duration:** 1 sprint (2 weeks)
 **Dependencies:** None - This is the foundational epic
 
 ## Epic Description
+
 Set up the complete development environment, infrastructure, and foundational elements required for the LattixIQ application. This epic ensures all developers can work efficiently and that the project has proper CI/CD, testing, and deployment infrastructure from day one.
 
 ## Acceptance Criteria
+
 - [ ] Local development environment is fully functional
 - [ ] All external services are configured and accessible
 - [ ] Database schema is implemented with migrations
@@ -21,11 +24,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ## User Stories
 
 ### Story 0.1: Initialize Next.js Project with TypeScript
+
 **As a** developer  
 **I want** a properly configured Next.js project  
 **So that** I can begin building the application with type safety
 
 **Acceptance Criteria:**
+
 - [ ] Next.js 15+ project created with App Router
 - [ ] TypeScript configured with strict mode
 - [ ] ESLint and Prettier configured
@@ -33,6 +38,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Initial README with setup instructions
 
 **Technical Tasks:**
+
 1. Verify existing Next.js project setup
 2. Configure `tsconfig.json` with strict settings
 3. Set up `.eslintrc.json` with Next.js and TypeScript rules
@@ -44,11 +50,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.2: Configure Tailwind CSS and shadcn/ui
+
 **As a** developer  
 **I want** a configured design system  
 **So that** I can build consistent UI components quickly
 
 **Acceptance Criteria:**
+
 - [ ] Tailwind CSS v4 properly configured
 - [ ] shadcn/ui CLI installed and configured
 - [ ] Base theme variables defined
@@ -56,6 +64,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Dark mode support configured
 
 **Technical Tasks:**
+
 1. Configure `tailwind.config.ts` with custom theme
 2. Install shadcn/ui: `npx shadcn-ui@latest init`
 3. Define CSS variables in `app/globals.css`
@@ -67,19 +76,22 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.3: Set Up Supabase Project and Authentication
+
 **As a** user  
 **I want** secure authentication  
 **So that** my data is protected and personalized
 
 **Acceptance Criteria:**
+
 - [ ] Supabase project created
 - [ ] Environment variables configured
 - [ ] Supabase client initialized
 - [ ] Auth middleware implemented
-- [ ] Email/Magic Link authentication working
+- [ ] Email/OTP authentication working
 - [ ] Connection verified via Supabase MCP
 
 **Technical Tasks:**
+
 1. Create Supabase project at supabase.com
 2. Add environment variables to `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
@@ -87,7 +99,7 @@ Set up the complete development environment, infrastructure, and foundational el
 3. Install Supabase packages: `npm install @supabase/supabase-js @supabase/ssr`
 4. Create `/lib/supabase/client.ts` and `/lib/supabase/server.ts`
 5. Implement auth middleware in `/middleware.ts`
-6. Create `/app/(auth)/login/page.tsx` with magic link form
+6. Create `/app/(auth)/login/page.tsx` with OTP form
 7. Verify connection using Supabase MCP tools
 
 **Story Points:** 5
@@ -95,11 +107,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.4: Implement Database Schema and Migrations
+
 **As a** developer  
 **I want** a properly structured database  
 **So that** I can store and retrieve application data efficiently
 
 **Acceptance Criteria:**
+
 - [ ] All custom ENUM types created
 - [ ] pgvector extension enabled for embeddings
 - [ ] All core tables created per data model specification
@@ -109,6 +123,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Migrations can be run locally
 
 **Technical Tasks:**
+
 1. Create `/supabase/migrations/` directory
 2. Create migration for custom ENUM types:
    - `subscription_status`
@@ -133,11 +148,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.5: Set Up CI/CD Pipeline with Netlify
+
 **As a** development team  
 **I want** automated testing and deployment  
 **So that** we maintain code quality and can deploy reliably
 
 **Acceptance Criteria:**
+
 - [ ] GitHub Actions workflow created for testing
 - [ ] Tests run on every PR
 - [ ] Linting and type checking automated
@@ -145,6 +162,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Main branch auto-deploys to production via Netlify
 
 **Technical Tasks:**
+
 1. Create `.github/workflows/ci.yml` for testing only
 2. Configure test steps:
    - Checkout code
@@ -165,11 +183,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.6: Implement Testing Infrastructure
+
 **As a** developer  
 **I want** a complete testing setup  
 **So that** I can ensure code quality and prevent regressions
 
 **Acceptance Criteria:**
+
 - [ ] Vitest configured for unit tests
 - [ ] React Testing Library set up
 - [ ] Playwright configured for E2E tests
@@ -177,6 +197,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Test commands added to package.json
 
 **Technical Tasks:**
+
 1. Install testing dependencies:
    ```bash
    npm install -D vitest @testing-library/react @testing-library/user-event @vitejs/plugin-react playwright
@@ -192,11 +213,13 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ### Story 0.7: Create Developer Documentation
+
 **As a** new developer  
 **I want** comprehensive setup documentation  
 **So that** I can quickly start contributing to the project
 
 **Acceptance Criteria:**
+
 - [ ] README updated with full setup instructions
 - [ ] Architecture decision records (ADRs) created
 - [ ] API documentation template created
@@ -204,6 +227,7 @@ Set up the complete development environment, infrastructure, and foundational el
 - [ ] Code style guide documented
 
 **Technical Tasks:**
+
 1. Update README with:
    - Prerequisites
    - Setup steps
@@ -219,10 +243,12 @@ Set up the complete development environment, infrastructure, and foundational el
 ---
 
 ## Epic Summary
+
 **Total Story Points:** 33
 **Critical Path:** Stories must be completed in sequence, with 0.1-0.4 being the highest priority
 **Risk Mitigation:** Early setup of CI/CD and testing infrastructure ensures quality from the start
-**Success Metrics:** 
+**Success Metrics:**
+
 - Zero blockers for feature development
 - All developers can run the project locally
 - Automated deployments working via Netlify

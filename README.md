@@ -7,7 +7,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
 
-*Transform passive knowledge into applied wisdom through personalized learning journeys*
+_Transform passive knowledge into applied wisdom through personalized learning journeys_
 
 [Live Demo](#) • [Documentation](./docs) • [Report Bug](https://github.com/dhargitai/lattixiq/issues) • [Request Feature](https://github.com/dhargitai/lattixiq/issues)
 
@@ -35,24 +35,24 @@ graph TB
         A[Next.js 15 App] --> B[React 19 Components]
         B --> C[shadcn/ui + Tailwind v4]
     end
-    
+
     subgraph "API Layer"
         D[Next.js API Routes] --> E[Vercel AI SDK]
         D --> F[Authentication Service]
         D --> G[Payment Service]
     end
-    
+
     subgraph "Data Layer"
         H[Supabase PostgreSQL] --> I[Row-Level Security]
         H --> J[Vector Embeddings]
     end
-    
+
     subgraph "Infrastructure"
         K[Vercel Edge Functions]
         L[GitHub Actions CI/CD]
         M[Stripe Payments]
     end
-    
+
     A --> D
     E --> J
     F --> H
@@ -63,6 +63,7 @@ graph TB
 ### Tech Stack Deep Dive
 
 #### Frontend Excellence
+
 - **Next.js 15.4** with App Router for optimal performance and SEO
 - **React 19.1** leveraging the latest concurrent features
 - **TypeScript** with strict mode for type safety across the codebase
@@ -71,6 +72,7 @@ graph TB
 - **Zustand** for complex state management where needed
 
 #### Backend Architecture
+
 - **Serverless Functions** via Next.js API routes for infinite scalability
 - **Supabase** providing PostgreSQL with Row-Level Security
 - **Vercel AI SDK** for streaming LLM responses
@@ -78,6 +80,7 @@ graph TB
 - **Stripe Integration** for seamless payment processing
 
 #### Development Workflow
+
 - **Storybook v9** for component-driven development
 - **Vitest** with browser mode for unit and integration testing
 - **Playwright** for comprehensive E2E testing
@@ -103,6 +106,10 @@ graph LR
 - Node.js 20.x or later
 - npm 10.x or later
 - Git
+- VS Code (recommended) with the following extensions:
+  - ESLint
+  - Prettier - Code formatter
+  - Tailwind CSS IntelliSense
 
 ### Installation
 
@@ -137,12 +144,61 @@ npm test
 # Run linting
 npm run lint
 
+# Format code with Prettier
+npm run format
+
+# Check code formatting
+npm run format:check
+
 # Build for production
 npm run build
 
 # Start production server
 npm run start
+
+# Build Storybook static site
+npm run build-storybook
 ```
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **Port 3000 Already in Use**
+
+   ```bash
+   # Kill the process using port 3000
+   npx kill-port 3000
+   # Or run on a different port
+   npm run dev -- -p 3001
+   ```
+
+2. **Module Not Found Errors**
+
+   ```bash
+   # Clear node_modules and reinstall
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+3. **TypeScript Errors**
+   - Ensure your VS Code is using the workspace TypeScript version
+   - Check that `tsconfig.json` has `strict: true`
+   - Run `npm run lint` to see all type errors
+
+4. **Storybook Not Loading**
+
+   ```bash
+   # Clear Storybook cache
+   rm -rf node_modules/.cache/storybook
+   npm run storybook
+   ```
+
+5. **Git Hooks Not Running**
+   ```bash
+   # Reinstall husky
+   npm run prepare
+   ```
 
 ## 🤝 Contributing
 
@@ -159,6 +215,7 @@ We welcome contributions! LattixIQ follows a structured development methodology 
 ### Getting Started as a Contributor
 
 1. **Fork the Repository**
+
    ```bash
    git clone https://github.com/dhargitai/lattixiq.git
    cd lattixiq
@@ -176,19 +233,20 @@ We welcome contributions! LattixIQ follows a structured development methodology 
    - Comment on the issue to claim it
 
 4. **Development Workflow**
+
    ```bash
    # Create a feature branch
    git checkout -b feature/your-feature-name
-   
+
    # Develop with Storybook
    npm run storybook
-   
+
    # Write/update tests
    npm test
-   
+
    # Ensure code quality
    npm run lint
-   
+
    # Commit with conventional commits
    git commit -m "feat: add new mental model component"
    ```
@@ -223,7 +281,7 @@ lattixiq/
 │   ├── (auth)/            # Authentication flows
 │   ├── (app)/             # Main application routes
 │   └── api/               # API routes
-├── components/            
+├── components/
 │   ├── ui/                # shadcn/ui components
 │   └── features/          # Feature-specific components
 ├── lib/                   # Shared utilities and helpers
@@ -238,17 +296,20 @@ lattixiq/
 ## 🔮 Roadmap
 
 ### Phase 1: Foundation (Current)
+
 - [x] Core architecture setup
 - [x] Component library with Storybook
 - [ ] Authentication flow
 - [ ] Basic learning loop
 
 ### Phase 2: AI Integration
+
 - [ ] Semantic vector search
 - [ ] Personalized roadmap generation
 - [ ] AI-powered journal analysis
 
 ### Phase 3: Growth Features
+
 - [ ] Social learning features
 - [ ] Advanced analytics
 - [ ] Mobile app with React Native
