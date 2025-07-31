@@ -1,17 +1,29 @@
-import * as React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ScreenCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  title: string
-  description?: string
-  icon?: React.ReactNode
-  delay?: number
-  gradient?: boolean
+  title: string;
+  description?: string;
+  icon?: React.ReactNode;
+  delay?: number;
+  gradient?: boolean;
 }
 
 const ScreenCard = React.forwardRef<HTMLDivElement, ScreenCardProps>(
-  ({ className, title, description, icon, delay = 0, gradient = true, children, ...props }, ref) => {
+  (
+    {
+      className,
+      title,
+      description,
+      icon,
+      delay = 0,
+      gradient: _gradient = true,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <Card
         ref={ref}
@@ -24,23 +36,15 @@ const ScreenCard = React.forwardRef<HTMLDivElement, ScreenCardProps>(
         {...props}
       >
         <CardHeader>
-          {icon && (
-            <div className="mb-3 text-primary">
-              {icon}
-            </div>
-          )}
+          {icon && <div className="mb-3 text-primary">{icon}</div>}
           <CardTitle className="text-xl">{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
-        {children && (
-          <CardContent>
-            {children}
-          </CardContent>
-        )}
+        {children && <CardContent>{children}</CardContent>}
       </Card>
-    )
+    );
   }
-)
-ScreenCard.displayName = "ScreenCard"
+);
+ScreenCard.displayName = "ScreenCard";
 
-export { ScreenCard }
+export { ScreenCard };
