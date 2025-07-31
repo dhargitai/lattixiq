@@ -17,7 +17,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClient();
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +25,7 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -52,6 +52,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
+      const supabase = createClient();
       const { error } = await supabase.auth.verifyOtp({
         email,
         token: otp,
