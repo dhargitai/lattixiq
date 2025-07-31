@@ -19,16 +19,24 @@ This guide walks through setting up Netlify deployment for the LattixIQ applicat
 
 ## Task 4: Configure Netlify Build Settings
 
+**Note**: Build settings are now configured via `netlify.toml` file in the repository root. Netlify will automatically detect and use these settings.
+
+The configuration includes:
+
+- **Build command**: `npm run build`
+- **Publish directory**: `.next`
+- **Node version**: `20`
+- **Next.js plugin**: Auto-enabled
+- **Redirect rules**: Configured for client-side routing
+- **Security headers**: Enabled for all routes
+
+If you need to override these settings:
+
 1. In Netlify dashboard, go to "Site settings" → "Build & deploy"
-2. Under "Build settings", click "Edit settings"
-3. Configure:
-   - **Build command**: `npm run build`
-   - **Publish directory**: `.next`
-   - **Node version**: Set environment variable `NODE_VERSION` to `20`
-4. Under "Build settings" → "Continuous Deployment":
+2. Under "Build settings", you can override the netlify.toml values
+3. Under "Build settings" → "Continuous Deployment":
    - **Production branch**: `main`
    - **Deploy Previews**: "Any pull request against your production branch"
-5. Save changes
 
 ## Task 5: Configure Environment Variables
 
