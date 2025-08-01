@@ -6,6 +6,14 @@ import NewRoadmapPage from "../page";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  })),
 }));
 
 vi.mock("@/lib/auth/supabase", () => ({
@@ -14,10 +22,15 @@ vi.mock("@/lib/auth/supabase", () => ({
 
 const mockGetUser = vi.mocked(await import("@/lib/auth/supabase").then((m) => m.getUser));
 
+// Mock fetch globally
+global.fetch = vi.fn();
+
 describe("New Roadmap Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    // Reset fetch mock
+    (global.fetch as any).mockReset();
   });
 
   describe("Authentication", () => {
@@ -270,6 +283,12 @@ describe("New Roadmap Page", () => {
     it("should show loading state when form is submitted", async () => {
       const user = userEvent.setup();
 
+      // Mock successful API response
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "roadmap-123", success: true }),
+      });
+
       render(await NewRoadmapPage());
 
       const textarea = screen.getByRole("textbox");
@@ -285,6 +304,12 @@ describe("New Roadmap Page", () => {
 
     it("should save goal to localStorage on submission", async () => {
       const user = userEvent.setup();
+
+      // Mock successful API response
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "roadmap-123", success: true }),
+      });
 
       render(await NewRoadmapPage());
 
@@ -302,6 +327,12 @@ describe("New Roadmap Page", () => {
 
     it("should set hasCompletedOnboarding flag after submission", async () => {
       const user = userEvent.setup();
+
+      // Mock successful API response
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "roadmap-123", success: true }),
+      });
 
       render(await NewRoadmapPage());
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +19,8 @@ export default function NewRoadmapForm() {
   const [goal, setGoal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isNewUser, setIsNewUser] = useState(true);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
@@ -34,15 +37,37 @@ export default function NewRoadmapForm() {
     if (goal.length < 10) return;
 
     setIsLoading(true);
-    localStorage.setItem("userGoal", goal);
-    localStorage.setItem("hasCompletedOnboarding", "true");
+    setError("");
 
-    // TODO: Replace localStorage check with DB query for roadmaps
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Call the API to generate roadmap
+      const response = await fetch("/api/roadmaps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          goalDescription: goal,
+        }),
+      });
 
-    // In a real implementation, this would redirect to the generated roadmap
-    setIsLoading(false);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate roadmap");
+      }
+
+      // Store goal and onboarding status
+      localStorage.setItem("userGoal", goal);
+      localStorage.setItem("hasCompletedOnboarding", "true");
+
+      // Redirect to the roadmap page
+      router.push("/roadmap");
+    } catch (err) {
+      console.error("Error generating roadmap:", err);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setIsLoading(false);
+    }
   };
 
   const getValidationHint = () => {
@@ -131,6 +156,12 @@ export default function NewRoadmapForm() {
                       {validationHint.text}
                     </p>
                   </div>
+
+                  {error && (
+                    <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+                      <p className="text-sm text-red-700">{error}</p>
+                    </div>
+                  )}
 
                   <Button
                     type="submit"

@@ -267,7 +267,7 @@ export class RoadmapSupabaseService {
       roadmap_id: roadmap.id,
       knowledge_content_id: step.knowledgeContentId,
       order: step.order,
-      status: step.order === 1 ? "active" : "locked",
+      status: step.order === 1 ? "unlocked" : "locked",
     }));
 
     const { error: stepsError } = await supabase.from("roadmap_steps").insert(steps);
