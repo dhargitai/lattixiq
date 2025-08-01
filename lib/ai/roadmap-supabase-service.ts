@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { UserLearningHistory, KnowledgeContent } from "@/lib/types/ai";
+import { testSemanticSearch, testKnowledgeContent } from "@/lib/mocks/test-knowledge-content";
 
 export interface KnowledgeSearchResult extends KnowledgeContent {
   similarity: number;
@@ -124,6 +125,30 @@ export class RoadmapSupabaseService {
     matchCount: number = 30,
     userLearningHistory?: UserLearningHistory
   ): Promise<KnowledgeSearchResult[]> {
+    // Check if we should use test data
+    if (process.env.USE_TEST_DATA === "true") {
+      // For test data, we'll use a simple search based on the query
+      // In a real scenario, you'd pass the actual query text here
+      const testResults = testSemanticSearch("", matchCount);
+
+      return testResults.map((result) => ({
+        id: result.id,
+        title: result.title,
+        type:
+          result.type === "mental_model"
+            ? "mental-model"
+            : ("cognitive-bias" as "mental-model" | "cognitive-bias" | "logical-fallacy"),
+        category: result.type === "mental_model" ? "decision-making" : "cognitive-biases",
+        summary: result.summary,
+        description: result.summary,
+        application: "Test application example",
+        keywords: [],
+        embedding: [],
+        goalExamples: [],
+        similarity: result.similarity,
+      }));
+    }
+
     const supabase = await createClient();
 
     // Use the match_knowledge_content function for vector similarity search
