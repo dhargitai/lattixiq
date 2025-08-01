@@ -1,8 +1,7 @@
 -- Create an index on the embedding column for faster similarity searches
 CREATE INDEX IF NOT EXISTS idx_knowledge_content_embedding
 ON knowledge_content
-USING ivfflat (embedding vector_cosine_ops)
-WITH (lists = 100);
+USING hnsw (embedding vector_cosine_ops);
 
 -- Add a function for semantic search
 CREATE OR REPLACE FUNCTION match_knowledge_content(
