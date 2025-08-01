@@ -2,7 +2,7 @@
 
 ## Overview
 
-Verifies a one-time password (OTP) sent to the user's email for passwordless authentication. This endpoint completes the magic link authentication flow.
+Verifies a one-time password (OTP) sent to the user's email for passwordless authentication. Users receive a 6-digit code via email that they must enter to complete authentication.
 
 ## Endpoint Details
 
@@ -24,8 +24,8 @@ Verifies a one-time password (OTP) sent to the user's email for passwordless aut
 ```typescript
 interface VerifyOTPRequest {
   email: string;
-  token: string;
-  type: "magiclink" | "signup" | "recovery";
+  token: string; // 6-digit OTP code
+  type: "email"; // OTP type for email authentication
 }
 ```
 
@@ -35,7 +35,7 @@ Example:
 {
   "email": "user@example.com",
   "token": "123456",
-  "type": "magiclink"
+  "type": "email"
 }
 ```
 
@@ -88,7 +88,7 @@ Example:
 | Status Code | Description           | Example                                |
 | ----------- | --------------------- | -------------------------------------- |
 | 400         | Bad Request           | Invalid request body or missing fields |
-| 401         | Unauthorized          | Invalid or expired OTP token           |
+| 401         | Unauthorized          | Invalid or expired OTP code            |
 | 422         | Unprocessable Entity  | Email format invalid                   |
 | 429         | Too Many Requests     | Rate limit exceeded                    |
 | 500         | Internal Server Error | Server error                           |
@@ -99,7 +99,7 @@ Error Response Format:
 {
   "error": {
     "code": "INVALID_OTP",
-    "message": "The OTP token is invalid or has expired",
+    "message": "The OTP code is invalid or has expired",
     "details": {
       "expired": true
     }
@@ -120,7 +120,7 @@ const response = await fetch("/api/auth/verify-otp", {
   body: JSON.stringify({
     email: "user@example.com",
     token: "123456",
-    type: "magiclink",
+    type: "email",
   }),
 });
 
@@ -145,33 +145,37 @@ curl -X POST https://api.lattixiq.com/api/auth/verify-otp \
   -d '{
     "email": "user@example.com",
     "token": "123456",
-    "type": "magiclink"
+    "type": "email"
   }'
 ```
 
 ## Implementation Notes
 
-- OTP tokens expire after 10 minutes
-- Each token can only be used once
+- OTP codes are 6 digits long
+- OTP codes expire after 10 minutes
+- Each code can only be used once
+- Users can request a new code after 30 seconds
 - Automatically creates user profile for new users
 - Sets secure HTTP-only cookies for session management
 - Implements rate limiting to prevent brute force attacks
 
 ## Security Considerations
 
-- Tokens are cryptographically secure random strings
+- OTP codes are cryptographically secure random numbers
 - Email verification is required before account activation
 - Failed attempts are logged for security monitoring
 - IP-based rate limiting prevents abuse
+- Maximum of 5 failed attempts before temporary lockout
 
 ## Related Endpoints
 
 - GET `/api/auth/callback` - OAuth provider callback
 - POST `/api/auth/logout` - Sign out user
-- POST `/api/auth/send-otp` - Request new OTP
+- POST `/api/auth/send-otp` - Request new OTP code
 
 ## Change Log
 
 | Version | Date       | Description                                    |
 | ------- | ---------- | ---------------------------------------------- |
+| 2.0     | 2024-01-20 | Changed from magic links to 6-digit OTP codes  |
 | 1.0     | 2024-01-15 | Initial implementation with magic link support |

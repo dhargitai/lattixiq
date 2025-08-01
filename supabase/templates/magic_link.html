@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your verification code</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #1a202c;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .code-container {
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #6d3a9c;
+            font-family: 'Courier New', monospace;
+        }
+        .message {
+            color: #4a5568;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🧠</div>
+            <h1>LattixIQ</h1>
+        </div>
+        
+        <p class="message">Hi there,</p>
+        
+        <p class="message">You requested to sign in to LattixIQ. Please enter the following verification code:</p>
+        
+        <div class="code-container">
+            <div class="code">{{ .Token }}</div>
+        </div>
+        
+        <p class="message">This code will expire in 5 minutes. If you didn't request this code, you can safely ignore this email.</p>
+        
+        <div class="footer">
+            <p>Your roadmap to a clearer mind.</p>
+        </div>
+    </div>
+</body>
+</html>
