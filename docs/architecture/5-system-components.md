@@ -25,19 +25,26 @@ This architecture is composed of several distinct, interacting logical component
 
 ## **4. AI Service**
 
-- **Responsibility:** To handle all interactions with Large Language Models. This includes generating vector embeddings for our knowledge base and analyzing user journal entries for sentiment and topics.
-- **Key Interfaces:** Vercel AI SDK.
-- **Dependencies:** A vector-enabled database (our Supabase `pgvector` instance).
-- **Technology Stack:** Vercel AI SDK, Supabase Edge Functions (for embedding generation).
+- **Responsibility:** To handle sophisticated AI-powered roadmap generation and analysis. This includes generating vector embeddings, executing complex semantic search with 6-factor relevance scoring, intelligent caching for performance, spaced repetition algorithms, and advanced synthesis for power users. Also handles analyzing user journal entries for sentiment and topics.
+- **Key Interfaces:** Vercel AI SDK, OpenAI text-embedding-3-small model.
+- **Dependencies:** A vector-enabled database (our Supabase `pgvector` instance), Caching Layer.
+- **Technology Stack:** Vercel AI SDK, OpenAI embeddings, LRU caching with TTL, performance monitoring, comprehensive error handling with retry logic.
 
-## **5. Payment Service**
+## **5. Caching Layer**
+
+- **Responsibility:** To provide intelligent caching for AI operations to improve performance and reduce API costs. Manages separate caches for embeddings (24hr TTL) and search results (1hr TTL) with memory-based eviction policies and cache statistics.
+- **Key Interfaces:** LRU Cache with TTL, cache statistics API.
+- **Dependencies:** None (in-memory caching).
+- **Technology Stack:** LRU-cache library, memory management with size calculation, performance monitoring.
+
+## **6. Payment Service**
 
 - **Responsibility:** To manage all subscription and payment-related tasks securely.
 - **Key Interfaces:** Stripe API, Stripe Webhooks.
 - **Dependencies:** Next.js API Routes (to handle webhook events).
 - **Technology Stack:** Stripe SDK.
 
-## **6. Notification Service**
+## **7. Notification Service**
 
 - **Responsibility:** To send all application-related notifications (e.g., morning plan digests). This component is an abstraction layer to avoid vendor lock-in.
 - **Key Interfaces:** A simple, internal `sendEmail` or `sendPush` function.
@@ -51,12 +58,16 @@ This diagram shows how these logical components interact to deliver the applicat
 ```mermaid
 graph TD
     UserInterface[Frontend Client] -- API Calls --> APILayer[Next.js API Routes]
-    
+
     APILayer -- Auth & DB Queries --> SupabaseService[Supabase Service]
     APILayer -- AI Tasks --> AIService[AI Service]
     APILayer -- Payment Processing --> PaymentService[Payment Service]
     APILayer -- Send Notifications --> NotificationService[Notification Service]
 
+    AIService -- Caching --> CachingLayer[Caching Layer]
+    AIService -- Vector Search --> SupabaseService
+
     style UserInterface fill:#D6EAF8
     style APILayer fill:#D1F2EB
+    style CachingLayer fill:#FEF9E7
 ```
