@@ -5,6 +5,7 @@ import { RoadmapSupabaseService } from "@/lib/ai/roadmap-supabase-service";
 import { RoadmapValidator } from "@/lib/ai/roadmap-validation";
 import { RoadmapErrorHandler } from "@/lib/ai/roadmap-error-handler";
 import type { UserGoalInput } from "@/lib/types/ai";
+import type { RoadmapWithSteps } from "@/lib/supabase/types";
 
 export async function POST(request: NextRequest) {
   try {

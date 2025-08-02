@@ -415,17 +415,18 @@ export class RoadmapGenerator {
       Learning: 0.4,
     };
 
-    let score = baseScores[content.category] || 0.3;
+    let score = content.category ? baseScores[content.category] || 0.3 : 0.3;
 
     // Boost categories based on goal characteristics
     if (goalContext.isBehavioral) {
-      if (["Psychology", "Habits", "Productivity"].includes(content.category)) {
+      if (content.category && ["Psychology", "Habits", "Productivity"].includes(content.category)) {
         score += 0.2;
       }
     }
 
     if (goalContext.isCognitive) {
       if (
+        content.category &&
         ["Decision Making", "Problem Solving", "Systems Thinking", "Learning"].includes(
           content.category
         )
@@ -435,13 +436,19 @@ export class RoadmapGenerator {
     }
 
     if (goalContext.isEmotional) {
-      if (["Psychology", "Philosophy", "Mindfulness"].includes(content.category)) {
+      if (
+        content.category &&
+        ["Psychology", "Philosophy", "Mindfulness"].includes(content.category)
+      ) {
         score += 0.2;
       }
     }
 
     if (goalContext.isSkillBased) {
-      if (["Learning", "Practice", "Problem Solving"].includes(content.category)) {
+      if (
+        content.category &&
+        ["Learning", "Practice", "Problem Solving"].includes(content.category)
+      ) {
         score += 0.2;
       }
     }
@@ -449,6 +456,7 @@ export class RoadmapGenerator {
     // Domain-specific boosts
     if (
       goalContext.domain === "professional" &&
+      content.category &&
       ["Productivity", "Communication", "Leadership"].includes(content.category)
     ) {
       score += 0.15;
@@ -456,6 +464,7 @@ export class RoadmapGenerator {
 
     if (
       goalContext.domain === "relational" &&
+      content.category &&
       ["Communication", "Psychology", "Empathy"].includes(content.category)
     ) {
       score += 0.15;
@@ -463,6 +472,7 @@ export class RoadmapGenerator {
 
     if (
       goalContext.domain === "personal" &&
+      content.category &&
       ["Philosophy", "Psychology", "Self-Improvement"].includes(content.category)
     ) {
       score += 0.1;
@@ -471,6 +481,7 @@ export class RoadmapGenerator {
     // Urgency modifier
     if (
       goalContext.isImmediate &&
+      content.category &&
       ["Quick Wins", "Productivity", "Action"].includes(content.category)
     ) {
       score += 0.1;
@@ -531,10 +542,10 @@ export class RoadmapGenerator {
       Philosophy: ["Psychology", "Ethics", "Logic"],
     };
 
-    if (categorySynergies[concept.category]) {
+    if (concept.category && categorySynergies[concept.category]) {
       const synergisticCategories = categorySynergies[concept.category];
-      const matchingCategories = selectedConcepts.filter((c) =>
-        synergisticCategories.includes(c.category)
+      const matchingCategories = selectedConcepts.filter(
+        (c) => c.category && synergisticCategories.includes(c.category)
       );
 
       synergyScore += (matchingCategories.length / selectedConcepts.length) * 0.05;
@@ -657,7 +668,9 @@ export class RoadmapGenerator {
         if (selected.length >= 7) break;
 
         const categoryLimit = concept.isLearned ? 3 : 2;
-        const currentCategoryCount = categoryCount.get(concept.category) || 0;
+        const currentCategoryCount = concept.category
+          ? categoryCount.get(concept.category) || 0
+          : 0;
 
         if (currentCategoryCount < categoryLimit) {
           // Recalculate synergy with current selection
@@ -676,7 +689,7 @@ export class RoadmapGenerator {
       if (selected.includes(concept)) continue;
 
       const categoryLimit = concept.isLearned ? 3 : 2;
-      const currentCategoryCount = categoryCount.get(concept.category) || 0;
+      const currentCategoryCount = concept.category ? categoryCount.get(concept.category) || 0 : 0;
 
       if (currentCategoryCount < categoryLimit) {
         // Recalculate synergy with current selection
@@ -745,7 +758,9 @@ export class RoadmapGenerator {
     categoryCount: Map<string, number>,
     typeCount: Map<string, number>
   ) {
-    categoryCount.set(concept.category, (categoryCount.get(concept.category) || 0) + 1);
+    if (concept.category) {
+      categoryCount.set(concept.category, (categoryCount.get(concept.category) || 0) + 1);
+    }
     typeCount.set(concept.type, (typeCount.get(concept.type) || 0) + 1);
   }
 
@@ -1009,14 +1024,14 @@ export class RoadmapGenerator {
     const goalLower = goal.toLowerCase();
 
     if (concept.type === "cognitive-bias") {
-      return `Understanding ${concept.title} helps you recognize when ${concept.summary.toLowerCase()} This awareness is crucial for ${goal} because it prevents self-sabotage and improves decision quality.`;
+      return `Understanding ${concept.title} helps you recognize when ${(concept.summary || "").toLowerCase()} This awareness is crucial for ${goal} because it prevents self-sabotage and improves decision quality.`;
     }
 
     if (concept.type === "mental-model") {
-      return `${concept.title} provides a framework for ${concept.summary.toLowerCase()} This mental model directly supports ${goal} by giving you a systematic approach to tackle challenges.`;
+      return `${concept.title} provides a framework for ${(concept.summary || "").toLowerCase()} This mental model directly supports ${goal} by giving you a systematic approach to tackle challenges.`;
     }
 
-    return `Learning ${concept.title} equips you with ${concept.summary.toLowerCase()} This is essential for ${goal} as it addresses the root causes of your challenge.`;
+    return `Learning ${concept.title} equips you with ${(concept.summary || "").toLowerCase()} This is essential for ${goal} as it addresses the root causes of your challenge.`;
   }
 
   private generateSuggestedFocus(concept: ScoredKnowledgeContent, goal: string): string {
@@ -1109,7 +1124,7 @@ export class RoadmapGenerator {
           summary: `Advanced application combining ${model.title} with awareness of ${bias.title}`,
           description: `This synthesis challenges you to apply ${model.title} while actively countering ${bias.title}. This creates a more robust thinking framework.`,
           application: `Use ${model.title} as your primary framework, but at each decision point, check for ${bias.title} influence.`,
-          keywords: [...model.keywords, ...bias.keywords, "synthesis", "advanced"],
+          keywords: [...(model.keywords || []), ...(bias.keywords || []), "synthesis", "advanced"],
           embedding: model.embedding, // Use the model's embedding as base
           finalScore: 0.9,
           semanticSimilarity: 0.8,
@@ -1138,7 +1153,7 @@ export class RoadmapGenerator {
         application:
           "When facing a new problem, scan your mental model library and ask: 'What does this remind me of from a completely different field?'",
         keywords: ["meta-learning", "transfer", "patterns"],
-        embedding: new Array(1536).fill(0.5),
+        embedding: null,
         finalScore: 0.85,
         semanticSimilarity: 0.7,
         categoryAlignment: 0.7,
@@ -1159,7 +1174,7 @@ export class RoadmapGenerator {
         application:
           "Take any decision and run it through 3-5 different mental models. Look for where they agree, disagree, and what unique insights each provides.",
         keywords: ["meta-learning", "synthesis", "multi-model"],
-        embedding: new Array(1536).fill(0.5),
+        embedding: null,
         finalScore: 0.85,
         semanticSimilarity: 0.7,
         categoryAlignment: 0.7,

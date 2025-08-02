@@ -3,11 +3,11 @@
  * Enable by setting USE_TEST_DATA=true in .env
  */
 
-export interface TestKnowledgeContent {
-  id: string;
-  title: string;
-  type: "mental-model" | "cognitive-bias" | "fallacy";
-  summary: string;
+import type { KnowledgeContent } from "@/lib/supabase/types";
+
+// Simplified test type that only includes required fields
+export interface TestKnowledgeContent
+  extends Pick<KnowledgeContent, "id" | "title" | "type" | "summary"> {
   embedding?: number[]; // Pre-computed test embeddings
 }
 
@@ -16,7 +16,7 @@ export const testKnowledgeContent: TestKnowledgeContent[] = [
   {
     id: "test-1",
     title: "First Principles Thinking",
-    type: "mental-model",
+    type: "mental-model" as const,
     summary: "Break down complex problems into fundamental truths and build up from there.",
   },
   {
@@ -176,7 +176,15 @@ export function generateTestEmbedding(content: TestKnowledgeContent): number[] {
 export function testSemanticSearch(
   query: string,
   limit: number = 7
-): Array<TestKnowledgeContent & { similarity: number }> {
+): Array<
+  Partial<KnowledgeContent> & {
+    id: string;
+    title: string;
+    type: KnowledgeContent["type"];
+    summary: string | null;
+    similarity: number;
+  }
+> {
   // Simple keyword matching for test purposes
   const queryLower = query.toLowerCase();
 
@@ -203,5 +211,8 @@ export function testSemanticSearch(
   });
 
   // Sort by score and return top results
-  return scored.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
+  return scored
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, limit)
+    .map(({ embedding, ...rest }) => rest); // Remove embedding field to match database type
 }

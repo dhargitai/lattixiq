@@ -7,20 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Lock, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { TransformedStep } from "@/lib/transformers/roadmap-transformers";
 
 interface RoadmapStepProps {
-  step: {
-    id: string;
-    order_index: number;
-    status: "unlocked" | "locked" | "completed";
-    knowledge_content: {
-      id: string;
-      title: string;
-      category: string;
-      type: string;
-      summary: string;
-    };
-  };
+  step: TransformedStep;
   index: number;
   isAvailable: boolean;
   isCompleted: boolean;

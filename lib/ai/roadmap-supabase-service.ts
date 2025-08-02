@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import type { UserLearningHistory, KnowledgeContent } from "@/lib/types/ai";
-import { testSemanticSearch, testKnowledgeContent } from "@/lib/mocks/test-knowledge-content";
+import type { UserLearningHistory, AIGoalExample, KnowledgeContent } from "@/lib/types/ai";
+import type { RoadmapStepInsert } from "@/lib/supabase/types";
+import { testSemanticSearch } from "@/lib/mocks/test-knowledge-content";
 
 export interface KnowledgeSearchResult extends KnowledgeContent {
   similarity: number;
+  goalExamples?: AIGoalExample[];
 }
 
 export class RoadmapSupabaseService {
@@ -100,23 +102,19 @@ export class RoadmapSupabaseService {
       throw new Error("Failed to fetch knowledge content");
     }
 
-    return (knowledgeContent || []).map((content) => ({
-      id: content.id,
-      title: content.title,
-      category: content.category,
-      type: content.type as "mental-model" | "cognitive-bias" | "fallacy",
-      summary: content.summary || "",
-      description: content.description || "",
-      application: content.application || "",
-      keywords: content.keywords || [],
-      embedding: Array.isArray(content.embedding) ? content.embedding : [],
-      goalExamples:
-        content.goal_examples?.map((example: any) => ({
-          goal: example.goal,
-          if_then_example: example.if_then_example,
-          spotting_mission_example: example.spotting_mission_example,
-        })) || [],
-    }));
+    return (knowledgeContent || []).map((content) => {
+      // Transform database response to include goalExamples
+      const result: KnowledgeContent = {
+        ...content,
+        goalExamples:
+          content.goal_examples?.map((example) => ({
+            goal: example.goal,
+            if_then_example: example.if_then_example,
+            spotting_mission_example: example.spotting_mission_example,
+          })) || undefined,
+      };
+      return result;
+    });
   }
 
   async searchKnowledgeContentByEmbedding(
@@ -143,7 +141,7 @@ export class RoadmapSupabaseService {
         description: result.summary,
         application: "Test application example",
         keywords: [],
-        embedding: [],
+        embedding: null,
         goalExamples: [],
         similarity: result.similarity,
       }));
@@ -153,7 +151,7 @@ export class RoadmapSupabaseService {
 
     // Use the match_knowledge_content function for vector similarity search
     const { data: searchResults, error } = await supabase.rpc("match_knowledge_content", {
-      query_embedding: queryEmbedding,
+      query_embedding: JSON.stringify(queryEmbedding),
       match_threshold: matchThreshold,
       match_count: matchCount,
     });
@@ -200,35 +198,18 @@ export class RoadmapSupabaseService {
     // Create a map of similarity scores
     const similarityMap = new Map(searchResults?.map((r: any) => [r.id, r.similarity]) || []);
 
-    // Combine full content with similarity scores and learning history
-    const learnedConceptsMap = new Map(
-      userLearningHistory?.learnedConcepts.map((concept) => [
-        concept.knowledgeContentId,
-        concept,
-      ]) || []
-    );
-
+    // Combine full content with similarity scores
     const results: KnowledgeSearchResult[] = (fullContent || []).map((content) => {
       const similarity = similarityMap.get(content.id) || 0;
-      const isLearned = learnedConceptsMap.has(content.id);
-      const learnedData = learnedConceptsMap.get(content.id);
 
       return {
-        id: content.id,
-        title: content.title,
-        category: content.category,
-        type: content.type as "mental-model" | "cognitive-bias" | "fallacy",
-        summary: content.summary || "",
-        description: content.description || "",
-        application: content.application || "",
-        keywords: content.keywords || [],
-        embedding: Array.isArray(content.embedding) ? content.embedding : [],
+        ...content,
         goalExamples:
           content.goal_examples?.map((example: any) => ({
             goal: example.goal,
             if_then_example: example.if_then_example,
             spotting_mission_example: example.spotting_mission_example,
-          })) || [],
+          })) || undefined,
         similarity: similarity as number,
       } as KnowledgeSearchResult;
     });
@@ -270,7 +251,9 @@ export class RoadmapSupabaseService {
       status: step.order === 1 ? "unlocked" : "locked",
     }));
 
-    const { error: stepsError } = await supabase.from("roadmap_steps").insert(steps);
+    const { error: stepsError } = await supabase
+      .from("roadmap_steps")
+      .insert(steps as RoadmapStepInsert[]);
 
     if (stepsError) {
       console.error("Error creating roadmap steps:", stepsError);
