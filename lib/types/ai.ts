@@ -8,7 +8,7 @@ export interface KnowledgeContent {
   id: string;
   title: string;
   category: string;
-  type: "mental-model" | "cognitive-bias" | "logical-fallacy";
+  type: "mental-model" | "cognitive-bias" | "fallacy";
   summary: string;
   description: string;
   application: string;
@@ -37,7 +37,7 @@ export interface RoadmapStep {
   order: number;
   knowledgeContentId: string;
   title: string;
-  type: "mental-model" | "cognitive-bias" | "logical-fallacy";
+  type: "mental-model" | "cognitive-bias" | "fallacy";
   category: string;
   relevanceScore: number;
   learningStatus: "new" | "reinforcement";

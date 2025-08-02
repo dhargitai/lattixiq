@@ -101,7 +101,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
       expect(step.knowledgeContent).toMatchObject({
         id: expect.any(String),
         title: expect.any(String),
-        type: expect.stringMatching(/^(mental_model|bias)$/),
+        type: expect.stringMatching(/^(mental-model|cognitive-bias|fallacy)$/),
         summary: expect.any(String),
       });
     });

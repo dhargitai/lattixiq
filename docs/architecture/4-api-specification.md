@@ -14,6 +14,7 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
   - **Description:** Creates a new, personalized roadmap for the authenticated user. This endpoint triggers sophisticated AI-powered roadmap generation using semantic search, spaced repetition algorithms, and advanced curation. Includes comprehensive validation and error handling.
   - **Request Body:** `{ "goalDescription": "string" }` (minimum 10 characters, validated for specificity)
   - **Response (200):** The newly created roadmap with detailed steps:
+
   ```json
   {
     "goalDescription": "string",
@@ -29,7 +30,7 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
         "order": number,
         "knowledgeContentId": "string",
         "title": "string",
-        "type": "mental-model" | "cognitive-bias" | "logical-fallacy",
+        "type": "mental-model" | "cognitive-bias" | "fallacy",
         "category": "string",
         "relevanceScore": number,
         "learningStatus": "new" | "reinforcement",
@@ -51,10 +52,12 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
     - **404:** Insufficient relevant content found for goal
     - **503:** AI service temporarily unavailable
     - **500:** Roadmap generation or validation failed
+
 - **`GET /`**
   - **Description:** Fetches the user's currently active roadmap with full step details and knowledge content.
   - **Request Body:** None.
   - **Response (200):**
+
   ```json
   {
     "roadmap": {

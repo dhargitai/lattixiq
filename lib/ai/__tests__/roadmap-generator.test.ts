@@ -425,7 +425,7 @@ describe("RoadmapGenerator", () => {
 
       const mentalModels = roadmap.steps.filter((s) => s.type === "mental-model");
       const biases = roadmap.steps.filter(
-        (s) => s.type === "cognitive-bias" || s.type === "logical-fallacy"
+        (s) => s.type === "cognitive-bias" || s.type === "fallacy"
       );
 
       expect(mentalModels.length).toBeGreaterThanOrEqual(2);
