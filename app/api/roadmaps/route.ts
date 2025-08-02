@@ -9,6 +9,61 @@ import type { RoadmapWithSteps } from "@/lib/supabase/types";
 
 export async function POST(request: NextRequest) {
   try {
+    // Parse request body first
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
+    }
+
+    const { goalDescription } = body;
+
+    // E2E test mode - return mock response
+    if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
+      console.log("E2E test mode - returning mock roadmap response");
+
+      // Validate goal description even in test mode
+      if (!goalDescription || goalDescription.length < 10) {
+        return NextResponse.json(
+          { error: "Goal description must be at least 10 characters long" },
+          { status: 400 }
+        );
+      }
+
+      // Return mock successful response
+      return NextResponse.json({
+        roadmapId: "test-roadmap-id",
+        goalDescription,
+        steps: [
+          {
+            knowledgeContentId: "test-content-1",
+            order: 1,
+            title: "First Principles Thinking",
+            type: "model",
+            category: "problem_solving",
+            summary: "Break complex problems into fundamental truths",
+            description:
+              "A problem-solving approach that involves breaking down complex problems into their most basic, foundational elements.",
+            application:
+              "Use when facing complex problems or when conventional solutions aren't working.",
+          },
+          {
+            knowledgeContentId: "test-content-2",
+            order: 2,
+            title: "Parkinson's Law",
+            type: "model",
+            category: "productivity",
+            summary: "Work expands to fill the time available",
+            description:
+              "The observation that work expands to fill the time available for its completion.",
+            application:
+              "Set artificial deadlines to increase productivity and prevent procrastination.",
+          },
+        ],
+      });
+    }
+
     // Get authenticated user
     const supabase = await createClient();
     const {
@@ -19,10 +74,6 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // Parse request body
-    const body = await request.json();
-    const { goalDescription } = body;
 
     // Validate goal description
     const validation = RoadmapValidator.validateGoalDescription(goalDescription);

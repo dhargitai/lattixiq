@@ -61,6 +61,11 @@ export default function NewRoadmapForm() {
       localStorage.setItem("userGoal", goal);
       localStorage.setItem("hasCompletedOnboarding", "true");
 
+      // Log for debugging in E2E tests
+      if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
+        console.log("E2E: API response received, navigating to /roadmap");
+      }
+
       // Redirect to the roadmap page
       router.push("/roadmap");
     } catch (err) {

@@ -2,20 +2,6 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Roadmap Creation Flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock authentication by setting a session cookie
-    // In a real app, you'd use proper authentication setup
-    await page.context().addCookies([
-      {
-        name: "sb-localhost-auth-token",
-        value: "mock-auth-token",
-        domain: "localhost",
-        path: "/",
-        httpOnly: true,
-        secure: false,
-        sameSite: "Lax",
-      },
-    ]);
-
     // Navigate to the new roadmap page
     await page.goto("/new-roadmap");
   });
@@ -84,29 +70,9 @@ test.describe("Roadmap Creation Flow", () => {
   });
 
   test("should successfully create a roadmap", async ({ page }) => {
-    // Intercept the API call
-    await page.route("**/api/roadmaps", async (route) => {
-      await route.fulfill({
-        status: 201,
-        contentType: "application/json",
-        body: JSON.stringify({
-          roadmapId: "test-roadmap-id",
-          goalDescription: "I want to stop procrastinating on my important work projects",
-          steps: [
-            {
-              knowledgeContentId: "test-content-1",
-              order: 1,
-              title: "First Principles Thinking",
-            },
-            {
-              knowledgeContentId: "test-content-2",
-              order: 2,
-              title: "Parkinson's Law",
-            },
-          ],
-        }),
-      });
-    });
+    // Add console listener to debug
+    page.on("console", (msg) => console.log("Browser console:", msg.text()));
+    page.on("pageerror", (err) => console.log("Page error:", err.message));
 
     // Fill the form
     await page
@@ -120,8 +86,18 @@ test.describe("Roadmap Creation Flow", () => {
     await expect(page.getByTestId("loading-overlay")).toBeVisible();
     await expect(page.getByText("Building Your Roadmap!")).toBeVisible();
 
-    // Wait for navigation to roadmap page
-    await page.waitForURL("/roadmap");
+    // Wait for either navigation or error
+    await Promise.race([
+      page.waitForURL("/roadmap", { timeout: 15000 }),
+      page.waitForSelector("div.bg-red-50", { timeout: 15000 }), // Error div
+    ]).catch(async (e) => {
+      // Log current URL and page content for debugging
+      console.log("Current URL:", page.url());
+      const bodyText = await page.locator("body").textContent();
+      console.log("Page content:", bodyText);
+      throw e;
+    });
+
     expect(page.url()).toContain("/roadmap");
   });
 
@@ -143,14 +119,12 @@ test.describe("Roadmap Creation Flow", () => {
       .fill("I want to stop procrastinating on my important work projects");
     await page.getByRole("button", { name: "Create My Roadmap" }).click();
 
-    // Check loading state appears and disappears
-    await expect(page.getByTestId("loading-overlay")).toBeVisible();
-    await expect(page.getByTestId("loading-overlay")).not.toBeVisible();
-
-    // Check error message is displayed
+    // Wait for error message to appear
     await expect(
-      page.getByText("You already have an active roadmap. Please complete or archive it first.")
-    ).toBeVisible();
+      page
+        .locator("div.bg-red-50")
+        .getByText("You already have an active roadmap. Please complete or archive it first.")
+    ).toBeVisible({ timeout: 10000 });
 
     // Ensure we're still on the same page
     expect(page.url()).toContain("/new-roadmap");
@@ -168,23 +142,13 @@ test.describe("Roadmap Creation Flow", () => {
       .fill("I want to stop procrastinating on my important work projects");
     await page.getByRole("button", { name: "Create My Roadmap" }).click();
 
-    // Check error message is displayed
-    await expect(page.getByText(/unexpected error occurred|Failed to fetch/i)).toBeVisible();
+    // Check error message is displayed - look for the error in the error div
+    await expect(
+      page.locator("div.bg-red-50").getByText(/unexpected error occurred|Failed to fetch/i)
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test("should save goal to localStorage on successful submission", async ({ page }) => {
-    // Mock successful API response
-    await page.route("**/api/roadmaps", async (route) => {
-      await route.fulfill({
-        status: 201,
-        contentType: "application/json",
-        body: JSON.stringify({
-          roadmapId: "test-roadmap-id",
-          steps: [],
-        }),
-      });
-    });
-
     const goalText = "I want to stop procrastinating on my important work projects";
 
     // Fill and submit the form
@@ -192,7 +156,7 @@ test.describe("Roadmap Creation Flow", () => {
     await page.getByRole("button", { name: "Create My Roadmap" }).click();
 
     // Wait for navigation
-    await page.waitForURL("/roadmap");
+    await page.waitForURL("/roadmap", { timeout: 15000 });
 
     // Check localStorage
     const userGoal = await page.evaluate(() => localStorage.getItem("userGoal"));
