@@ -1,11 +1,59 @@
 import { createClient } from "@/lib/supabase/server";
 import type { UserLearningHistory, AIGoalExample, KnowledgeContent } from "@/lib/types/ai";
-import type { RoadmapStepInsert } from "@/lib/supabase/types";
+import type { RoadmapStepInsert, GoalExample } from "@/lib/supabase/types";
 import { testSemanticSearch } from "@/lib/mocks/test-knowledge-content";
+
+// Query result interfaces
+interface CompletedStepWithRoadmap {
+  knowledge_content_id: string;
+  roadmap: {
+    user_id: string;
+    status: string | null;
+  };
+}
+
+interface ApplicationLogWithStep {
+  roadmap_step_id: string;
+  effectiveness_rating: number | null;
+  created_at: string | null;
+  roadmap_steps: {
+    knowledge_content_id: string;
+  };
+}
+
+interface KnowledgeContentWithGoalExamples {
+  id: string;
+  title: string;
+  category: string | null;
+  type: "mental-model" | "cognitive-bias" | "fallacy";
+  summary: string | null;
+  description: string | null;
+  application: string | null;
+  keywords: string[] | null;
+  embedding: string | null;
+  goal_examples: GoalExample[] | null;
+}
+
+interface MatchKnowledgeContentResult {
+  id: string;
+  title: string;
+  category: string | null;
+  type: "mental-model" | "cognitive-bias" | "fallacy";
+  summary: string | null;
+  similarity: number;
+}
 
 export interface KnowledgeSearchResult extends KnowledgeContent {
   similarity: number;
   goalExamples?: AIGoalExample[];
+}
+
+interface LearnedConcept {
+  knowledgeContentId: string;
+  completedAt: string;
+  lastReflectionAt: string;
+  effectivenessRating: number;
+  applicationCount: number;
 }
 
 export class RoadmapSupabaseService {
@@ -13,7 +61,7 @@ export class RoadmapSupabaseService {
     const supabase = await createClient();
 
     // Get user's completed roadmap steps
-    const { data: completedSteps, error } = await supabase
+    const { data: completedSteps, error } = (await supabase
       .from("roadmap_steps")
       .select(
         `
@@ -25,7 +73,7 @@ export class RoadmapSupabaseService {
       `
       )
       .eq("roadmap.user_id", userId)
-      .eq("status", "completed");
+      .eq("status", "completed")) as { data: CompletedStepWithRoadmap[] | null; error: unknown };
 
     if (error) {
       console.error("Error fetching learning history:", error);
@@ -33,9 +81,10 @@ export class RoadmapSupabaseService {
     }
 
     // Get application logs for effectiveness ratings and last reflection dates
-    const knowledgeIds = completedSteps?.map((step) => step.knowledge_content_id) || [];
+    const knowledgeIds =
+      completedSteps?.map((step: CompletedStepWithRoadmap) => step.knowledge_content_id) || [];
 
-    const { data: applicationLogs, error: logsError } = await supabase
+    const { data: applicationLogs, error: logsError } = (await supabase
       .from("application_logs")
       .select(
         `
@@ -49,7 +98,10 @@ export class RoadmapSupabaseService {
       )
       .eq("user_id", userId)
       .in("roadmap_steps.knowledge_content_id", knowledgeIds)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })) as {
+      data: ApplicationLogWithStep[] | null;
+      error: unknown;
+    };
 
     if (logsError) {
       console.error("Error fetching application logs:", error);
@@ -80,7 +132,7 @@ export class RoadmapSupabaseService {
   async getKnowledgeContent(): Promise<KnowledgeContent[]> {
     const supabase = await createClient();
 
-    const { data: knowledgeContent, error } = await supabase.from("knowledge_content").select(`
+    const { data: knowledgeContent, error } = (await supabase.from("knowledge_content").select(`
         id,
         title,
         category,
@@ -95,19 +147,19 @@ export class RoadmapSupabaseService {
           if_then_example,
           spotting_mission_example
         )
-      `);
+      `)) as { data: KnowledgeContentWithGoalExamples[] | null; error: unknown };
 
     if (error) {
       console.error("Error fetching knowledge content:", error);
       throw new Error("Failed to fetch knowledge content");
     }
 
-    return (knowledgeContent || []).map((content) => {
+    return (knowledgeContent || []).map((content: KnowledgeContentWithGoalExamples) => {
       // Transform database response to include goalExamples
       const result: KnowledgeContent = {
         ...content,
         goalExamples:
-          content.goal_examples?.map((example) => ({
+          content.goal_examples?.map((example: GoalExample) => ({
             goal: example.goal,
             if_then_example: example.if_then_example,
             spotting_mission_example: example.spotting_mission_example,
@@ -121,7 +173,7 @@ export class RoadmapSupabaseService {
     queryEmbedding: number[],
     matchThreshold: number = 0.3,
     matchCount: number = 30,
-    userLearningHistory?: UserLearningHistory
+    _userLearningHistory?: UserLearningHistory
   ): Promise<KnowledgeSearchResult[]> {
     // Check if we should use test data
     if (process.env.USE_TEST_DATA === "true") {
@@ -150,11 +202,11 @@ export class RoadmapSupabaseService {
     const supabase = await createClient();
 
     // Use the match_knowledge_content function for vector similarity search
-    const { data: searchResults, error } = await supabase.rpc("match_knowledge_content", {
+    const { data: searchResults, error } = (await supabase.rpc("match_knowledge_content", {
       query_embedding: JSON.stringify(queryEmbedding),
       match_threshold: matchThreshold,
       match_count: matchCount,
-    });
+    })) as { data: MatchKnowledgeContentResult[] | null; error: unknown };
 
     if (error) {
       console.error("Error searching knowledge content:", error);
@@ -162,13 +214,13 @@ export class RoadmapSupabaseService {
     }
 
     // Get full content details for the matched items
-    const ids = searchResults?.map((r: any) => r.id) || [];
+    const ids = searchResults?.map((r) => r.id) || [];
 
     if (ids.length === 0) {
       return [];
     }
 
-    const { data: fullContent, error: contentError } = await supabase
+    const { data: fullContent, error: contentError } = (await supabase
       .from("knowledge_content")
       .select(
         `
@@ -188,7 +240,7 @@ export class RoadmapSupabaseService {
         )
       `
       )
-      .in("id", ids);
+      .in("id", ids)) as { data: KnowledgeContentWithGoalExamples[] | null; error: unknown };
 
     if (contentError) {
       console.error("Error fetching full knowledge content:", contentError);
@@ -196,23 +248,25 @@ export class RoadmapSupabaseService {
     }
 
     // Create a map of similarity scores
-    const similarityMap = new Map(searchResults?.map((r: any) => [r.id, r.similarity]) || []);
+    const similarityMap = new Map(searchResults?.map((r) => [r.id, r.similarity]) || []);
 
     // Combine full content with similarity scores
-    const results: KnowledgeSearchResult[] = (fullContent || []).map((content) => {
-      const similarity = similarityMap.get(content.id) || 0;
+    const results: KnowledgeSearchResult[] = (fullContent || []).map(
+      (content: KnowledgeContentWithGoalExamples) => {
+        const similarity = similarityMap.get(content.id) || 0;
 
-      return {
-        ...content,
-        goalExamples:
-          content.goal_examples?.map((example: any) => ({
-            goal: example.goal,
-            if_then_example: example.if_then_example,
-            spotting_mission_example: example.spotting_mission_example,
-          })) || undefined,
-        similarity: similarity as number,
-      } as KnowledgeSearchResult;
-    });
+        return {
+          ...content,
+          goalExamples:
+            content.goal_examples?.map((example) => ({
+              goal: example.goal,
+              if_then_example: example.if_then_example,
+              spotting_mission_example: example.spotting_mission_example,
+            })) || undefined,
+          similarity: similarity as number,
+        } as KnowledgeSearchResult;
+      }
+    );
 
     return results.sort((a, b) => b.similarity - a.similarity);
   }
@@ -265,16 +319,19 @@ export class RoadmapSupabaseService {
     return roadmap.id;
   }
 
-  private transformToLearnedConcepts(completedSteps: any[], applicationLogs: any[]) {
-    const conceptMap = new Map<string, any>();
+  private transformToLearnedConcepts(
+    completedSteps: CompletedStepWithRoadmap[],
+    applicationLogs: ApplicationLogWithStep[]
+  ): LearnedConcept[] {
+    const conceptMap = new Map<string, LearnedConcept>();
 
     // Group by knowledge content id
     completedSteps.forEach((step) => {
       const logs = applicationLogs.filter(
-        (log) => log.roadmap_steps?.knowledge_content_id === step.knowledge_content_id
+        (log) => log.roadmap_steps.knowledge_content_id === step.knowledge_content_id
       );
 
-      const latestLog = logs[0]; // Already sorted by created_at desc
+      const [latestLog] = logs; // Already sorted by created_at desc
       const avgRating =
         logs.length > 0
           ? logs.reduce((sum, log) => sum + (log.effectiveness_rating || 0), 0) / logs.length
