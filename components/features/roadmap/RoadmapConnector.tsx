@@ -12,17 +12,14 @@ export default function RoadmapConnector({ isCompleted, className }: RoadmapConn
   return (
     <div className={cn("relative flex justify-center", className)}>
       <div
-        className={cn(
-          "w-0.5 h-12",
-          "transition-all duration-500",
-          isCompleted ? "bg-primary" : "bg-border",
-          !isCompleted && "border-dashed",
-          "origin-top scale-y-0 animate-[scale-in-y_0.5s_ease-out_forwards]"
-        )}
+        className={cn("w-0.5 h-12", "transition-all duration-500", "origin-top")}
         style={{
           backgroundImage: !isCompleted
-            ? "repeating-linear-gradient(to bottom, transparent, transparent 6px, var(--border) 6px, var(--border) 12px)"
+            ? "repeating-linear-gradient(to bottom, hsl(var(--border)), hsl(var(--border)) 6px, transparent 6px, transparent 12px)"
             : undefined,
+          backgroundColor: isCompleted ? "hsl(var(--primary))" : undefined,
+          transform: "scaleY(0)",
+          animation: "scale-in-y 0.5s ease-out forwards",
           animationDelay: "inherit",
         }}
       />
@@ -30,10 +27,11 @@ export default function RoadmapConnector({ isCompleted, className }: RoadmapConn
         className={cn(
           "absolute top-1/2 -translate-y-1/2",
           "h-2 w-2 rounded-full",
-          isCompleted ? "bg-primary" : "bg-border",
-          "scale-0 animate-[scale-in_0.3s_ease-out_forwards]"
+          isCompleted ? "bg-primary" : "bg-border"
         )}
         style={{
+          transform: "scale(0)",
+          animation: "scale-in 0.3s ease-out forwards",
           animationDelay: "calc(inherit + 0.3s)",
         }}
       />

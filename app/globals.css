@@ -51,19 +51,19 @@
   }
 
   @keyframes scale-in {
-    0% {
-      transform: scaleX(0);
+    from {
+      transform: scale(0);
     }
-    100% {
-      transform: scaleX(1);
+    to {
+      transform: scale(1);
     }
   }
 
   @keyframes scale-in-y {
-    0% {
+    from {
       transform: scaleY(0);
     }
-    100% {
+    to {
       transform: scaleY(1);
     }
   }
