@@ -484,7 +484,7 @@ export class RoadmapGenerator {
     const typeScores: Record<string, number> = {
       "mental-model": 0.6,
       "cognitive-bias": 0.5,
-      "logical-fallacy": 0.4,
+      fallacy: 0.4,
     };
 
     return typeScores[content.type] || 0.5;
@@ -784,14 +784,14 @@ export class RoadmapGenerator {
 
     // Recalculate after potential mental model swaps
     const updatedBiases = selected.filter(
-      (c) => c.type === "cognitive-bias" || c.type === "logical-fallacy"
+      (c) => c.type === "cognitive-bias" || c.type === "fallacy"
     ).length;
 
     // If we need more biases/fallacies
     if (updatedBiases < MIN_BIASES) {
       const neededBiases = MIN_BIASES - updatedBiases;
       const availableBiases = unselected
-        .filter((c) => c.type === "cognitive-bias" || c.type === "logical-fallacy")
+        .filter((c) => c.type === "cognitive-bias" || c.type === "fallacy")
         .sort((a, b) => b.finalScore - a.finalScore);
 
       // Find lowest scoring concepts that aren't mental models or foundational
@@ -815,7 +815,7 @@ export class RoadmapGenerator {
     // Final validation - if still not balanced, force add from remaining candidates
     const finalMentalModels = selected.filter((c) => c.type === "mental-model").length;
     const finalBiases = selected.filter(
-      (c) => c.type === "cognitive-bias" || c.type === "logical-fallacy"
+      (c) => c.type === "cognitive-bias" || c.type === "fallacy"
     ).length;
 
     if (finalMentalModels < MIN_MENTAL_MODELS || finalBiases < MIN_BIASES) {
@@ -843,7 +843,7 @@ export class RoadmapGenerator {
 
       if (finalBiases < MIN_BIASES) {
         const bestBias = unselected
-          .filter((c) => c.type === "cognitive-bias" || c.type === "logical-fallacy")
+          .filter((c) => c.type === "cognitive-bias" || c.type === "fallacy")
           .sort((a, b) => b.finalScore - a.finalScore)[0];
 
         if (bestBias && selected.length < 7) {
@@ -1089,7 +1089,7 @@ export class RoadmapGenerator {
 
     const biases = allContent.filter(
       (c) =>
-        (c.type === "cognitive-bias" || c.type === "logical-fallacy") &&
+        (c.type === "cognitive-bias" || c.type === "fallacy") &&
         learnedConceptsMap.has(c.id) &&
         topConcepts.some((tc) => tc.knowledgeContentId === c.id)
     );

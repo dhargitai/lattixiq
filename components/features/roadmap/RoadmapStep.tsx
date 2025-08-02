@@ -17,6 +17,7 @@ interface RoadmapStepProps {
       id: string;
       title: string;
       category: string;
+      type: string;
       summary: string;
     };
   };
@@ -45,9 +46,13 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
   };
 
   const getCategoryBadge = () => {
-    const variant = step.knowledge_content.category === "mental_model" ? "default" : "secondary";
+    const variant = step.knowledge_content.type === "mental-model" ? "default" : "secondary";
     const label =
-      step.knowledge_content.category === "mental_model" ? "Mental Model" : "Cognitive Bias";
+      step.knowledge_content.type === "mental-model"
+        ? "Mental Model"
+        : step.knowledge_content.type === "cognitive-bias"
+          ? "Cognitive Bias"
+          : "Fallacy";
     return <Badge variant={variant}>{label}</Badge>;
   };
 

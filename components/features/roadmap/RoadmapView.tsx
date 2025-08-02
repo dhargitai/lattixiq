@@ -26,6 +26,7 @@ interface RoadmapViewProps {
         id: string;
         title: string;
         category: string;
+        type: string;
         summary: string;
       };
     }>;

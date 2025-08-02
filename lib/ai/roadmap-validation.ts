@@ -121,7 +121,7 @@ export class RoadmapValidator {
       errors.push("Roadmap should include at least 2 mental models");
     }
 
-    if (!typeCount["cognitive-bias"] && !typeCount["logical-fallacy"]) {
+    if (!typeCount["cognitive-bias"] && !typeCount["fallacy"]) {
       errors.push("Roadmap should include at least 1 cognitive bias or logical fallacy");
     }
 

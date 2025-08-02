@@ -104,7 +104,7 @@ export class RoadmapSupabaseService {
       id: content.id,
       title: content.title,
       category: content.category,
-      type: content.type as "mental-model" | "cognitive-bias" | "logical-fallacy",
+      type: content.type as "mental-model" | "cognitive-bias" | "fallacy",
       summary: content.summary || "",
       description: content.description || "",
       application: content.application || "",
@@ -135,10 +135,10 @@ export class RoadmapSupabaseService {
         id: result.id,
         title: result.title,
         type:
-          result.type === "mental_model"
+          result.type === "mental-model"
             ? "mental-model"
-            : ("cognitive-bias" as "mental-model" | "cognitive-bias" | "logical-fallacy"),
-        category: result.type === "mental_model" ? "decision-making" : "cognitive-biases",
+            : ("cognitive-bias" as "mental-model" | "cognitive-bias" | "fallacy"),
+        category: result.type === "mental-model" ? "decision-making" : "cognitive-biases",
         summary: result.summary,
         description: result.summary,
         application: "Test application example",
@@ -217,7 +217,7 @@ export class RoadmapSupabaseService {
         id: content.id,
         title: content.title,
         category: content.category,
-        type: content.type as "mental-model" | "cognitive-bias" | "logical-fallacy",
+        type: content.type as "mental-model" | "cognitive-bias" | "fallacy",
         summary: content.summary || "",
         description: content.description || "",
         application: content.application || "",

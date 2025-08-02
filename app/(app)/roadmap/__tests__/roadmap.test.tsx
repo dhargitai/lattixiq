@@ -69,7 +69,7 @@ const mockRoadmap = {
       knowledge_content: {
         id: "content-2",
         title: "First Principles Thinking",
-        category: "mental_model",
+        category: "mental-model",
         summary: "Breaking down complex problems into basic elements",
         details: "Detailed explanation...",
         how_to_use: "Application guide...",

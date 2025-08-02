@@ -6,7 +6,7 @@
 export interface TestKnowledgeContent {
   id: string;
   title: string;
-  type: "mental_model" | "bias";
+  type: "mental-model" | "cognitive-bias" | "fallacy";
   summary: string;
   embedding?: number[]; // Pre-computed test embeddings
 }
@@ -16,43 +16,43 @@ export const testKnowledgeContent: TestKnowledgeContent[] = [
   {
     id: "test-1",
     title: "First Principles Thinking",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Break down complex problems into fundamental truths and build up from there.",
   },
   {
     id: "test-2",
     title: "Parkinson's Law",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Work expands to fill the time available for its completion.",
   },
   {
     id: "test-3",
     title: "Eisenhower Matrix",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Prioritize tasks by urgency and importance to focus on what matters most.",
   },
   {
     id: "test-4",
     title: "80/20 Rule (Pareto Principle)",
-    type: "mental_model",
+    type: "mental-model",
     summary: "80% of results come from 20% of efforts - focus on high-impact activities.",
   },
   {
     id: "test-5",
     title: "Second-Order Thinking",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Consider the consequences of consequences when making decisions.",
   },
   {
     id: "test-6",
     title: "Inversion",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Solve problems by thinking about what you want to avoid.",
   },
   {
     id: "test-7",
     title: "Occam's Razor",
-    type: "mental_model",
+    type: "mental-model",
     summary: "The simplest explanation is usually the correct one.",
   },
 
@@ -60,44 +60,44 @@ export const testKnowledgeContent: TestKnowledgeContent[] = [
   {
     id: "test-8",
     title: "Confirmation Bias",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Tendency to search for information that confirms our existing beliefs.",
   },
   {
     id: "test-9",
     title: "Planning Fallacy",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Tendency to underestimate the time needed to complete tasks.",
   },
   {
     id: "test-10",
     title: "Dunning-Kruger Effect",
-    type: "bias",
+    type: "cognitive-bias",
     summary:
       "Less competent people overestimate their abilities while experts underestimate theirs.",
   },
   {
     id: "test-11",
     title: "Sunk Cost Fallacy",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Continuing a behavior because of previously invested resources.",
   },
   {
     id: "test-12",
     title: "Availability Heuristic",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Overestimating the likelihood of events we can easily recall.",
   },
   {
     id: "test-13",
     title: "Anchoring Bias",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Over-relying on the first piece of information encountered.",
   },
   {
     id: "test-14",
     title: "Status Quo Bias",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Preference for the current state of affairs and resistance to change.",
   },
 
@@ -105,37 +105,37 @@ export const testKnowledgeContent: TestKnowledgeContent[] = [
   {
     id: "test-15",
     title: "Systems Thinking",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Understanding how parts interact within a whole system.",
   },
   {
     id: "test-16",
     title: "Feedback Loops",
-    type: "mental_model",
+    type: "mental-model",
     summary: "How outputs of a system feed back as inputs, creating cycles.",
   },
   {
     id: "test-17",
     title: "Marginal Thinking",
-    type: "mental_model",
+    type: "mental-model",
     summary: "Making decisions based on incremental changes rather than absolutes.",
   },
   {
     id: "test-18",
     title: "Opportunity Cost",
-    type: "mental_model",
+    type: "mental-model",
     summary: "The value of the best alternative foregone when making a choice.",
   },
   {
     id: "test-19",
     title: "Hindsight Bias",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Believing past events were more predictable than they actually were.",
   },
   {
     id: "test-20",
     title: "Bandwagon Effect",
-    type: "bias",
+    type: "cognitive-bias",
     summary: "Tendency to do things because many other people do the same.",
   },
 ];
@@ -189,12 +189,12 @@ export function testSemanticSearch(
     if (queryLower.includes("procrastin") && contentText.includes("parkinson")) score += 0.5;
     if (queryLower.includes("decision") && contentText.includes("decision")) score += 0.4;
     if (queryLower.includes("decision") && contentText.includes("think")) score += 0.3;
-    if (queryLower.includes("bias") && content.type === "bias") score += 0.2;
+    if (queryLower.includes("bias") && content.type === "cognitive-bias") score += 0.2;
     if (queryLower.includes("productiv") && contentText.includes("pareto")) score += 0.4;
     if (queryLower.includes("productiv") && contentText.includes("eisenhower")) score += 0.4;
 
     // Prefer mental models for foundational learning
-    if (content.type === "mental_model") score += 0.1;
+    if (content.type === "mental-model") score += 0.1;
 
     // Add some randomness for variety
     score += Math.random() * 0.1;
