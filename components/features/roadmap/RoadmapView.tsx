@@ -13,24 +13,10 @@ import {
 import RoadmapStep from "./RoadmapStep";
 import RoadmapConnector from "./RoadmapConnector";
 import { cn } from "@/lib/utils";
+import type { TransformedRoadmap } from "@/lib/transformers/roadmap-transformers";
 
 interface RoadmapViewProps {
-  roadmap: {
-    id: string;
-    goal_description: string;
-    steps: Array<{
-      id: string;
-      order_index: number;
-      status: "unlocked" | "locked" | "completed";
-      knowledge_content: {
-        id: string;
-        title: string;
-        category: string;
-        type: string;
-        summary: string;
-      };
-    }>;
-  };
+  roadmap: TransformedRoadmap;
 }
 
 export default function RoadmapView({ roadmap }: RoadmapViewProps) {

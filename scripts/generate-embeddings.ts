@@ -9,6 +9,7 @@ import {
   EmbeddingInput,
   EmbeddingResult,
 } from "../lib/ai/embeddings-service";
+import type { Database } from "../lib/supabase/database.types";
 
 // Load environment variables
 config({ path: ".env.local" });
@@ -33,7 +34,7 @@ const logger = createLogger({
 });
 
 // Initialize Supabase client with service role for admin access
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!, // You'll need to add this to .env.local
   {
@@ -270,7 +271,7 @@ async function generateAndStoreEmbeddings() {
               // Update existing record with embedding
               const { error: updateError } = await supabase
                 .from("knowledge_content")
-                .update({ embedding: embedding })
+                .update({ embedding: JSON.stringify(embedding) })
                 .eq("id", knowledgeId);
 
               if (updateError) {
@@ -288,7 +289,7 @@ async function generateAndStoreEmbeddings() {
                   description: item.description,
                   application: item.application,
                   keywords: item.keywords,
-                  embedding: embedding,
+                  embedding: JSON.stringify(embedding),
                 })
                 .select("id")
                 .single();

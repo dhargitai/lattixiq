@@ -27,9 +27,18 @@ vi.mock("@/components/features/roadmap/RoadmapView", () => ({
   default: vi.fn(),
 }));
 
+vi.mock("@/lib/queries/roadmap-queries", () => ({
+  getActiveRoadmapWithSteps: vi.fn(),
+}));
+
+vi.mock("@/lib/transformers/roadmap-transformers", () => ({
+  transformRoadmapForView: vi.fn((roadmap) => roadmap),
+}));
+
 // Import modules after mocks
 import { createClient } from "@/lib/supabase/server";
 import RoadmapView from "@/components/features/roadmap/RoadmapView";
+import { getActiveRoadmapWithSteps } from "@/lib/queries/roadmap-queries";
 import RoadmapPage from "../page";
 
 // Mock data
@@ -37,62 +46,75 @@ const mockRoadmap = {
   id: "roadmap-1",
   user_id: "test-user-id",
   goal_description: "Improve decision-making skills",
-  status: "active",
+  status: "active" as const,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
+  completed_at: null,
   steps: [
     {
       id: "step-1",
       roadmap_id: "roadmap-1",
       knowledge_content_id: "content-1",
-      order_index: 0,
-      status: "unlocked",
-      created_at: new Date().toISOString(),
+      order: 0,
+      status: "unlocked" as const,
+      plan_action: null,
+      plan_created_at: null,
+      plan_situation: null,
+      plan_trigger: null,
       knowledge_content: {
         id: "content-1",
         title: "Confirmation Bias",
+        type: "cognitive-bias" as const,
         category: "bias",
         summary: "The tendency to search for information that confirms our existing beliefs",
-        details: "Detailed explanation...",
-        how_to_use: "Application guide...",
-        examples: ["Example 1", "Example 2"],
-        relationships: ["Anchoring Bias"],
+        description: "Detailed explanation...",
+        application: "Application guide...",
+        keywords: ["bias", "confirmation"],
+        embedding: null,
       },
     },
     {
       id: "step-2",
       roadmap_id: "roadmap-1",
       knowledge_content_id: "content-2",
-      order_index: 1,
-      status: "locked",
-      created_at: new Date().toISOString(),
+      order: 1,
+      status: "locked" as const,
+      plan_action: null,
+      plan_created_at: null,
+      plan_situation: null,
+      plan_trigger: null,
       knowledge_content: {
         id: "content-2",
         title: "First Principles Thinking",
+        type: "mental-model" as const,
         category: "mental-model",
         summary: "Breaking down complex problems into basic elements",
-        details: "Detailed explanation...",
-        how_to_use: "Application guide...",
-        examples: ["Example 1", "Example 2"],
-        relationships: ["Systems Thinking"],
+        description: "Detailed explanation...",
+        application: "Application guide...",
+        keywords: ["thinking", "principles"],
+        embedding: null,
       },
     },
     {
       id: "step-3",
       roadmap_id: "roadmap-1",
       knowledge_content_id: "content-3",
-      order_index: 2,
-      status: "locked",
-      created_at: new Date().toISOString(),
+      order: 2,
+      status: "locked" as const,
+      plan_action: null,
+      plan_created_at: null,
+      plan_situation: null,
+      plan_trigger: null,
       knowledge_content: {
         id: "content-3",
         title: "Sunk Cost Fallacy",
+        type: "fallacy" as const,
         category: "bias",
         summary: "Continuing something because of previously invested resources",
-        details: "Detailed explanation...",
-        how_to_use: "Application guide...",
-        examples: ["Example 1", "Example 2"],
-        relationships: ["Loss Aversion"],
+        description: "Detailed explanation...",
+        application: "Application guide...",
+        keywords: ["fallacy", "sunk cost"],
+        embedding: null,
       },
     },
   ],
@@ -101,15 +123,14 @@ const mockRoadmap = {
 describe("Roadmap Page", () => {
   const mockCreateClient = vi.mocked(createClient);
   const mockRoadmapView = vi.mocked(RoadmapView);
+  const mockGetActiveRoadmapWithSteps = vi.mocked(getActiveRoadmapWithSteps);
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Setup RoadmapView mock
-    mockRoadmapView.mockImplementation(({ roadmap }: any) => {
-      const completedSteps = roadmap.steps.filter(
-        (step: any) => step.status === "completed"
-      ).length;
+    mockRoadmapView.mockImplementation(({ roadmap }) => {
+      const completedSteps = roadmap.steps.filter((step) => step.status === "completed").length;
       const totalSteps = roadmap.steps.length;
       const progressPercentage = (completedSteps / totalSteps) * 100;
 
@@ -119,7 +140,7 @@ describe("Roadmap Page", () => {
           <div role="progressbar" aria-valuenow={progressPercentage} aria-valuemax={100}>
             {completedSteps} of {totalSteps} steps completed
           </div>
-          {roadmap.steps.map((step: any, index: number) => (
+          {roadmap.steps.map((step, index) => (
             <div
               key={step.id}
               data-testid={`roadmap-step-${index}`}
@@ -136,7 +157,7 @@ describe("Roadmap Page", () => {
       );
     });
 
-    // Default Supabase mock - authenticated user with roadmap
+    // Default Supabase mock - authenticated user
     const mockSupabaseClient = {
       auth: {
         getUser: vi.fn().mockResolvedValue({
@@ -144,20 +165,14 @@ describe("Roadmap Page", () => {
           error: null,
         }),
       },
-      from: vi.fn(() => ({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(() => ({
-              single: vi.fn().mockResolvedValue({
-                data: mockRoadmap,
-                error: null,
-              }),
-            })),
-          })),
-        })),
-      })),
     };
     mockCreateClient.mockResolvedValue(mockSupabaseClient as any);
+
+    // Default roadmap query mock - user has active roadmap
+    mockGetActiveRoadmapWithSteps.mockResolvedValue({
+      data: mockRoadmap,
+      error: null,
+    });
   });
 
   it("should redirect unauthenticated users to login", async () => {
@@ -301,20 +316,14 @@ describe("Roadmap Page", () => {
           error: null,
         }),
       },
-      from: vi.fn(() => ({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(() => ({
-              single: vi.fn().mockResolvedValue({
-                data: null,
-                error: null,
-              }),
-            })),
-          })),
-        })),
-      })),
     };
     mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any);
+
+    // Mock getActiveRoadmapWithSteps to return null (no active roadmap)
+    mockGetActiveRoadmapWithSteps.mockResolvedValueOnce({
+      data: null,
+      error: null,
+    });
 
     await RoadmapPage();
 

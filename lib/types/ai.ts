@@ -1,25 +1,23 @@
+import type { KnowledgeContent as DbKnowledgeContent } from "@/lib/supabase/types";
+
 export interface UserGoalInput {
   goalDescription: string;
   userId: string;
   timestamp: string;
 }
 
-export interface KnowledgeContent {
-  id: string;
-  title: string;
-  category: string;
-  type: "mental-model" | "cognitive-bias" | "fallacy";
-  summary: string;
-  description: string;
-  application: string;
-  keywords: string[];
-  embedding: number[];
-  goalExamples?: {
-    goal: string;
-    if_then_example: string;
-    spotting_mission_example?: string;
-  }[];
+// Simplified goal example for AI usage (without DB fields)
+export interface AIGoalExample {
+  goal: string;
+  if_then_example: string | null;
+  spotting_mission_example?: string | null;
 }
+
+// Re-export KnowledgeContent from database types with AI-friendly goal examples
+export type KnowledgeContent = DbKnowledgeContent & {
+  // Add the transformed goal_examples as goalExamples for AI compatibility
+  goalExamples?: AIGoalExample[];
+};
 
 export interface UserLearningHistory {
   userId: string;
@@ -38,7 +36,7 @@ export interface RoadmapStep {
   knowledgeContentId: string;
   title: string;
   type: "mental-model" | "cognitive-bias" | "fallacy";
-  category: string;
+  category: string | null;
   relevanceScore: number;
   learningStatus: "new" | "reinforcement";
   reinforcementContext?: {

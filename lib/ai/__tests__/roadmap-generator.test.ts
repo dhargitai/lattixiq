@@ -22,12 +22,13 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "First principles thinking involves breaking down complicated problems...",
       application: "To use first principles thinking, start by questioning assumptions...",
       keywords: ["problem-solving", "analysis", "fundamentals"],
-      embedding: new Array(1536).fill(0.1),
+      embedding: JSON.stringify(new Array(1536).fill(0.1)),
       goalExamples: [
         {
           goal: "Improve decision making",
           if_then_example:
             "If I face a complex decision, then I will break it down to fundamental truths",
+          spotting_mission_example: null,
         },
       ],
       similarity: 0.85,
@@ -41,7 +42,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Confirmation bias is our tendency to cherry-pick information...",
       application: "To counter confirmation bias, actively seek disconfirming evidence...",
       keywords: ["bias", "psychology", "decision-making"],
-      embedding: new Array(1536).fill(0.2),
+      embedding: JSON.stringify(new Array(1536).fill(0.2)),
       similarity: 0.75,
     },
     {
@@ -53,7 +54,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Systems thinking is a holistic approach to analysis...",
       application: "Look for feedback loops and interconnections...",
       keywords: ["systems", "holistic", "interactions"],
-      embedding: new Array(1536).fill(0.15),
+      embedding: JSON.stringify(new Array(1536).fill(0.15)),
       similarity: 0.7,
     },
     {
@@ -65,7 +66,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Present bias leads us to prioritize immediate gratification...",
       application: "Use commitment devices and future visualization...",
       keywords: ["bias", "time", "rewards"],
-      embedding: new Array(1536).fill(0.18),
+      embedding: JSON.stringify(new Array(1536).fill(0.18)),
       similarity: 0.65,
     },
     {
@@ -77,7 +78,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "The Pareto principle states that roughly 80% of effects...",
       application: "Identify and focus on the vital few activities...",
       keywords: ["productivity", "efficiency", "focus"],
-      embedding: new Array(1536).fill(0.12),
+      embedding: JSON.stringify(new Array(1536).fill(0.12)),
       similarity: 0.8,
     },
     {
@@ -89,7 +90,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "The sunk cost fallacy occurs when we continue...",
       application: "Ignore past investments when making future decisions...",
       keywords: ["fallacy", "investment", "decision"],
-      embedding: new Array(1536).fill(0.14),
+      embedding: JSON.stringify(new Array(1536).fill(0.14)),
       similarity: 0.6,
     },
     {
@@ -101,7 +102,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Inversion involves approaching problems from the opposite end...",
       application: "Ask 'What would make this fail?' instead of 'How to succeed?'",
       keywords: ["problem-solving", "reverse", "thinking"],
-      embedding: new Array(1536).fill(0.11),
+      embedding: JSON.stringify(new Array(1536).fill(0.11)),
       similarity: 0.72,
     },
     {
@@ -113,7 +114,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Growth mindset is the belief that talents can be developed...",
       application: "Embrace challenges and view failures as learning opportunities...",
       keywords: ["mindset", "learning", "development"],
-      embedding: new Array(1536).fill(0.13),
+      embedding: JSON.stringify(new Array(1536).fill(0.13)),
       similarity: 0.68,
     },
     {
@@ -125,7 +126,7 @@ vi.mock("../roadmap-supabase-service", () => {
       description: "Anchoring bias occurs when we rely too heavily on initial information...",
       application: "Question initial assumptions and seek multiple perspectives...",
       keywords: ["bias", "anchoring", "judgment"],
-      embedding: new Array(1536).fill(0.16),
+      embedding: JSON.stringify(new Array(1536).fill(0.16)),
       similarity: 0.62,
     },
     {
@@ -138,7 +139,7 @@ vi.mock("../roadmap-supabase-service", () => {
         "Deep work refers to professional activities performed in a state of distraction-free concentration...",
       application: "Schedule blocks of uninterrupted time for important tasks...",
       keywords: ["focus", "productivity", "concentration"],
-      embedding: new Array(1536).fill(0.17),
+      embedding: JSON.stringify(new Array(1536).fill(0.17)),
       similarity: 0.76,
     },
   ];
@@ -242,7 +243,7 @@ describe("RoadmapGenerator", () => {
           description: "First principles thinking involves breaking down complicated problems...",
           application: "To use first principles thinking, start by questioning assumptions...",
           keywords: ["problem-solving", "analysis", "fundamentals"],
-          embedding: new Array(1536).fill(0.1),
+          embedding: JSON.stringify(new Array(1536).fill(0.1)),
           similarity: 0.85,
           isLearned: true,
           learnedData: {
@@ -261,7 +262,7 @@ describe("RoadmapGenerator", () => {
           description: "Confirmation bias is our tendency to cherry-pick information...",
           application: "To counter confirmation bias, actively seek disconfirming evidence...",
           keywords: ["bias", "psychology", "decision-making"],
-          embedding: new Array(1536).fill(0.2),
+          embedding: JSON.stringify(new Array(1536).fill(0.2)),
           similarity: 0.75,
         },
         {
@@ -273,7 +274,7 @@ describe("RoadmapGenerator", () => {
           description: "Systems thinking is a holistic approach to analysis...",
           application: "Look for feedback loops and interconnections...",
           keywords: ["systems", "holistic", "interactions"],
-          embedding: new Array(1536).fill(0.15),
+          embedding: JSON.stringify(new Array(1536).fill(0.15)),
           similarity: 0.7,
         },
         {
@@ -285,7 +286,7 @@ describe("RoadmapGenerator", () => {
           description: "Present bias leads us to prioritize immediate gratification...",
           application: "Use commitment devices and future visualization...",
           keywords: ["bias", "time", "rewards"],
-          embedding: new Array(1536).fill(0.18),
+          embedding: JSON.stringify(new Array(1536).fill(0.18)),
           similarity: 0.65,
         },
         {
@@ -297,7 +298,7 @@ describe("RoadmapGenerator", () => {
           description: "The Pareto principle states that roughly 80% of effects...",
           application: "Identify and focus on the vital few activities...",
           keywords: ["productivity", "efficiency", "focus"],
-          embedding: new Array(1536).fill(0.12),
+          embedding: JSON.stringify(new Array(1536).fill(0.12)),
           similarity: 0.8,
         },
       ]);
@@ -369,7 +370,7 @@ describe("RoadmapGenerator", () => {
           description: "First principles thinking involves breaking down complicated problems...",
           application: "To use first principles thinking, start by questioning assumptions...",
           keywords: ["problem-solving", "analysis", "fundamentals"],
-          embedding: new Array(1536).fill(0.1),
+          embedding: JSON.stringify(new Array(1536).fill(0.1)),
         },
         {
           id: "2",
@@ -380,7 +381,7 @@ describe("RoadmapGenerator", () => {
           description: "Confirmation bias is our tendency to cherry-pick information...",
           application: "To counter confirmation bias, actively seek disconfirming evidence...",
           keywords: ["bias", "psychology", "decision-making"],
-          embedding: new Array(1536).fill(0.2),
+          embedding: JSON.stringify(new Array(1536).fill(0.2)),
         },
       ]);
 
@@ -447,7 +448,7 @@ describe("RoadmapGenerator", () => {
         description: "Description",
         application: "Application",
         keywords: ["problem-solving"],
-        embedding: new Array(1536).fill(0.1),
+        embedding: JSON.stringify(new Array(1536).fill(0.1)),
         finalScore: 0.7,
         semanticSimilarity: 0.7,
         categoryAlignment: 0.7,
@@ -467,7 +468,7 @@ describe("RoadmapGenerator", () => {
         description: "Description",
         application: "Application",
         keywords: ["problem-solving"],
-        embedding: new Array(1536).fill(0.11),
+        embedding: JSON.stringify(new Array(1536).fill(0.11)),
         finalScore: 0.65,
         semanticSimilarity: 0.65,
         categoryAlignment: 0.7,

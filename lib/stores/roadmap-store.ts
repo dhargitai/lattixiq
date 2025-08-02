@@ -1,34 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createClient } from "@/lib/supabase/client";
+import type {
+  Roadmap as DBRoadmap,
+  RoadmapStep as DBRoadmapStep,
+  KnowledgeContent,
+} from "@/lib/supabase/types";
 
-interface Roadmap {
-  id: string;
-  user_id: string;
-  goal_description: string;
-  status: "active" | "completed" | "inactive";
-  created_at: string;
-  updated_at: string;
+interface Roadmap extends DBRoadmap {
   steps: RoadmapStep[];
 }
 
-interface RoadmapStep {
-  id: string;
-  roadmap_id: string;
-  knowledge_content_id: string;
-  order_index: number;
-  status: "unlocked" | "locked" | "completed";
-  created_at: string;
-  knowledge_content: {
-    id: string;
-    title: string;
-    category: string;
-    summary: string;
-    details?: string;
-    how_to_use?: string;
-    examples?: string[];
-    relationships?: string[];
-  };
+interface RoadmapStep extends DBRoadmapStep {
+  knowledge_content: KnowledgeContent;
 }
 
 interface RoadmapViewState {
