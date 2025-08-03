@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { RoadmapGenerator } from "@/lib/ai/roadmap-generator";
 import { RoadmapSupabaseService } from "@/lib/ai/roadmap-supabase-service";
 import { RoadmapValidator } from "@/lib/ai/roadmap-validation";
 import { RoadmapErrorHandler } from "@/lib/ai/roadmap-error-handler";
 import type { UserGoalInput } from "@/lib/types/ai";
-import type { RoadmapWithSteps } from "@/lib/supabase/types";
+// import type { RoadmapWithSteps } from "@/lib/supabase/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     let body;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
     }
 
@@ -182,7 +183,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to retrieve existing roadmap
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
     const {

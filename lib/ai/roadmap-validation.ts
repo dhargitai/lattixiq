@@ -78,8 +78,7 @@ export class RoadmapValidator {
     );
 
     if (hasUnrealisticExpectations) {
-      processedGoal =
-        processedGoal + " (focusing on continuous improvement rather than perfection)";
+      processedGoal = `${processedGoal} (focusing on continuous improvement rather than perfection)`;
     }
 
     return {
@@ -127,9 +126,9 @@ export class RoadmapValidator {
 
     // Check learning mix accuracy
     const actualNewConcepts = roadmap.steps.filter((s) => s.learningStatus === "new").length;
-    const actualReinforcementConcepts = roadmap.steps.filter(
-      (s) => s.learningStatus === "reinforcement"
-    ).length;
+    // const _actualReinforcementConcepts = roadmap.steps.filter(
+    //   (s) => s.learningStatus === "reinforcement"
+    // ).length;
 
     if (actualNewConcepts !== roadmap.learningMixSummary.newConcepts) {
       errors.push("Learning mix summary doesn't match actual step counts");
@@ -182,7 +181,7 @@ export class RoadmapValidator {
     }
 
     // User inactive for long period
-    const NINETY_DAYS = 90 * 24 * 60 * 60 * 1000;
+    // const NINETY_DAYS = 90 * 24 * 60 * 60 * 1000;
     if (userLearnedCount > 0) {
       // This check would need last activity date from user data
       // Simplified for now

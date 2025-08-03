@@ -1,0 +1,10 @@
+
+> lattixiq@0.1.0 build
+> next build
+
+   ▲ Next.js 15.4.5
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 8.0s
+   Linting and checking validity of types ...

@@ -61,11 +61,11 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
           if (roadmap) {
             // Sort steps by order_index
-            roadmap.steps.sort((a: any, b: any) => a.order_index - b.order_index);
+            roadmap.steps.sort((a: any, b: any) => a.order_index - b.order_index); // eslint-disable-line @typescript-eslint/no-explicit-any
 
             // Find the current step index (first non-completed step)
             const currentIndex = roadmap.steps.findIndex(
-              (step: any) => step.status !== "completed"
+              (step: any) => step.status !== "completed" // eslint-disable-line @typescript-eslint/no-explicit-any
             );
 
             set({
@@ -76,7 +76,7 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           } else {
             set({ activeRoadmap: null, isLoading: false });
           }
-        } catch (error) {
+        } catch {
           set({ error: "Failed to fetch roadmap", isLoading: false });
         }
       },
@@ -156,7 +156,7 @@ export const useRoadmapStore = create<RoadmapViewState>()(
             currentStepIndex: completedStepIndex + 1,
             isLoading: false,
           });
-        } catch (error) {
+        } catch {
           set({ error: "Failed to update step", isLoading: false });
         }
       },

@@ -1,6 +1,6 @@
 import type {
   RoadmapWithStepsRenamed,
-  RoadmapStepWithContent,
+  // RoadmapStepWithContent,
   RoadmapStep,
   KnowledgeContent,
 } from "@/lib/supabase/types";

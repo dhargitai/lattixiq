@@ -231,8 +231,8 @@ export class RoadmapGenerator {
       const semanticSimilarity = content.similarity;
 
       // Learning history is already included in search results
-      const isLearned = (content as any).isLearned || false;
-      const learnedData = (content as any).learnedData;
+      const isLearned = (content as any).isLearned || false; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const learnedData = (content as any).learnedData; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       let daysSinceLastUse = 0;
       let spacedRepetitionScore = 0;
@@ -627,7 +627,7 @@ export class RoadmapGenerator {
       .sort((a, b) => b.adjustedScore - a.adjustedScore);
 
     // Define foundational concepts based on goal context
-    let foundationalTitles = ["First Principles", "Mental Models"];
+    const foundationalTitles = ["First Principles", "Mental Models"];
 
     if (goalContext.isBehavioral) {
       foundationalTitles.push("Habit Formation", "Behavioral Change");
@@ -768,7 +768,7 @@ export class RoadmapGenerator {
     selected: ScoredKnowledgeContent[],
     candidates: ScoredKnowledgeContent[],
     mentalModels: number,
-    biases: number
+    _biases: number
   ) {
     // Ensure we have at least 2 mental models and 1 bias/fallacy
     const MIN_MENTAL_MODELS = 2;
@@ -837,17 +837,17 @@ export class RoadmapGenerator {
       // This is a fallback - add the highest scoring concepts of needed types
       // even if it means exceeding our target count temporarily
       if (finalMentalModels < MIN_MENTAL_MODELS) {
-        const bestModel = unselected
+        const [bestModel] = unselected
           .filter((c) => c.type === "mental-model")
-          .sort((a, b) => b.finalScore - a.finalScore)[0];
+          .sort((a, b) => b.finalScore - a.finalScore);
 
         if (bestModel && selected.length < 7) {
           selected.push(bestModel);
         } else if (bestModel) {
           // Replace the lowest scoring non-essential concept
-          const lowestNonEssential = selected
+          const [lowestNonEssential] = selected
             .filter((c) => !this.isFoundational(c.title))
-            .sort((a, b) => a.finalScore - b.finalScore)[0];
+            .sort((a, b) => a.finalScore - b.finalScore);
 
           const index = selected.indexOf(lowestNonEssential);
           if (index !== -1) {
@@ -857,21 +857,21 @@ export class RoadmapGenerator {
       }
 
       if (finalBiases < MIN_BIASES) {
-        const bestBias = unselected
+        const [bestBias] = unselected
           .filter((c) => c.type === "cognitive-bias" || c.type === "fallacy")
-          .sort((a, b) => b.finalScore - a.finalScore)[0];
+          .sort((a, b) => b.finalScore - a.finalScore);
 
         if (bestBias && selected.length < 7) {
           selected.push(bestBias);
         } else if (bestBias) {
           // Replace the lowest scoring non-essential concept
-          const lowestNonEssential = selected
+          const [lowestNonEssential] = selected
             .filter(
               (c) =>
                 !this.isFoundational(c.title) &&
                 !(c.type === "mental-model" && finalMentalModels <= MIN_MENTAL_MODELS)
             )
-            .sort((a, b) => a.finalScore - b.finalScore)[0];
+            .sort((a, b) => a.finalScore - b.finalScore);
 
           const index = selected.indexOf(lowestNonEssential);
           if (index !== -1) {
@@ -937,7 +937,7 @@ export class RoadmapGenerator {
       if (bPrereqForA) return 1;
 
       // Then by adjusted score (includes synergy)
-      return (b as any).adjustedScore - (a as any).adjustedScore || b.finalScore - a.finalScore;
+      return (b as any).adjustedScore - (a as any).adjustedScore || b.finalScore - a.finalScore; // eslint-disable-line @typescript-eslint/no-explicit-any
     });
   }
 
@@ -1021,7 +1021,7 @@ export class RoadmapGenerator {
     }
 
     // Generate specific rationales based on concept type and goal
-    const goalLower = goal.toLowerCase();
+    // const goalLower = goal.toLowerCase();
 
     if (concept.type === "cognitive-bias") {
       return `Understanding ${concept.title} helps you recognize when ${(concept.summary || "").toLowerCase()} This awareness is crucial for ${goal} because it prevents self-sabotage and improves decision quality.`;
@@ -1050,7 +1050,7 @@ export class RoadmapGenerator {
     let context = "";
     for (const [key, patterns] of Object.entries(actionPatterns)) {
       if (goalLower.includes(key)) {
-        context = patterns[0];
+        [context] = patterns;
         break;
       }
     }

@@ -6,7 +6,7 @@ export class RoadmapGenerationError extends Error {
   constructor(
     message: string,
     public code: string,
-    public details?: any,
+    public details?: unknown,
     public isRetryable = false
   ) {
     super(message);
@@ -15,28 +15,28 @@ export class RoadmapGenerationError extends Error {
 }
 
 export class EmbeddingServiceError extends RoadmapGenerationError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message, "EMBEDDING_SERVICE_ERROR", details, true);
     this.name = "EmbeddingServiceError";
   }
 }
 
 export class DatabaseSearchError extends RoadmapGenerationError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message, "DATABASE_SEARCH_ERROR", details, true);
     this.name = "DatabaseSearchError";
   }
 }
 
 export class InsufficientContentError extends RoadmapGenerationError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message, "INSUFFICIENT_CONTENT", details, false);
     this.name = "InsufficientContentError";
   }
 }
 
 export class InvalidGoalError extends RoadmapGenerationError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message, "INVALID_GOAL", details, false);
     this.name = "InvalidGoalError";
   }
@@ -105,7 +105,7 @@ export class RoadmapErrorHandler {
       userId?: string;
       goal?: string;
       phase?: string;
-      [key: string]: any;
+      [key: string]: unknown;
     }
   ): void {
     const errorData: {
@@ -114,9 +114,9 @@ export class RoadmapErrorHandler {
       stack?: string;
       timestamp: string;
       code?: string;
-      details?: any;
+      details?: unknown;
       isRetryable?: boolean;
-      [key: string]: any;
+      [key: string]: unknown;
     } = {
       name: error.name,
       message: error.message,
@@ -234,7 +234,7 @@ export class PerformanceMonitor {
    */
   static logAllStats(): void {
     console.log("[PerformanceMonitor] Statistics:");
-    for (const [operation, _] of this.metrics) {
+    for (const [operation] of this.metrics) {
       const stats = this.getStats(operation);
       if (stats) {
         console.log(`  ${operation}:`, stats);

@@ -1,0 +1,59 @@
+#!/bin/sh
+
+echo "🔨 Running build checks before push..."
+
+# Run build and capture output
+BUILD_OUTPUT=$(npm run build 2>&1)
+BUILD_EXIT_CODE=$?
+
+if [ $BUILD_EXIT_CODE -eq 0 ]; then
+  echo "✅ Build successful!"
+  exit 0
+fi
+
+echo "❌ Build failed. Attempting automatic fixes..."
+
+# Save build output to pass to fix script
+echo "$BUILD_OUTPUT" > /tmp/build-output.txt
+
+# Run ESLint with fix flag
+echo "🔧 Running ESLint auto-fix..."
+npm run fix:types
+
+# Run custom fix script for TypeScript errors
+echo "🔧 Running custom TypeScript fixes..."
+npx tsx scripts/fix-build-errors.ts "$BUILD_OUTPUT"
+
+# Check if any files were modified
+if git diff --quiet; then
+  echo "ℹ️  No files were automatically fixed"
+else
+  echo "📝 Files were modified by auto-fix"
+  # Stage any fixed files
+  git add -A
+fi
+
+# Try build again
+echo "🔨 Re-running build after fixes..."
+npm run build
+
+if [ $? -eq 0 ]; then
+  echo "✅ Build successful after fixes!"
+  
+  # Check if we have staged changes
+  if ! git diff --cached --quiet; then
+    echo "📦 Committing auto-fixes..."
+    git commit -m "fix: auto-fix build errors before push
+
+- Fixed ESLint errors
+- Fixed TypeScript type errors
+- Applied automated fixes from pre-push hook"
+  fi
+  
+  exit 0
+else
+  echo "❌ Build still failing. Please fix the following errors manually:"
+  echo ""
+  npm run build
+  exit 1
+fi

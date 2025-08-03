@@ -214,5 +214,5 @@ export function testSemanticSearch(
   return scored
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, limit)
-    .map(({ embedding, ...rest }) => rest); // Remove embedding field to match database type
+    .map(({ embedding: _embedding, ...rest }) => rest); // Remove embedding field to match database type
 }

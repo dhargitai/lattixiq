@@ -75,7 +75,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
     // Verify roadmap structure
     expect(roadmap).toMatchObject({
       id: expect.any(String),
-      userId: userId,
+      userId,
       title: expect.any(String),
       goalDescription:
         "I want to overcome procrastination and be more productive with my daily tasks",
@@ -98,6 +98,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
 
     // Verify each step has knowledge content
     roadmap.steps.forEach((step: any) => {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       expect(step.knowledgeContent).toMatchObject({
         id: expect.any(String),
         title: expect.any(String),
@@ -125,7 +126,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
     const roadmap = await response.json();
 
     // Check that we got productivity-related mental models
-    const titles = roadmap.steps.map((step: any) => step.knowledgeContent.title.toLowerCase());
+    const titles = roadmap.steps.map((step: any) => step.knowledgeContent.title.toLowerCase()); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Should include some productivity-focused mental models
     const productivityKeywords = [

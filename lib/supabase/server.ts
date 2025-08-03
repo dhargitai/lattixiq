@@ -22,8 +22,8 @@ class MockSupabaseClient {
   from(table: string) {
     return {
       select: (query?: string) => ({
-        eq: (column: string, value: any) => ({
-          eq: (column2: string, value2: any) => ({
+        eq: (_column: string, _value: unknown) => ({
+          eq: (_column2: string, _value2: unknown) => ({
             single: async () => {
               // Mock responses for different tables
               if (table === "roadmaps") {
@@ -152,7 +152,7 @@ class MockSupabaseClient {
               }
               return { data: null, error: null };
             },
-            order: (orderColumn: string, options?: any) => ({
+            order: (_orderColumn: string, _options?: unknown) => ({
               single: async () => {
                 // This is unused in our mock
                 return { data: null, error: { code: "PGRST116" } };
@@ -192,7 +192,7 @@ export async function createClient() {
   // Return mock client in E2E test mode
   if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
     console.log("E2E test mode - using mock Supabase client");
-    return new MockSupabaseClient() as any;
+    return new MockSupabaseClient() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   const cookieStore = await cookies();
