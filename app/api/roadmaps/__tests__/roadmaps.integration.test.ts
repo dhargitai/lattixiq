@@ -99,7 +99,6 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
     // Verify each step has knowledge content
     roadmap.steps.forEach((step: any) => {
       // eslint-disable-line @typescript-eslint/no-explicit-any
-
       expect(step.knowledgeContent).toMatchObject({
         id: expect.any(String),
         title: expect.any(String),

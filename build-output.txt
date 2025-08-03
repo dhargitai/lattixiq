@@ -6,5 +6,5 @@
    - Environments: .env.local
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 8.0s
+ ✓ Compiled successfully in 2000ms
    Linting and checking validity of types ...
