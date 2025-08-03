@@ -16,6 +16,21 @@ import type {
   RoadmapStep,
   ScoredKnowledgeContent,
 } from "@/lib/types/ai";
+import type { KnowledgeSearchResult } from "./roadmap-supabase-service";
+
+// Extended interface for search results with learning data
+interface KnowledgeSearchResultWithLearning extends KnowledgeSearchResult {
+  isLearned?: boolean;
+  learnedData?: {
+    lastReflectionAt: string;
+    effectivenessRating: number;
+  };
+}
+
+// Extended interface for scored content with adjusted score
+interface ScoredKnowledgeContentWithAdjusted extends ScoredKnowledgeContent {
+  adjustedScore?: number;
+}
 
 const SIMILARITY_THRESHOLD = 0.3;
 const OPTIMAL_SPACED_INTERVALS = [1, 3, 7, 30, 90];
@@ -227,12 +242,15 @@ export class RoadmapGenerator {
     const scoredContent: ScoredKnowledgeContent[] = [];
 
     for (const content of searchResults) {
+      // Cast to extended type that may include learning data
+      const contentWithLearning = content as KnowledgeSearchResultWithLearning;
+
       // Similarity is already calculated by the database
-      const semanticSimilarity = content.similarity;
+      const semanticSimilarity = contentWithLearning.similarity;
 
       // Learning history is already included in search results
-      const isLearned = (content as any).isLearned || false;
-      const { learnedData } = content as any;
+      const isLearned = contentWithLearning.isLearned || false;
+      const { learnedData } = contentWithLearning;
       let daysSinceLastUse = 0;
       let spacedRepetitionScore = 0;
 
@@ -936,7 +954,12 @@ export class RoadmapGenerator {
       if (bPrereqForA) return 1;
 
       // Then by adjusted score (includes synergy)
-      return (b as any).adjustedScore - (a as any).adjustedScore || b.finalScore - a.finalScore;
+      const aWithAdjusted = a as ScoredKnowledgeContentWithAdjusted;
+      const bWithAdjusted = b as ScoredKnowledgeContentWithAdjusted;
+      return (
+        (bWithAdjusted.adjustedScore ?? bWithAdjusted.finalScore) -
+        (aWithAdjusted.adjustedScore ?? aWithAdjusted.finalScore)
+      );
     });
   }
 

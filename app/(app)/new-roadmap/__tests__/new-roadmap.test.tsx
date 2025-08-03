@@ -22,15 +22,16 @@ vi.mock("@/lib/auth/supabase", () => ({
 
 const mockGetUser = vi.mocked(await import("@/lib/auth/supabase").then((m) => m.getUser));
 
-// Mock fetch globally
-global.fetch = vi.fn();
+// Mock fetch globally with proper typing
+const mockFetch = vi.fn<typeof fetch>();
+global.fetch = mockFetch;
 
 describe("New Roadmap Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
     // Reset fetch mock
-    (global.fetch as any).mockReset();
+    mockFetch.mockReset();
   });
 
   describe("Authentication", () => {
@@ -284,10 +285,10 @@ describe("New Roadmap Page", () => {
       const user = userEvent.setup();
 
       // Mock successful API response
-      (global.fetch as any).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
-      });
+      } as Response);
 
       render(await NewRoadmapPage());
 
@@ -306,10 +307,10 @@ describe("New Roadmap Page", () => {
       const user = userEvent.setup();
 
       // Mock successful API response
-      (global.fetch as any).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
-      });
+      } as Response);
 
       render(await NewRoadmapPage());
 
@@ -329,10 +330,10 @@ describe("New Roadmap Page", () => {
       const user = userEvent.setup();
 
       // Mock successful API response
-      (global.fetch as any).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
-      });
+      } as Response);
 
       render(await NewRoadmapPage());
 

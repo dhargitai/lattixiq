@@ -36,6 +36,10 @@ interface CachedSearchResults {
 export class RoadmapCache {
   private embeddingCache: LRUCache<string, CachedEmbedding>;
   private searchCache: LRUCache<string, CachedSearchResults>;
+  private stats = {
+    embeddings: { hits: 0, misses: 0 },
+    search: { hits: 0, misses: 0 },
+  };
 
   constructor(config?: { embeddings?: Partial<CacheConfig>; search?: Partial<CacheConfig> }) {
     // Default configuration
@@ -120,9 +124,11 @@ export class RoadmapCache {
     const cached = this.embeddingCache.get(key);
 
     if (cached) {
+      this.stats.embeddings.hits++;
       return cached.embedding;
     }
 
+    this.stats.embeddings.misses++;
     return null;
   }
 
@@ -150,9 +156,11 @@ export class RoadmapCache {
     const cached = this.searchCache.get(key);
 
     if (cached) {
+      this.stats.search.hits++;
       return cached.results;
     }
 
+    this.stats.search.misses++;
     return null;
   }
 
@@ -201,13 +209,13 @@ export class RoadmapCache {
     return {
       embeddings: {
         size: this.embeddingCache.size,
-        hits: (this.embeddingCache as any).hits || 0,
-        misses: (this.embeddingCache as any).misses || 0,
+        hits: this.stats.embeddings.hits,
+        misses: this.stats.embeddings.misses,
       },
       search: {
         size: this.searchCache.size,
-        hits: (this.searchCache as any).hits || 0,
-        misses: (this.searchCache as any).misses || 0,
+        hits: this.stats.search.hits,
+        misses: this.stats.search.misses,
       },
     };
   }

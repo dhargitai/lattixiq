@@ -60,12 +60,10 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           }
 
           if (roadmap) {
-            // Sort steps by order_index
-            roadmap.steps.sort((a: any, b: any) => a.order_index - b.order_index);
+            // Sort steps by order
+            roadmap.steps.sort((a, b) => a.order - b.order);
             // Find the current step index (first non-completed step)
-            const currentIndex = roadmap.steps.findIndex(
-              (step: any) => step.status !== "completed"
-            );
+            const currentIndex = roadmap.steps.findIndex((step) => step.status !== "completed");
 
             set({
               activeRoadmap: roadmap,

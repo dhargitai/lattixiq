@@ -165,14 +165,32 @@ vi.mock("../roadmap-supabase-service", () => {
 // Import modules after mocks are set up
 import { RoadmapGenerator } from "../roadmap-generator";
 import { RoadmapValidator } from "../roadmap-validation";
+import type { ScoredKnowledgeContent } from "@/lib/types/ai";
+import type { RoadmapSupabaseService } from "../roadmap-supabase-service";
+
+// Interface for accessing private methods in tests
+interface TestableRoadmapGenerator {
+  analyzeGoalContext(goal: string): {
+    isBehavioral: boolean;
+    isCognitive: boolean;
+    domain: "professional" | "personal" | "general";
+  };
+  calculateSynergyScore: (
+    concept: ScoredKnowledgeContent,
+    selectedConcepts: ScoredKnowledgeContent[]
+  ) => number;
+  supabaseService: RoadmapSupabaseService;
+}
 
 describe("RoadmapGenerator", () => {
   let generator: RoadmapGenerator;
+  let testableGenerator: TestableRoadmapGenerator;
   let mockLearningHistory: UserLearningHistory;
 
   beforeEach(() => {
     vi.clearAllMocks();
     generator = new RoadmapGenerator();
+    testableGenerator = generator as unknown as TestableRoadmapGenerator;
     mockLearningHistory = {
       userId: "test-user",
       learnedConcepts: [],
@@ -183,19 +201,19 @@ describe("RoadmapGenerator", () => {
   describe("Goal Analysis", () => {
     it("should identify behavioral goals", () => {
       const goal = "I want to stop procrastinating on important work";
-      const analysis = (generator as any).analyzeGoalContext(goal);
+      const analysis = testableGenerator.analyzeGoalContext(goal);
       expect(analysis.isBehavioral).toBe(true);
     });
 
     it("should identify cognitive goals", () => {
       const goal = "I want to think more clearly and make better decisions";
-      const analysis = (generator as any).analyzeGoalContext(goal);
+      const analysis = testableGenerator.analyzeGoalContext(goal);
       expect(analysis.isCognitive).toBe(true);
     });
 
     it("should identify professional domain", () => {
       const goal = "I want to advance in my career";
-      const analysis = (generator as any).analyzeGoalContext(goal);
+      const analysis = testableGenerator.analyzeGoalContext(goal);
       expect(analysis.domain).toBe("professional");
     });
   });
@@ -234,7 +252,7 @@ describe("RoadmapGenerator", () => {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       // Mock a learning history with a learned concept
-      const mockServiceWithHistory = (generator as any).supabaseService;
+      const mockServiceWithHistory = testableGenerator.supabaseService;
       mockServiceWithHistory.searchKnowledgeContentByEmbedding = vi.fn().mockResolvedValue([
         {
           id: "1",
@@ -361,7 +379,7 @@ describe("RoadmapGenerator", () => {
   describe("Advanced Synthesis", () => {
     it("should generate synthesis roadmap for users with 80+ learned concepts", async () => {
       // Mock the getKnowledgeContent for advanced synthesis
-      const mockService = (generator as any).supabaseService;
+      const mockService = testableGenerator.supabaseService;
       mockService.getKnowledgeContent = vi.fn().mockResolvedValue([
         {
           id: "1",
@@ -439,7 +457,7 @@ describe("RoadmapGenerator", () => {
   describe("Synergy Scoring", () => {
     it("should prioritize concepts that work well together", () => {
       // Access private method for testing
-      const synergyScore = (generator as any).calculateSynergyScore;
+      const synergyScore = testableGenerator.calculateSynergyScore.bind(testableGenerator);
       const concept1 = {
         id: "1",
         title: "First Principles Thinking",

@@ -2,6 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 
+// Type for the Supabase server client
+type SupabaseServerClient = ReturnType<typeof createServerClient<Database>>;
+
 // Global state for E2E tests
 let mockHasCreatedRoadmap = false;
 
@@ -191,7 +194,7 @@ export async function createClient() {
   // Return mock client in E2E test mode
   if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
     console.log("E2E test mode - using mock Supabase client");
-    return new MockSupabaseClient() as any;
+    return new MockSupabaseClient() as unknown as SupabaseServerClient;
   }
 
   const cookieStore = await cookies();

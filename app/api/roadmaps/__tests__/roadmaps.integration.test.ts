@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { createClient } from "@supabase/supabase-js";
+import type { KnowledgeContent } from "@/lib/supabase/types";
 
 /**
  * Integration tests for the /api/roadmaps endpoint
@@ -12,6 +13,37 @@ import { createClient } from "@supabase/supabase-js";
  *
  * If these requirements aren't met, tests will be skipped automatically.
  */
+
+// Type for the API response
+interface RoadmapApiResponse {
+  roadmapId: string;
+  goalDescription: string;
+  totalSteps: number;
+  estimatedDuration: string;
+  learningMixSummary: {
+    newConcepts: number;
+    reinforcementConcepts: number;
+    expansionPercentage: number;
+  };
+  steps: Array<{
+    order: number;
+    knowledgeContentId: string;
+    title: string;
+    type: "mental-model" | "cognitive-bias" | "fallacy";
+    category: string | null;
+    relevanceScore: number;
+    learningStatus: "new" | "reinforcement";
+    reinforcementContext?: {
+      lastAppliedDaysAgo: number;
+      effectivenessRating: number;
+      spacedInterval: string;
+    };
+    rationaleForInclusion: string;
+    suggestedFocus: string;
+    status?: "unlocked" | "locked" | "completed";
+    knowledgeContent: KnowledgeContent;
+  }>;
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -70,7 +102,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
 
     expect(response.status).toBe(201);
 
-    const roadmap = await response.json();
+    const roadmap: RoadmapApiResponse = await response.json();
 
     // Verify roadmap structure
     expect(roadmap).toMatchObject({
@@ -97,7 +129,7 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
     }
 
     // Verify each step has knowledge content
-    roadmap.steps.forEach((step: any) => {
+    roadmap.steps.forEach((step) => {
       expect(step.knowledgeContent).toMatchObject({
         id: expect.any(String),
         title: expect.any(String),
@@ -122,10 +154,10 @@ describe.skipIf(!hasSupabaseCredentials)("/api/roadmaps Integration Tests", () =
 
     expect(response.status).toBe(201);
 
-    const roadmap = await response.json();
+    const roadmap: RoadmapApiResponse = await response.json();
 
     // Check that we got productivity-related mental models
-    const titles = roadmap.steps.map((step: any) => step.knowledgeContent.title.toLowerCase());
+    const titles = roadmap.steps.map((step) => step.knowledgeContent.title.toLowerCase());
     // Should include some productivity-focused mental models
     const productivityKeywords = [
       "parkinson",

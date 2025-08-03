@@ -37,9 +37,13 @@ vi.mock("@/lib/transformers/roadmap-transformers", () => ({
 
 // Import modules after mocks
 import { createClient } from "@/lib/supabase/server";
+import type { createClient as createClientType } from "@/lib/supabase/server";
 import RoadmapView from "@/components/features/roadmap/RoadmapView";
 import { getActiveRoadmapWithSteps } from "@/lib/queries/roadmap-queries";
 import RoadmapPage from "../page";
+
+// Type for Supabase client
+type SupabaseClientType = Awaited<ReturnType<typeof createClientType>>;
 
 // Mock data
 const mockRoadmap = {
@@ -165,8 +169,8 @@ describe("Roadmap Page", () => {
           error: null,
         }),
       },
-    };
-    mockCreateClient.mockResolvedValue(mockSupabaseClient as any);
+    } as unknown as SupabaseClientType;
+    mockCreateClient.mockResolvedValue(mockSupabaseClient);
     // Default roadmap query mock - user has active roadmap
     mockGetActiveRoadmapWithSteps.mockResolvedValue({
       data: mockRoadmap,
@@ -192,8 +196,8 @@ describe("Roadmap Page", () => {
           })),
         })),
       })),
-    };
-    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any);
+    } as unknown as SupabaseClientType;
+    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient);
     await RoadmapPage();
 
     expect(mockRedirect).toHaveBeenCalledWith("/login");
@@ -314,8 +318,8 @@ describe("Roadmap Page", () => {
           error: null,
         }),
       },
-    };
-    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any);
+    } as unknown as SupabaseClientType;
+    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient);
     // Mock getActiveRoadmapWithSteps to return null (no active roadmap)
     mockGetActiveRoadmapWithSteps.mockResolvedValueOnce({
       data: null,

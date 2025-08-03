@@ -1,5 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { embed, embedMany } from "ai";
+import type { KnowledgeContent, AIGoalExample } from "@/lib/types/ai";
 
 export interface EmbeddingInput {
   id: string;
@@ -43,7 +44,7 @@ export async function generateEmbeddings(inputs: EmbeddingInput[]): Promise<Embe
 /**
  * Prepares knowledge content text for embedding by combining relevant fields
  */
-export function prepareTextForEmbedding(content: any): string {
+export function prepareTextForEmbedding(content: KnowledgeContent): string {
   // Combine all relevant text fields with appropriate weighting
   const parts = [
     content.title ? `Title: ${content.title}` : "",
@@ -57,7 +58,7 @@ export function prepareTextForEmbedding(content: any): string {
 
   // Add goal examples if present
   if (content.goalExamples?.length) {
-    content.goalExamples.forEach((example: any) => {
+    content.goalExamples.forEach((example: AIGoalExample) => {
       if (example.goal) {
         parts.push(`Goal Example: ${example.goal}`);
       }
