@@ -1,13 +1,30 @@
 #!/bin/sh
 
-echo "🔨 Running build checks before push..."
+echo "🔨 Running pre-push checks..."
+
+# Run tests first
+echo "🧪 Running tests..."
+TEST_OUTPUT=$(npm run test 2>&1)
+TEST_EXIT_CODE=$?
+
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+  echo "❌ Tests failed:"
+  echo "$TEST_OUTPUT"
+  echo ""
+  echo "Please fix the failing tests before pushing."
+  exit 1
+fi
+
+echo "✅ Tests passed!"
 
 # Run build and capture output
+echo "🔨 Running build..."
 BUILD_OUTPUT=$(npm run build 2>&1)
 BUILD_EXIT_CODE=$?
 
 if [ $BUILD_EXIT_CODE -eq 0 ]; then
   echo "✅ Build successful!"
+  echo "✅ All pre-push checks passed!"
   exit 0
 fi
 
