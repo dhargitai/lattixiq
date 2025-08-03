@@ -2,9 +2,9 @@
 /**
  * Automated build error fixer
  * Parses build output and attempts to fix common errors
+ * Type-related errors are reported but not auto-fixed
  */
 
-import { execSync } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 
@@ -15,6 +15,16 @@ interface BuildError {
   rule: string;
   message: string;
 }
+
+// Type-related error rules that should not be auto-fixed
+const TYPE_ERROR_RULES = [
+  "@typescript-eslint/no-explicit-any",
+  "@typescript-eslint/no-unsafe-assignment",
+  "@typescript-eslint/no-unsafe-member-access",
+  "@typescript-eslint/no-unsafe-call",
+  "@typescript-eslint/no-unsafe-return",
+  "@typescript-eslint/no-unsafe-argument",
+];
 
 async function main() {
   const buildOutput = process.argv[2] || "";
@@ -29,21 +39,39 @@ async function main() {
   const errors = parseBuildErrors(buildOutput);
 
   if (errors.length === 0) {
-    console.log("No fixable errors found");
+    console.log("No errors found");
     process.exit(0);
   }
 
-  console.log(`Found ${errors.length} errors to fix`);
+  // Separate type errors from fixable errors
+  const typeErrors = errors.filter((e) => TYPE_ERROR_RULES.includes(e.rule));
+  const fixableErrors = errors.filter((e) => !TYPE_ERROR_RULES.includes(e.rule));
 
-  // Group errors by file
-  const errorsByFile = groupErrorsByFile(errors);
-
-  // Fix errors in each file
-  for (const [filePath, fileErrors] of Object.entries(errorsByFile)) {
-    await fixFileErrors(filePath, fileErrors);
+  if (typeErrors.length > 0) {
+    console.log(`\n❌ Found ${typeErrors.length} type errors that require manual fixing:`);
+    reportTypeErrors(typeErrors);
   }
 
-  console.log("✅ Finished applying fixes");
+  if (fixableErrors.length > 0) {
+    console.log(`\n🔧 Found ${fixableErrors.length} auto-fixable errors`);
+
+    // Group errors by file
+    const errorsByFile = groupErrorsByFile(fixableErrors);
+
+    // Fix errors in each file
+    for (const [filePath, fileErrors] of Object.entries(errorsByFile)) {
+      await fixFileErrors(filePath, fileErrors);
+    }
+
+    console.log("\n✅ Finished applying automatic fixes");
+  }
+
+  // Exit with error code if type errors were found
+  if (typeErrors.length > 0) {
+    console.log("\n⚠️  Type errors detected. Please fix them manually before pushing.");
+    console.log("These errors cannot be auto-fixed as they may hide important type safety issues.");
+    process.exit(1);
+  }
 }
 
 function parseBuildErrors(output: string): BuildError[] {
@@ -94,6 +122,25 @@ function groupErrorsByFile(errors: BuildError[]): Record<string, BuildError[]> {
   );
 }
 
+function reportTypeErrors(typeErrors: BuildError[]) {
+  // Group by file for better readability
+  const errorsByFile = groupErrorsByFile(typeErrors);
+
+  for (const [filePath, fileErrors] of Object.entries(errorsByFile)) {
+    console.log(`\n📄 ${filePath}:`);
+    for (const error of fileErrors) {
+      console.log(`   Line ${error.line}:${error.column} - ${error.message}`);
+      console.log(`   Rule: ${error.rule}`);
+    }
+  }
+
+  console.log(`\n💡 Suggestions for fixing type errors:`);
+  console.log(`   - Define proper interfaces/types for your data structures`);
+  console.log(`   - Use type assertions only when you're certain about the type`);
+  console.log(`   - For test mocks, consider using proper type definitions or mock libraries`);
+  console.log(`   - Use 'unknown' instead of 'any' and add type guards where needed`);
+}
+
 async function fixFileErrors(filePath: string, errors: BuildError[]) {
   try {
     console.log(`\n📝 Fixing ${filePath}...`);
@@ -109,10 +156,6 @@ async function fixFileErrors(filePath: string, errors: BuildError[]) {
       console.log(`  - Line ${error.line}: ${error.rule}`);
 
       switch (error.rule) {
-        case "@typescript-eslint/no-explicit-any":
-          lines = fixExplicitAny(lines, error);
-          break;
-
         case "no-unused-vars":
         case "@typescript-eslint/no-unused-vars":
           lines = fixUnusedVars(lines, error);
@@ -133,38 +176,6 @@ async function fixFileErrors(filePath: string, errors: BuildError[]) {
   } catch (err) {
     console.error(`  ❌ Error fixing ${filePath}:`, err);
   }
-}
-
-function fixExplicitAny(lines: string[], error: BuildError): string[] {
-  const lineIndex = error.line - 1;
-  if (lineIndex >= 0 && lineIndex < lines.length) {
-    let line = lines[lineIndex];
-
-    // For test files, we need to be more careful
-    if (error.file.includes(".test.")) {
-      // Don't change 'as any' in test files - it's often needed for mocks
-      // Only add eslint-disable comment
-      if (!line.includes("eslint-disable")) {
-        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
-      }
-    } else {
-      // In non-test files, try to be more specific
-      // For function parameters with : any
-      if (line.match(/\([^)]*:\s*any[^)]*\)/)) {
-        // Keep as any for now, add comment
-        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
-      } else if (line.includes("as any")) {
-        // Keep as any, add comment
-        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
-      } else {
-        // For other cases, replace with unknown
-        line = line.replace(/:\s*any\b/g, ": unknown");
-      }
-    }
-
-    lines[lineIndex] = line;
-  }
-  return lines;
 }
 
 function fixUnusedVars(lines: string[], error: BuildError): string[] {

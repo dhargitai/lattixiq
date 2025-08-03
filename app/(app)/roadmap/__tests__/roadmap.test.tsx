@@ -166,8 +166,7 @@ describe("Roadmap Page", () => {
         }),
       },
     };
-    mockCreateClient.mockResolvedValue(mockSupabaseClient as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-
+    mockCreateClient.mockResolvedValue(mockSupabaseClient as any);
     // Default roadmap query mock - user has active roadmap
     mockGetActiveRoadmapWithSteps.mockResolvedValue({
       data: mockRoadmap,
@@ -194,8 +193,7 @@ describe("Roadmap Page", () => {
         })),
       })),
     };
-    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-
+    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any);
     await RoadmapPage();
 
     expect(mockRedirect).toHaveBeenCalledWith("/login");
@@ -317,8 +315,7 @@ describe("Roadmap Page", () => {
         }),
       },
     };
-    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any); // eslint-disable-line @typescript-eslint/no-explicit-any
-
+    mockCreateClient.mockResolvedValueOnce(mockSupabaseClient as any);
     // Mock getActiveRoadmapWithSteps to return null (no active roadmap)
     mockGetActiveRoadmapWithSteps.mockResolvedValueOnce({
       data: null,

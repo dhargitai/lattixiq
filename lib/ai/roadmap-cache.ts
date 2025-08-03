@@ -201,13 +201,13 @@ export class RoadmapCache {
     return {
       embeddings: {
         size: this.embeddingCache.size,
-        hits: (this.embeddingCache as any).hits || 0, // eslint-disable-line @typescript-eslint/no-explicit-any
-        misses: (this.embeddingCache as any).misses || 0, // eslint-disable-line @typescript-eslint/no-explicit-any
+        hits: (this.embeddingCache as any).hits || 0,
+        misses: (this.embeddingCache as any).misses || 0,
       },
       search: {
         size: this.searchCache.size,
-        hits: (this.searchCache as any).hits || 0, // eslint-disable-line @typescript-eslint/no-explicit-any
-        misses: (this.searchCache as any).misses || 0, // eslint-disable-line @typescript-eslint/no-explicit-any
+        hits: (this.searchCache as any).hits || 0,
+        misses: (this.searchCache as any).misses || 0,
       },
     };
   }

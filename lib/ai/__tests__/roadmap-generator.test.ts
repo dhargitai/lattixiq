@@ -183,19 +183,19 @@ describe("RoadmapGenerator", () => {
   describe("Goal Analysis", () => {
     it("should identify behavioral goals", () => {
       const goal = "I want to stop procrastinating on important work";
-      const analysis = (generator as any).analyzeGoalContext(goal); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const analysis = (generator as any).analyzeGoalContext(goal);
       expect(analysis.isBehavioral).toBe(true);
     });
 
     it("should identify cognitive goals", () => {
       const goal = "I want to think more clearly and make better decisions";
-      const analysis = (generator as any).analyzeGoalContext(goal); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const analysis = (generator as any).analyzeGoalContext(goal);
       expect(analysis.isCognitive).toBe(true);
     });
 
     it("should identify professional domain", () => {
       const goal = "I want to advance in my career";
-      const analysis = (generator as any).analyzeGoalContext(goal); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const analysis = (generator as any).analyzeGoalContext(goal);
       expect(analysis.domain).toBe("professional");
     });
   });
@@ -234,7 +234,7 @@ describe("RoadmapGenerator", () => {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       // Mock a learning history with a learned concept
-      const mockServiceWithHistory = (generator as any).supabaseService; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const mockServiceWithHistory = (generator as any).supabaseService;
       mockServiceWithHistory.searchKnowledgeContentByEmbedding = vi.fn().mockResolvedValue([
         {
           id: "1",
@@ -361,7 +361,7 @@ describe("RoadmapGenerator", () => {
   describe("Advanced Synthesis", () => {
     it("should generate synthesis roadmap for users with 80+ learned concepts", async () => {
       // Mock the getKnowledgeContent for advanced synthesis
-      const mockService = (generator as any).supabaseService; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const mockService = (generator as any).supabaseService;
       mockService.getKnowledgeContent = vi.fn().mockResolvedValue([
         {
           id: "1",
@@ -439,8 +439,7 @@ describe("RoadmapGenerator", () => {
   describe("Synergy Scoring", () => {
     it("should prioritize concepts that work well together", () => {
       // Access private method for testing
-      const synergyScore = (generator as any).calculateSynergyScore; // eslint-disable-line @typescript-eslint/no-explicit-any
-
+      const synergyScore = (generator as any).calculateSynergyScore;
       const concept1 = {
         id: "1",
         title: "First Principles Thinking",

@@ -191,7 +191,7 @@ export async function createClient() {
   // Return mock client in E2E test mode
   if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
     console.log("E2E test mode - using mock Supabase client");
-    return new MockSupabaseClient() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    return new MockSupabaseClient() as any;
   }
 
   const cookieStore = await cookies();

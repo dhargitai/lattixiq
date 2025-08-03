@@ -16,15 +16,26 @@ echo "❌ Build failed. Attempting automatic fixes..."
 # Save build output to pass to fix script
 echo "$BUILD_OUTPUT" > /tmp/build-output.txt
 
-# Run ESLint with fix flag
-echo "🔧 Running ESLint auto-fix..."
+# Run ESLint with fix flag for simple issues
+echo "🔧 Running ESLint auto-fix for simple issues..."
 npm run fix:types
 
 # Run custom fix script for TypeScript errors
-echo "🔧 Running custom TypeScript fixes..."
+echo "🔧 Checking for type errors..."
 npx tsx scripts/fix-build-errors.ts "$BUILD_OUTPUT"
+FIX_EXIT_CODE=$?
 
-# Check if any files were modified
+# If fix script exited with error (type errors found), fail the push
+if [ $FIX_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ Type errors found that require manual fixing."
+  echo "Please fix the type errors listed above before pushing."
+  echo ""
+  echo "The pre-push hook prevented the push to maintain type safety."
+  exit 1
+fi
+
+# Check if any files were modified by auto-fixes
 if git diff --quiet; then
   echo "ℹ️  No files were automatically fixed"
 else
@@ -45,8 +56,7 @@ if [ $? -eq 0 ]; then
     echo "📦 Committing auto-fixes..."
     git commit -m "fix: auto-fix build errors before push
 
-- Fixed ESLint errors
-- Fixed TypeScript type errors
+- Fixed ESLint errors (unused vars, display names, etc.)
 - Applied automated fixes from pre-push hook"
   fi
   

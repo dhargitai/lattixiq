@@ -61,11 +61,10 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
           if (roadmap) {
             // Sort steps by order_index
-            roadmap.steps.sort((a: any, b: any) => a.order_index - b.order_index); // eslint-disable-line @typescript-eslint/no-explicit-any
-
+            roadmap.steps.sort((a: any, b: any) => a.order_index - b.order_index);
             // Find the current step index (first non-completed step)
             const currentIndex = roadmap.steps.findIndex(
-              (step: any) => step.status !== "completed" // eslint-disable-line @typescript-eslint/no-explicit-any
+              (step: any) => step.status !== "completed"
             );
 
             set({

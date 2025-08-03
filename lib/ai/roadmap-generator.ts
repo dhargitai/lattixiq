@@ -231,9 +231,8 @@ export class RoadmapGenerator {
       const semanticSimilarity = content.similarity;
 
       // Learning history is already included in search results
-      const isLearned = (content as any).isLearned || false; // eslint-disable-line @typescript-eslint/no-explicit-any
-      const { learnedData } = content as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
+      const isLearned = (content as any).isLearned || false;
+      const { learnedData } = content as any;
       let daysSinceLastUse = 0;
       let spacedRepetitionScore = 0;
 
@@ -937,7 +936,7 @@ export class RoadmapGenerator {
       if (bPrereqForA) return 1;
 
       // Then by adjusted score (includes synergy)
-      return (b as any).adjustedScore - (a as any).adjustedScore || b.finalScore - a.finalScore; // eslint-disable-line @typescript-eslint/no-explicit-any
+      return (b as any).adjustedScore - (a as any).adjustedScore || b.finalScore - a.finalScore;
     });
   }
 
