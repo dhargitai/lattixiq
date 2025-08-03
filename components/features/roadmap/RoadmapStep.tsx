@@ -21,7 +21,7 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
 
   const handleClick = () => {
     if (isAvailable) {
-      router.push(`/learn?step=${step.id}`);
+      router.push(`/learn/${step.id}`);
     }
   };
 

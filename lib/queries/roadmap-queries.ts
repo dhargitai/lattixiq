@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import type { RoadmapWithStepsRenamed, Roadmap, RoadmapWithSteps } from "@/lib/supabase/types";
+import type {
+  RoadmapWithStepsRenamed,
+  Roadmap,
+  RoadmapWithSteps,
+  RoadmapStepWithContent,
+} from "@/lib/supabase/types";
 
 /**
  * Get the active roadmap for a user with all steps and knowledge content
@@ -89,5 +94,29 @@ export async function hasActiveRoadmap(userId: string) {
   return {
     hasActive: count ? count > 0 : false,
     error,
+  };
+}
+
+/**
+ * Get a specific roadmap step with knowledge content and roadmap info
+ */
+export async function getRoadmapStepWithContent(stepId: string) {
+  const supabase = await createClient();
+
+  const result = await supabase
+    .from("roadmap_steps")
+    .select(
+      `
+      *,
+      knowledge_content(*),
+      roadmap:roadmaps(*)
+    `
+    )
+    .eq("id", stepId)
+    .single();
+
+  return {
+    data: result.data as (RoadmapStepWithContent & { roadmap: Roadmap }) | null,
+    error: result.error,
   };
 }

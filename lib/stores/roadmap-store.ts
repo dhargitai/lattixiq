@@ -20,8 +20,12 @@ interface RoadmapViewState {
   currentStepIndex: number;
   isLoading: boolean;
   error: string | null;
+  // Learn screen specific state
+  currentStep: RoadmapStep | null;
+  knowledgeContent: KnowledgeContent | null;
   fetchActiveRoadmap: (userId: string) => Promise<void>;
   setCurrentStep: (index: number) => void;
+  setCurrentStepForLearn: (step: RoadmapStep, content: KnowledgeContent) => void;
   markStepCompleted: (stepId: string) => Promise<void>;
   resetState: () => void;
 }
@@ -33,6 +37,9 @@ export const useRoadmapStore = create<RoadmapViewState>()(
       currentStepIndex: 0,
       isLoading: false,
       error: null,
+      // Learn screen specific state
+      currentStep: null,
+      knowledgeContent: null,
 
       fetchActiveRoadmap: async (userId: string) => {
         set({ isLoading: true, error: null });
@@ -83,6 +90,13 @@ export const useRoadmapStore = create<RoadmapViewState>()(
         if (activeRoadmap && index >= 0 && index < activeRoadmap.steps.length) {
           set({ currentStepIndex: index });
         }
+      },
+
+      setCurrentStepForLearn: (step: RoadmapStep, content: KnowledgeContent) => {
+        set({
+          currentStep: step,
+          knowledgeContent: content,
+        });
       },
 
       markStepCompleted: async (stepId: string) => {
@@ -164,6 +178,8 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           currentStepIndex: 0,
           isLoading: false,
           error: null,
+          currentStep: null,
+          knowledgeContent: null,
         });
       },
     }),
@@ -172,6 +188,8 @@ export const useRoadmapStore = create<RoadmapViewState>()(
       partialize: (state) => ({
         activeRoadmap: state.activeRoadmap,
         currentStepIndex: state.currentStepIndex,
+        currentStep: state.currentStep,
+        knowledgeContent: state.knowledgeContent,
       }),
     }
   )
