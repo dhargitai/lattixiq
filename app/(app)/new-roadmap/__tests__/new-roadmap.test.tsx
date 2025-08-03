@@ -286,6 +286,7 @@ describe("New Roadmap Page", () => {
       // Mock successful API response
       (global.fetch as any).mockResolvedValueOnce({
         // eslint-disable-line @typescript-eslint/no-explicit-any
+
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
       });
@@ -309,6 +310,7 @@ describe("New Roadmap Page", () => {
       // Mock successful API response
       (global.fetch as any).mockResolvedValueOnce({
         // eslint-disable-line @typescript-eslint/no-explicit-any
+
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
       });
@@ -333,6 +335,7 @@ describe("New Roadmap Page", () => {
       // Mock successful API response
       (global.fetch as any).mockResolvedValueOnce({
         // eslint-disable-line @typescript-eslint/no-explicit-any
+
         ok: true,
         json: async () => ({ id: "roadmap-123", success: true }),
       });

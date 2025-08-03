@@ -3,12 +3,8 @@ import { config } from "dotenv";
 import { readFileSync, writeFileSync, existsSync, unlinkSync } from "fs";
 import { join } from "path";
 import { createLogger, format, transports } from "winston";
-import {
-  generateEmbeddings,
-  prepareTextForEmbedding,
-  EmbeddingInput,
-  EmbeddingResult,
-} from "../lib/ai/embeddings-service";
+import type { EmbeddingInput, EmbeddingResult } from "../lib/ai/embeddings-service";
+import { generateEmbeddings, prepareTextForEmbedding } from "../lib/ai/embeddings-service";
 import type { Database } from "../lib/supabase/database.types";
 
 // Load environment variables

@@ -145,17 +145,17 @@ function fixExplicitAny(lines: string[], error: BuildError): string[] {
       // Don't change 'as any' in test files - it's often needed for mocks
       // Only add eslint-disable comment
       if (!line.includes("eslint-disable")) {
-        line = line + " // eslint-disable-line @typescript-eslint/no-explicit-any";
+        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
       }
     } else {
       // In non-test files, try to be more specific
       // For function parameters with : any
       if (line.match(/\([^)]*:\s*any[^)]*\)/)) {
         // Keep as any for now, add comment
-        line = line + " // eslint-disable-line @typescript-eslint/no-explicit-any";
+        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
       } else if (line.includes("as any")) {
         // Keep as any, add comment
-        line = line + " // eslint-disable-line @typescript-eslint/no-explicit-any";
+        line = `${line} // eslint-disable-line @typescript-eslint/no-explicit-any`;
       } else {
         // For other cases, replace with unknown
         line = line.replace(/:\s*any\b/g, ": unknown");
@@ -210,7 +210,7 @@ function fixUnusedVars(lines: string[], error: BuildError): string[] {
         line.trim().startsWith("let ") ||
         line.trim().startsWith("var ")
       ) {
-        line = "// " + line;
+        line = `// ${line}`;
       }
     }
 

@@ -45,6 +45,7 @@ export async function generateEmbeddings(inputs: EmbeddingInput[]): Promise<Embe
  */
 export function prepareTextForEmbedding(content: any): string {
   // eslint-disable-line @typescript-eslint/no-explicit-any
+
   // Combine all relevant text fields with appropriate weighting
   const parts = [
     content.title ? `Title: ${content.title}` : "",
@@ -60,6 +61,7 @@ export function prepareTextForEmbedding(content: any): string {
   if (content.goalExamples?.length) {
     content.goalExamples.forEach((example: any) => {
       // eslint-disable-line @typescript-eslint/no-explicit-any
+
       if (example.goal) {
         parts.push(`Goal Example: ${example.goal}`);
       }

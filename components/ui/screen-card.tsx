@@ -23,27 +23,25 @@ const ScreenCard = React.forwardRef<HTMLDivElement, ScreenCardProps>(
       ...props
     },
     ref
-  ) => {
-    return (
-      <Card
-        ref={ref}
-        className={cn(
-          "screen-card animate-fade-in-up cursor-pointer",
-          delay && `delay-${delay}`,
-          className
-        )}
-        style={delay ? { animationDelay: `${delay}ms` } : undefined}
-        {...props}
-      >
-        <CardHeader>
-          {icon && <div className="mb-3 text-primary">{icon}</div>}
-          <CardTitle className="text-xl">{title}</CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
-        </CardHeader>
-        {children && <CardContent>{children}</CardContent>}
-      </Card>
-    );
-  }
+  ) => (
+    <Card
+      ref={ref}
+      className={cn(
+        "screen-card animate-fade-in-up cursor-pointer",
+        delay && `delay-${delay}`,
+        className
+      )}
+      style={delay ? { animationDelay: `${delay}ms` } : undefined}
+      {...props}
+    >
+      <CardHeader>
+        {icon && <div className="mb-3 text-primary">{icon}</div>}
+        <CardTitle className="text-xl">{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
+      </CardHeader>
+      {children && <CardContent>{children}</CardContent>}
+    </Card>
+  )
 );
 ScreenCard.displayName = "ScreenCard";
 

@@ -153,10 +153,9 @@ class MockSupabaseClient {
               return { data: null, error: null };
             },
             order: (_orderColumn: string, _options?: unknown) => ({
-              single: async () => {
+              single: async () =>
                 // This is unused in our mock
-                return { data: null, error: { code: "PGRST116" } };
-              },
+                ({ data: null, error: { code: "PGRST116" } }),
             }),
           }),
           single: async () => {

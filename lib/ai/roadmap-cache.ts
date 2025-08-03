@@ -53,10 +53,9 @@ export class RoadmapCache {
     this.embeddingCache = new LRUCache<string, CachedEmbedding>({
       max: config?.embeddings?.max || defaultEmbeddingConfig.max,
       ttl: config?.embeddings?.ttl || defaultEmbeddingConfig.ttl,
-      sizeCalculation: (value: CachedEmbedding) => {
+      sizeCalculation: (value: CachedEmbedding) =>
         // Each float in embedding is ~4 bytes, plus overhead
-        return value.embedding.length * 4 + 100;
-      },
+        value.embedding.length * 4 + 100,
       maxSize: config?.embeddings?.maxSize,
     });
 
@@ -64,10 +63,9 @@ export class RoadmapCache {
     this.searchCache = new LRUCache<string, CachedSearchResults>({
       max: config?.search?.max || defaultSearchConfig.max,
       ttl: config?.search?.ttl || defaultSearchConfig.ttl,
-      sizeCalculation: (value: CachedSearchResults) => {
+      sizeCalculation: (value: CachedSearchResults) =>
         // Rough estimate of memory usage per result
-        return JSON.stringify(value.results).length;
-      },
+        JSON.stringify(value.results).length,
       maxSize: config?.search?.maxSize,
     });
   }

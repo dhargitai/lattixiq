@@ -232,7 +232,7 @@ export class RoadmapGenerator {
 
       // Learning history is already included in search results
       const isLearned = (content as any).isLearned || false; // eslint-disable-line @typescript-eslint/no-explicit-any
-      const learnedData = (content as any).learnedData; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { learnedData } = content as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       let daysSinceLastUse = 0;
       let spacedRepetitionScore = 0;
