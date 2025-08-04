@@ -17,9 +17,10 @@ import type { TransformedRoadmap } from "@/lib/transformers/roadmap-transformers
 
 interface RoadmapViewProps {
   roadmap: TransformedRoadmap;
+  showSuccess?: boolean;
 }
 
-export default function RoadmapView({ roadmap }: RoadmapViewProps) {
+export default function RoadmapView({ roadmap, showSuccess = false }: RoadmapViewProps) {
   const completedSteps = roadmap.steps.filter((step) => step.status === "completed").length;
   const totalSteps = roadmap.steps.length;
   const progressPercentage = (completedSteps / totalSteps) * 100;
@@ -46,6 +47,15 @@ export default function RoadmapView({ roadmap }: RoadmapViewProps) {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+          <div className="text-green-800 font-medium">
+            🎉 Great job! Your reflection has been saved and the next step is now unlocked.
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="mb-8 text-center">

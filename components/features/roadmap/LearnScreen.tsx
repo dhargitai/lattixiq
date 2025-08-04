@@ -18,11 +18,26 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
   ({ step, onNavigateToPlan, onNavigateBack }, ref) => {
     const router = useRouter();
 
+    // Check if user came from reflect screen via URL params
+    const [cameFromReflect, setCameFromReflect] = React.useState(false);
+    React.useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+      setCameFromReflect(params.get("from") === "reflect");
+    }, []);
+
+    // Check if plan exists
+    const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
+
     const handleNavigateToPlan = () => {
       if (onNavigateToPlan) {
         onNavigateToPlan();
       } else {
-        router.push(`/plan/${step.id}`);
+        // If came from reflect and plan exists, go back to reflect, otherwise go to plan
+        if (cameFromReflect && hasPlan) {
+          router.push(`/reflect/${step.id}`);
+        } else {
+          router.push(`/plan/${step.id}`);
+        }
       }
     };
 
@@ -144,18 +159,21 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
                   <Button
                     onClick={handleNavigateToPlan}
                     data-testid="continue-to-plan-button"
-                    disabled={!!step.plan_created_at}
+                    disabled={false} // Remove disabled state - always allow action
                     className={cn(
                       "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
                       "text-white font-semibold text-lg px-10 py-6 rounded-xl",
                       "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30",
                       "transform transition-all duration-300 hover:-translate-y-0.5",
-                      "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
                       "inline-flex items-center gap-2"
                     )}
                   >
-                    {step.plan_created_at ? "Plan Created" : "Continue to Plan"}
-                    {!step.plan_created_at && <ArrowRight className="h-5 w-5" />}
+                    {cameFromReflect && hasPlan
+                      ? "Back to Reflection"
+                      : hasPlan
+                        ? "Review Plan"
+                        : "Continue to Plan"}
+                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </div>
               </CardContent>

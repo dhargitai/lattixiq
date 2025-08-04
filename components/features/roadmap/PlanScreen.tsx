@@ -80,7 +80,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
         }
 
         // Navigate back to roadmap
-        router.push("/");
+        router.push("/roadmap");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to save plan");
       } finally {

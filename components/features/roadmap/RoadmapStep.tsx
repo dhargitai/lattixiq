@@ -21,7 +21,13 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
 
   const handleClick = () => {
     if (isAvailable) {
-      router.push(`/learn/${step.id}`);
+      // Check if plan exists - if so, navigate to reflect screen, otherwise to learn screen
+      const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
+      if (hasPlan) {
+        router.push(`/reflect/${step.id}`);
+      } else {
+        router.push(`/learn/${step.id}`);
+      }
     }
   };
 

@@ -4,7 +4,12 @@ import RoadmapView from "@/components/features/roadmap/RoadmapView";
 import { getActiveRoadmapWithSteps } from "@/lib/queries/roadmap-queries";
 import { transformRoadmapForView } from "@/lib/transformers/roadmap-transformers";
 
-export default async function RoadmapPage() {
+export default async function RoadmapPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -30,7 +35,7 @@ export default async function RoadmapPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <RoadmapView roadmap={transformedRoadmap} />
+      <RoadmapView roadmap={transformedRoadmap} showSuccess={params.success === "true"} />
     </div>
   );
 }

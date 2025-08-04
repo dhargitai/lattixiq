@@ -216,7 +216,7 @@ describe("Plan Screen", () => {
     // Should update the database and navigate
     await waitFor(() => {
       expect(mockSupabase.from).toHaveBeenCalledWith("roadmap_steps");
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockPush).toHaveBeenCalledWith("/roadmap");
     });
   });
 
@@ -343,7 +343,7 @@ describe("Plan Screen", () => {
     // Should update the database and navigate
     await waitFor(() => {
       expect(mockSupabase.from).toHaveBeenCalledWith("roadmap_steps");
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockPush).toHaveBeenCalledWith("/roadmap");
     });
   });
 });

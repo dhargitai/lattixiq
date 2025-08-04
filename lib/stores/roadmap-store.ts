@@ -101,23 +101,34 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
       markStepCompleted: async (stepId: string) => {
         const { activeRoadmap } = get();
-        if (!activeRoadmap) return;
+        if (!activeRoadmap) {
+          const error = "No active roadmap found";
+          console.error("[markStepCompleted]", error);
+          set({ error, isLoading: false });
+          throw new Error(error);
+        }
 
         set({ isLoading: true, error: null });
 
         try {
           const supabase = createClient();
+          console.log("[markStepCompleted] Starting update for stepId:", stepId);
 
           // Update step status in database
+          console.log("[markStepCompleted] Updating step status to 'completed'");
           const { error: updateError } = await supabase
             .from("roadmap_steps")
             .update({ status: "completed" })
             .eq("id", stepId);
 
           if (updateError) {
-            set({ error: updateError.message, isLoading: false });
-            return;
+            const errorMessage = `Failed to mark step as completed: ${updateError.message}`;
+            console.error("[markStepCompleted] Step update failed:", updateError);
+            set({ error: errorMessage, isLoading: false });
+            throw new Error(errorMessage);
           }
+
+          console.log("[markStepCompleted] Step marked as completed successfully");
 
           // Update local state
           const updatedSteps = activeRoadmap.steps.map((step) => {
@@ -129,33 +140,62 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
           // Unlock next step if exists
           const completedStepIndex = updatedSteps.findIndex((s) => s.id === stepId);
-          if (completedStepIndex < updatedSteps.length - 1) {
+          console.log("[markStepCompleted] Completed step index:", completedStepIndex);
+
+          if (completedStepIndex !== -1 && completedStepIndex < updatedSteps.length - 1) {
             const nextStep = updatedSteps[completedStepIndex + 1];
+            console.log("[markStepCompleted] Next step status:", nextStep.status);
+
             if (nextStep.status === "locked") {
-              // Update next step to available in database
-              await supabase
+              console.log("[markStepCompleted] Unlocking next step:", nextStep.id);
+              // Update next step to unlocked in database
+              const { error: unlockError } = await supabase
                 .from("roadmap_steps")
                 .update({ status: "unlocked" })
                 .eq("id", nextStep.id);
 
-              // Update local state
-              updatedSteps[completedStepIndex + 1] = {
-                ...nextStep,
-                status: "unlocked" as const,
-              };
+              if (unlockError) {
+                console.error("[markStepCompleted] Failed to unlock next step:", unlockError);
+                // Don't fail the entire operation, but log the error
+                const warning = `Step completed but failed to unlock next step: ${unlockError.message}`;
+                console.warn("[markStepCompleted]", warning);
+              } else {
+                console.log("[markStepCompleted] Next step unlocked successfully");
+                // Update local state only if database update succeeded
+                updatedSteps[completedStepIndex + 1] = {
+                  ...nextStep,
+                  status: "unlocked" as const,
+                };
+              }
+            } else {
+              console.log("[markStepCompleted] Next step is already unlocked or completed");
             }
+          } else {
+            console.log("[markStepCompleted] No next step to unlock (this was the last step)");
           }
 
           // Check if all steps are completed
           const allCompleted = updatedSteps.every((step) => step.status === "completed");
           const roadmapStatus = allCompleted ? "completed" : "active";
+          console.log(
+            "[markStepCompleted] All steps completed:",
+            allCompleted,
+            "Roadmap status:",
+            roadmapStatus
+          );
 
           // Update roadmap status if needed
           if (allCompleted) {
-            await supabase
+            console.log("[markStepCompleted] Updating roadmap status to completed");
+            const { error: roadmapError } = await supabase
               .from("roadmaps")
               .update({ status: "completed" })
               .eq("id", activeRoadmap.id);
+
+            if (roadmapError) {
+              console.error("[markStepCompleted] Failed to update roadmap status:", roadmapError);
+              // Don't fail the operation, but log the error
+            }
           }
 
           set({
@@ -167,8 +207,13 @@ export const useRoadmapStore = create<RoadmapViewState>()(
             currentStepIndex: completedStepIndex + 1,
             isLoading: false,
           });
-        } catch {
-          set({ error: "Failed to update step", isLoading: false });
+
+          console.log("[markStepCompleted] Operation completed successfully");
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to update step";
+          console.error("[markStepCompleted] Fatal error:", error);
+          set({ error: errorMessage, isLoading: false });
+          throw error;
         }
       },
 

@@ -133,13 +133,18 @@ describe("Roadmap Page", () => {
     vi.clearAllMocks();
 
     // Setup RoadmapView mock
-    mockRoadmapView.mockImplementation(({ roadmap }) => {
+    mockRoadmapView.mockImplementation(({ roadmap, showSuccess = false }) => {
       const completedSteps = roadmap.steps.filter((step) => step.status === "completed").length;
       const totalSteps = roadmap.steps.length;
       const progressPercentage = (completedSteps / totalSteps) * 100;
 
       return (
         <div data-testid="roadmap-container" className="flex-col">
+          {showSuccess && (
+            <div data-testid="success-message">
+              Great job! Your reflection has been saved and the next step is now unlocked.
+            </div>
+          )}
           <h1>{roadmap.goal_description}</h1>
           <div role="progressbar" aria-valuenow={progressPercentage} aria-valuemax={100}>
             {completedSteps} of {totalSteps} steps completed
@@ -198,13 +203,13 @@ describe("Roadmap Page", () => {
       })),
     } as unknown as SupabaseClientType;
     mockCreateClient.mockResolvedValueOnce(mockSupabaseClient);
-    await RoadmapPage();
+    await RoadmapPage({ searchParams: Promise.resolve({}) });
 
     expect(mockRedirect).toHaveBeenCalledWith("/login");
   });
 
   it("should load and display active roadmap data", async () => {
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -213,7 +218,7 @@ describe("Roadmap Page", () => {
   });
 
   it("should display all roadmap steps in order", async () => {
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -228,7 +233,7 @@ describe("Roadmap Page", () => {
   });
 
   it("should show first step as unlocked and clickable", async () => {
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -244,7 +249,7 @@ describe("Roadmap Page", () => {
   });
 
   it("should show subsequent steps as locked and blurred", async () => {
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -263,7 +268,7 @@ describe("Roadmap Page", () => {
   });
 
   it("should display progress indicators", async () => {
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -283,7 +288,7 @@ describe("Roadmap Page", () => {
     global.innerWidth = 375;
     global.dispatchEvent(new Event("resize"));
 
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -296,7 +301,7 @@ describe("Roadmap Page", () => {
   it("should navigate to learning screen when Start Learning is clicked", async () => {
     const user = userEvent.setup();
 
-    const PageComponent = await RoadmapPage();
+    const PageComponent = await RoadmapPage({ searchParams: Promise.resolve({}) });
     render(PageComponent);
 
     await waitFor(() => {
@@ -326,7 +331,7 @@ describe("Roadmap Page", () => {
       error: null,
     });
 
-    await RoadmapPage();
+    await RoadmapPage({ searchParams: Promise.resolve({}) });
 
     expect(mockRedirect).toHaveBeenCalledWith("/new-roadmap");
   });

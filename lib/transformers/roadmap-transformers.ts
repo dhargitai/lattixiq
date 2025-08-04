@@ -20,12 +20,16 @@ export function transformRoadmapForView(roadmap: RoadmapWithStepsRenamed) {
 /**
  * Transform database step to view-friendly format
  * Maps 'order' to 'order_index' for UI components
+ * Includes plan data for navigation logic
  */
 export function transformStepForView(step: RoadmapStep & { knowledge_content: KnowledgeContent }) {
   return {
     id: step.id,
     order_index: step.order, // Map 'order' to 'order_index' for UI components
     status: step.status || ("locked" as "unlocked" | "locked" | "completed"),
+    plan_situation: step.plan_situation,
+    plan_trigger: step.plan_trigger,
+    plan_action: step.plan_action,
     knowledge_content: {
       id: step.knowledge_content.id,
       title: step.knowledge_content.title,
