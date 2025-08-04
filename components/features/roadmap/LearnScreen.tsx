@@ -3,9 +3,8 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, ArrowRight, KeyRound, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { RoadmapStepWithContent, Roadmap } from "@/lib/supabase/types";
 
@@ -48,117 +47,126 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
       }
     };
 
-    const getBadgeVariant = () =>
-      step.knowledge_content.type === "mental-model" ? "default" : "secondary";
-
     return (
-      <div ref={ref} className="min-h-screen bg-background" data-testid="learn-screen">
-        {/* Navigation breadcrumb */}
-        <nav className="border-b bg-card/50 p-4" aria-label="breadcrumb">
-          <div className="mx-auto max-w-3xl">
+      <div
+        ref={ref}
+        className="min-h-screen bg-gray-50/50 flex flex-col"
+        data-testid="learn-screen"
+      >
+        {/* Navigation header matching prototype */}
+        <header className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="px-5 py-4">
             <Button
               variant="ghost"
-              size="sm"
               onClick={handleNavigateBack}
               data-testid="back-button"
-              className="mb-2"
+              className="text-blue-500 hover:text-blue-600 hover:bg-gray-50 font-medium px-2 py-1.5 rounded-lg transition-all duration-200"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Roadmap
             </Button>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <span>Toolkit</span>
-              <span>›</span>
-              <span>Roadmap</span>
-              <span>›</span>
-              <span className="text-foreground">Learn</span>
-            </div>
           </div>
-        </nav>
+        </header>
 
-        {/* Main content */}
-        <main className="mx-auto max-w-3xl p-6">
-          {/* Header with title and metadata */}
-          <header className="mb-8">
-            <div className="mb-4 flex items-center gap-3">
-              <Badge variant={getBadgeVariant()} data-testid="category-badge">
-                {step.knowledge_content.category}
-              </Badge>
-              <span data-testid="type-indicator" className="text-sm text-muted-foreground">
-                {getTypeLabel()}
-              </span>
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight">{step.knowledge_content.title}</h1>
-          </header>
-
-          {/* Content sections */}
-          <div className="space-y-8">
-            {/* Summary section */}
-            {step.knowledge_content.summary && (
-              <Card data-testid="summary-section">
-                <CardHeader>
-                  <CardTitle className="text-lg">Summary</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base leading-relaxed">
-                    {step.knowledge_content.summary}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Description section */}
-            {step.knowledge_content.description && (
-              <Card data-testid="description-section">
-                <CardHeader>
-                  <CardTitle className="text-lg">Description</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-neutral max-w-none dark:prose-invert">
-                    <p className="text-base leading-relaxed text-muted-foreground">
-                      {step.knowledge_content.description}
-                    </p>
+        {/* Main content with prototype styling */}
+        <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">
+          <div className="mx-auto max-w-2xl">
+            {/* Content card with enhanced styling */}
+            <Card className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-8 md:p-14 animate-in fade-in slide-in-from-bottom-3 duration-500">
+              <CardContent className="p-0 space-y-8">
+                {/* Type label and title section */}
+                <div>
+                  <div
+                    className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3"
+                    data-testid="type-indicator"
+                  >
+                    {getTypeLabel()}
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight mb-2">
+                    {step.knowledge_content.title}
+                  </h1>
+                  <div className="h-0.5 w-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full" />
+                </div>
 
-            {/* Application section */}
-            {step.knowledge_content.application && (
-              <Card data-testid="application-section">
-                <CardHeader>
-                  <CardTitle className="text-lg">How to Apply This</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-neutral max-w-none dark:prose-invert">
-                    <p className="text-base leading-relaxed text-muted-foreground">
+                {/* Summary section with improved typography */}
+                {step.knowledge_content.summary && (
+                  <p
+                    className="text-xl md:text-2xl leading-relaxed text-gray-700 font-medium"
+                    data-testid="summary-section"
+                  >
+                    {step.knowledge_content.summary}
+                  </p>
+                )}
+
+                {/* Description section */}
+                {step.knowledge_content.description && (
+                  <div
+                    className="text-base md:text-lg leading-relaxed text-gray-600 space-y-4"
+                    data-testid="description-section"
+                  >
+                    {step.knowledge_content.description.split("\n\n").map((paragraph, index) => (
+                      <p key={index}>{paragraph}</p>
+                    ))}
+                  </div>
+                )}
+
+                {/* Example/Application section styled as in prototype */}
+                {step.knowledge_content.application && (
+                  <div
+                    className="bg-gradient-to-br from-blue-50 to-cyan-50 border-l-4 border-blue-500 rounded-lg p-6 relative overflow-hidden"
+                    data-testid="application-section"
+                  >
+                    <Lightbulb className="absolute top-5 right-5 h-6 w-6 text-blue-300/30" />
+                    <h3 className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-3">
+                      Example in Practice
+                    </h3>
+                    <p className="text-base text-blue-600 italic leading-relaxed relative z-10">
                       {step.knowledge_content.application}
                     </p>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Footer with Continue button */}
-          <footer className="mt-12 border-t pt-8">
-            <div className="flex justify-end">
-              <Button
-                onClick={handleNavigateToPlan}
-                data-testid="continue-to-plan-button"
-                disabled={!!step.plan_created_at}
-                className={cn(
-                  "btn-primary",
-                  step.plan_created_at && "opacity-50 cursor-not-allowed"
                 )}
-                size="lg"
-              >
-                {step.plan_created_at ? "Plan Created" : "Continue to Plan"}
-                {!step.plan_created_at && <ArrowRight className="ml-2 h-4 w-4" />}
-              </Button>
-            </div>
-          </footer>
+
+                {/* Key takeaway section */}
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <KeyRound className="h-5 w-5 text-gray-700" />
+                    <h3 className="font-semibold text-gray-900">Key Takeaway</h3>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">
+                    This {getTypeLabel().toLowerCase()} helps you{" "}
+                    {step.knowledge_content.category?.toLowerCase() || "improve"} by providing a
+                    structured approach to understanding and addressing your challenges.
+                  </p>
+                </div>
+
+                {/* Continue button with prototype styling */}
+                <div className="flex justify-center pt-8">
+                  <Button
+                    onClick={handleNavigateToPlan}
+                    data-testid="continue-to-plan-button"
+                    disabled={!!step.plan_created_at}
+                    className={cn(
+                      "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
+                      "text-white font-semibold text-lg px-10 py-6 rounded-xl",
+                      "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30",
+                      "transform transition-all duration-300 hover:-translate-y-0.5",
+                      "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
+                      "inline-flex items-center gap-2"
+                    )}
+                  >
+                    {step.plan_created_at ? "Plan Created" : "Continue to Plan"}
+                    {!step.plan_created_at && <ArrowRight className="h-5 w-5" />}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </main>
+
+        {/* Progress indicator */}
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-lg shadow-gray-300/50 text-sm text-gray-500 font-medium z-10 transition-transform duration-300">
+          Step <span className="text-blue-500 font-semibold">{step.order}</span> • Learn
+        </div>
       </div>
     );
   }

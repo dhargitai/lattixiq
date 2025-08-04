@@ -19,6 +19,21 @@
     animation-delay: 400ms;
   }
 
+  /* Card container styles matching prototype design */
+  .card-container {
+    @apply bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-8 md:p-14;
+  }
+
+  /* Form input styles matching prototype design */
+  .form-input-prototype {
+    @apply min-h-[100px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 placeholder:italic placeholder:text-gray-400;
+  }
+
+  /* Primary button styles matching prototype design */
+  .btn-prototype-primary {
+    @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold text-lg px-10 py-6 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transform transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 inline-flex items-center gap-2;
+  }
+
   @keyframes float {
     0%,
     100% {
@@ -66,5 +81,35 @@
     to {
       transform: scaleY(1);
     }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out;
+  }
+
+  .animate-slide-in-left {
+    animation: slide-in-left 0.5s ease-out;
   }
 }
