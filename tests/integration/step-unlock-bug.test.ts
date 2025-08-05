@@ -135,7 +135,7 @@ describe("Step Unlocking Bug - Integration Test", () => {
       }
     } catch (error) {
       errorCaught = true;
-      expect(error.message).toContain("Failed to unlock next step");
+      expect((error as Error).message).toContain("Failed to unlock next step");
     }
 
     expect(errorCaught).toBe(true);

@@ -2,6 +2,124 @@
 
 This document outlines the coding standards and conventions for the LattixIQ project. Following these guidelines ensures consistency, maintainability, and readability across the codebase.
 
+## 🔴 ZERO TOLERANCE POLICY: Type Safety & Professional Standards
+
+### ABSOLUTELY PROHIBITED - NEVER DO THESE
+
+The following practices are **FORBIDDEN** and will result in immediate code rejection:
+
+#### 1. **NEVER** Use `as any`
+
+```typescript
+// ❌ FORBIDDEN - This is lazy, unprofessional coding
+const result = data as any;
+const response = (await fetch("/api/data")) as any;
+
+// ✅ CORRECT - Always define proper types
+interface ApiResponse {
+  success: boolean;
+  data: UserData;
+  error?: string;
+}
+const response: ApiResponse = await fetch("/api/data").then((r) => r.json());
+```
+
+#### 2. **NEVER** Disable ESLint Rules
+
+```typescript
+// ❌ FORBIDDEN - This hides real problems
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const user = data as any;
+
+// ❌ FORBIDDEN - NEVER disable TypeScript
+// @ts-ignore
+// @ts-nocheck
+
+// ✅ CORRECT - Fix the underlying type issue instead
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+const user: User = data;
+```
+
+#### 3. **NEVER** Use `any` in Test Mocks
+
+```typescript
+// ❌ FORBIDDEN - Even in tests, proper typing matters
+vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+(useRouter as any).mockReturnValue(mockRouter);
+
+// ✅ CORRECT - Use proper mocking with types
+const mockSupabase = createMockSupabaseClient();
+vi.mocked(createClient).mockReturnValue(mockSupabase);
+```
+
+### Professional Type Definition Process
+
+When you encounter a type error, follow this **mandatory** process:
+
+1. **STOP** - Do not use `as any` or disable linting
+2. **ANALYZE** - Understand what type is actually needed
+3. **DEFINE** - Create the proper type in the correct location
+4. **USE** - Apply the type properly throughout your code
+
+#### Type Definition Locations
+
+- **Database types**: `/lib/supabase/database.types.ts` (auto-generated from Supabase)
+- **Application types**: `/lib/supabase/types.ts` (extends database types)
+- **Feature-specific types**: `/lib/types/[feature].ts` (e.g., `ai.ts`, `roadmap.ts`)
+- **Shared utilities**: `/lib/utils/[utility].ts`
+- **Test helpers**: `/lib/test-utils.ts`
+
+#### Example: Handling RPC Functions
+
+Instead of `as any` for RPC functions:
+
+```typescript
+// ❌ FORBIDDEN
+const { data } = await (supabase.rpc as any)("complete_step_and_unlock_next", params);
+
+// ✅ CORRECT - Extend Supabase types
+// In lib/supabase/database.types.ts or lib/supabase/types.ts
+declare module "@supabase/supabase-js" {
+  interface SupabaseClient {
+    rpc<T = any>(
+      fn: "complete_step_and_unlock_next",
+      params: { p_step_id: string; p_roadmap_id: string }
+    ): Promise<{ data: T; error: PostgrestError | null }>;
+  }
+}
+
+// Then use with proper typing
+const { data, error } = await supabase.rpc<StepUnlockResult>(
+  "complete_step_and_unlock_next",
+  params
+);
+```
+
+### Enforcement Mechanisms
+
+These violations will be caught by:
+
+1. **Pre-commit hooks** - Automatic rejection
+2. **CI/CD pipeline** - PR will be blocked
+3. **Code review** - Mandatory reviewer rejection
+4. **ESLint configuration** - Strict rules enabled
+
+### The Professional Standard
+
+As a professional developer, you are expected to:
+
+- **Think through type definitions** before writing code
+- **Create proper types** instead of shortcuts
+- **Understand the domain** you're working in
+- **Ask for help** when types are genuinely complex
+- **Never compromise** on type safety for convenience
+
+Remember: Every `as any` or `eslint-disable` is technical debt that will cost more time later than it saves now.
+
 ## Table of Contents
 
 - [Core Principles](#core-principles)
@@ -98,9 +216,9 @@ function processData(data: DataItem[]): number[] {
 
 ## TypeScript Guidelines
 
-### Strict Mode
+### Strict Mode Enforcement
 
-Always use TypeScript strict mode. Our `tsconfig.json` enforces:
+**MANDATORY**: All code must use TypeScript strict mode. Our `tsconfig.json` enforces:
 
 ```json
 {
@@ -117,31 +235,114 @@ Always use TypeScript strict mode. Our `tsconfig.json` enforces:
 }
 ```
 
-### Type Definitions
+### Professional Type Definition Standards
+
+#### Type Definition Process (MANDATORY)
+
+When you need to define types, follow this exact process:
+
+1. **Analyze the data structure** - What fields, types, and relationships exist?
+2. **Choose the correct location** - Where should this type live? (see Type Locations above)
+3. **Define comprehensive types** - Include all fields, optional/mandatory status
+4. **Test the type** - Ensure it compiles without `as any` or `// @ts-ignore`
+
+#### Type Definition Examples
 
 ```typescript
-// Prefer interfaces for object shapes
+// ✅ CORRECT - Properly defined types
 interface UserProfile {
   id: string;
   email: string;
   displayName: string;
   createdAt: Date;
+  reminderEnabled?: boolean;
+  timezone?: string;
 }
 
-// Use type aliases for unions, intersections, and utility types
-type Status = "idle" | "loading" | "success" | "error";
-type Nullable<T> = T | null;
-type PartialUser = Partial<UserProfile>;
+// ✅ CORRECT - Test mock types
+type MockSupabaseClient = {
+  auth: {
+    getUser: () => Promise<{ data: { user: User | null }; error: Error | null }>;
+  };
+  from: (table: string) => {
+    select: () => Promise<{ data: any[] | null; error: Error | null }>;
+  };
+};
 
-// Use enums sparingly, prefer const assertions
-const RoadmapStatus = {
-  DRAFT: "draft",
-  ACTIVE: "active",
-  COMPLETED: "completed",
-  ARCHIVED: "archived",
-} as const;
+// ✅ CORRECT - RPC function types
+interface CompleteStepResult {
+  success: boolean;
+  next_step_id?: string;
+  unlocked_steps: string[];
+}
 
-type RoadmapStatus = (typeof RoadmapStatus)[keyof typeof RoadmapStatus];
+// ❌ FORBIDDEN - Never use any
+const mockSupabase = {} as any;
+const userData = response as any;
+```
+
+#### Handling Complex Types
+
+For complex scenarios like Supabase RPC functions or third-party libraries:
+
+```typescript
+// ✅ CORRECT - Module augmentation for Supabase RPC
+import "@supabase/supabase-js";
+
+declare module "@supabase/supabase-js" {
+  interface SupabaseClient {
+    rpc<T = any>(
+      fn: "complete_step_and_unlock_next",
+      params: { p_step_id: string; p_roadmap_id: string }
+    ): Promise<{ data: T; error: PostgrestError | null }>;
+
+    rpc<T = any>(
+      fn: "get_user_roadmap_progress",
+      params: { user_id: string }
+    ): Promise<{ data: UserProgress[]; error: PostgrestError | null }>;
+  }
+}
+
+// ✅ CORRECT - Third-party library types
+// Create /lib/types/external-libs.ts
+interface CustomRouter {
+  push: (url: string) => Promise<boolean>;
+  replace: (url: string) => Promise<boolean>;
+  pathname: string;
+  query: Record<string, string | string[] | undefined>;
+}
+
+// Then use properly
+declare module "next/router" {
+  export function useRouter(): CustomRouter;
+}
+```
+
+### Test Type Safety
+
+Even test files must maintain type safety:
+
+```typescript
+// ✅ CORRECT - Proper test mocking
+type MockRouter = {
+  push: jest.Mock<Promise<boolean>, [string]>;
+  replace: jest.Mock<Promise<boolean>, [string]>;
+  pathname: string;
+  query: Record<string, string>;
+};
+
+const mockRouter: MockRouter = {
+  push: jest.fn().mockResolvedValue(true),
+  replace: jest.fn().mockResolvedValue(true),
+  pathname: "/test",
+  query: {},
+};
+
+// Use with proper typing
+vi.mocked(useRouter).mockReturnValue(mockRouter);
+
+// ❌ FORBIDDEN - Never do this in tests
+(useRouter as any).mockReturnValue({ push: jest.fn() });
 ```
 
 ### Generics

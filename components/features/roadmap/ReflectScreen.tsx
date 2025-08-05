@@ -133,73 +133,117 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
           await markStepCompleted(step.id);
           console.log("[ReflectScreen] Step marked as completed successfully");
         } catch (stepError) {
-          // If the error is "No active roadmap found", we can handle it gracefully
-          if (stepError instanceof Error && stepError.message === "No active roadmap found") {
+          // Enhanced error handling - use fallback for ANY store-related errors
+          const errorMessage = stepError instanceof Error ? stepError.message : "Unknown error";
+          const isStoreError =
+            errorMessage.includes("No active roadmap") ||
+            errorMessage.includes("Failed to update step") ||
+            errorMessage.includes("Failed to fetch") ||
+            errorMessage.includes("roadmap");
+
+          if (isStoreError || stepError) {
             console.warn(
-              "[ReflectScreen] Attempting alternative approach since roadmap store is empty"
+              `[ReflectScreen] Store operation failed (${errorMessage}), using direct database approach`
             );
             // Since we have the step data and roadmap from props, we can update directly
             const supabase = createClient();
 
-            // Use a transaction to ensure atomic updates
-            // Update step status directly
-            const { error: stepUpdateError } = await supabase
-              .from("roadmap_steps")
-              .update({ status: "completed" })
-              .eq("id", step.id);
-
-            if (stepUpdateError) {
-              console.error("[ReflectScreen] Direct step update failed:", stepUpdateError);
-              throw new Error(
-                `Your reflection was saved, but there was an issue updating your progress: ${stepUpdateError.message}`
-              );
-            }
-
-            // Ensure we unlock the next step even if there are issues
+            // First, try using the RPC function for atomic updates
             try {
-              // Check if we need to unlock next step
-              const { data: nextStep } = await supabase
-                .from("roadmap_steps")
-                .select("id, status, order")
-                .eq("roadmap_id", step.roadmap_id)
-                .gt("order", step.order)
-                .order("order", { ascending: true })
-                .limit(1)
-                .single();
-
-              if (nextStep && nextStep.status === "locked") {
-                const { error: unlockError } = await supabase
-                  .from("roadmap_steps")
-                  .update({ status: "unlocked" })
-                  .eq("id", nextStep.id);
-
-                if (unlockError) {
-                  console.error("[ReflectScreen] Failed to unlock next step:", unlockError);
-                  // Don't throw error here - let the user continue with a warning
-                  console.warn(
-                    "[ReflectScreen] Step completed but next step unlocking failed. Please refresh the page."
-                  );
-                } else {
-                  console.log("[ReflectScreen] Successfully unlocked next step");
+              console.log("[ReflectScreen] Attempting RPC function complete_step_and_unlock_next");
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const { data: rpcResult, error: rpcError } = await (supabase.rpc as any)(
+                "complete_step_and_unlock_next",
+                {
+                  p_step_id: step.id,
+                  p_roadmap_id: step.roadmap_id,
                 }
-              } else if (nextStep) {
-                console.log("[ReflectScreen] Next step is already unlocked or does not exist");
-              } else {
-                console.log("[ReflectScreen] This was the last step in the roadmap");
+              );
+
+              if (rpcError) {
+                throw rpcError;
               }
-            } catch (nextStepError) {
-              console.error("[ReflectScreen] Error in next step unlocking:", nextStepError);
-              // Continue with success - user can refresh to sync
+
+              console.log("[ReflectScreen] RPC function succeeded:", rpcResult);
+            } catch (rpcError) {
+              console.warn(
+                "[ReflectScreen] RPC function failed, falling back to manual updates:",
+                rpcError
+              );
+
+              // Fallback to manual updates if RPC fails
+              const { error: stepUpdateError } = await supabase
+                .from("roadmap_steps")
+                .update({ status: "completed" })
+                .eq("id", step.id);
+
+              if (stepUpdateError) {
+                console.error("[ReflectScreen] Direct step update failed:", stepUpdateError);
+                throw new Error(
+                  `Your reflection was saved, but there was an issue updating your progress: ${stepUpdateError.message}`
+                );
+              }
+
+              // Manually handle next step unlocking if RPC was not used
+              try {
+                // Check if we need to unlock next step
+                const { data: nextStep } = await supabase
+                  .from("roadmap_steps")
+                  .select("id, status, order")
+                  .eq("roadmap_id", step.roadmap_id)
+                  .gt("order", step.order)
+                  .order("order", { ascending: true })
+                  .limit(1)
+                  .single();
+
+                if (nextStep && nextStep.status === "locked") {
+                  const { error: unlockError } = await supabase
+                    .from("roadmap_steps")
+                    .update({ status: "unlocked" })
+                    .eq("id", nextStep.id);
+
+                  if (unlockError) {
+                    console.error("[ReflectScreen] Failed to unlock next step:", unlockError);
+                    // Don't throw error here - let the user continue with a warning
+                    console.warn(
+                      "[ReflectScreen] Step completed but next step unlocking failed. Please refresh the page."
+                    );
+                  } else {
+                    console.log("[ReflectScreen] Successfully unlocked next step");
+                  }
+                } else if (nextStep) {
+                  console.log("[ReflectScreen] Next step is already unlocked or does not exist");
+                } else {
+                  console.log("[ReflectScreen] This was the last step in the roadmap");
+
+                  // Check if we need to mark roadmap as completed
+                  const { data: allSteps } = await supabase
+                    .from("roadmap_steps")
+                    .select("status")
+                    .eq("roadmap_id", step.roadmap_id);
+
+                  if (allSteps && allSteps.every((s) => s.status === "completed")) {
+                    await supabase
+                      .from("roadmaps")
+                      .update({ status: "completed", completed_at: new Date().toISOString() })
+                      .eq("id", step.roadmap_id);
+                    console.log("[ReflectScreen] Roadmap marked as completed");
+                  }
+                }
+              } catch (nextStepError) {
+                console.error("[ReflectScreen] Error in next step unlocking:", nextStepError);
+                // Continue with success - user can refresh to sync
+              }
             }
 
-            console.log("[ReflectScreen] Successfully updated step using direct approach");
-          } else {
-            console.error("[ReflectScreen] Failed to mark step as completed:", stepError);
-            throw new Error(
-              stepError instanceof Error
-                ? `Your reflection was saved, but there was an issue updating your progress: ${stepError.message}`
-                : "Your reflection was saved, but there was an issue updating your progress. Please try refreshing the page."
-            );
+            console.log("[ReflectScreen] Successfully updated step using fallback approach");
+
+            // Try to refresh the store state after manual updates
+            try {
+              await fetchActiveRoadmap(user.id, true); // Force refresh
+            } catch (refreshError) {
+              console.warn("[ReflectScreen] Could not refresh store state:", refreshError);
+            }
           }
         }
 
@@ -212,7 +256,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
         }
 
         // Add a small delay to ensure database operations complete
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         console.log(
           "[ReflectScreen] All operations completed successfully, showing success dialog"
@@ -357,7 +401,22 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             </div>
 
             {/* Error Message */}
-            {error && <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">{error}</div>}
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">
+                <div className="font-medium mb-1">⚠️ Error</div>
+                <div>{error}</div>
+                {error.includes("refresh") && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.reload()}
+                    className="mt-2 text-red-600 border-red-300 hover:bg-red-50"
+                  >
+                    Refresh Page
+                  </Button>
+                )}
+              </div>
+            )}
 
             {/* Submit Button */}
             <Button

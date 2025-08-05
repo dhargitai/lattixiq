@@ -5,8 +5,6 @@ import { defineConfig } from "vitest/config";
 import { loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
-
 const dirname =
   typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 

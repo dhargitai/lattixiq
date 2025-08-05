@@ -15,6 +15,12 @@ interface RoadmapStep extends DBRoadmapStep {
   knowledge_content: KnowledgeContent;
 }
 
+interface CacheMetadata {
+  lastFetched: number | null;
+  ttl: number; // Time to live in milliseconds
+  userId: string | null;
+}
+
 interface RoadmapViewState {
   activeRoadmap: Roadmap | null;
   currentStepIndex: number;
@@ -23,12 +29,19 @@ interface RoadmapViewState {
   // Learn screen specific state
   currentStep: RoadmapStep | null;
   knowledgeContent: KnowledgeContent | null;
-  fetchActiveRoadmap: (userId: string) => Promise<void>;
+  // Cache metadata
+  cacheMetadata: CacheMetadata;
+  fetchActiveRoadmap: (userId: string, forceRefresh?: boolean) => Promise<void>;
   setCurrentStep: (index: number) => void;
   setCurrentStepForLearn: (step: RoadmapStep, content: KnowledgeContent) => void;
   markStepCompleted: (stepId: string) => Promise<void>;
   resetState: () => void;
+  invalidateCache: () => void;
+  isCacheValid: (userId: string) => boolean;
 }
+
+// Default cache TTL: 5 minutes
+const DEFAULT_CACHE_TTL = 5 * 60 * 1000;
 
 export const useRoadmapStore = create<RoadmapViewState>()(
   persist(
@@ -40,8 +53,45 @@ export const useRoadmapStore = create<RoadmapViewState>()(
       // Learn screen specific state
       currentStep: null,
       knowledgeContent: null,
+      // Cache metadata
+      cacheMetadata: {
+        lastFetched: null,
+        ttl: DEFAULT_CACHE_TTL,
+        userId: null,
+      },
 
-      fetchActiveRoadmap: async (userId: string) => {
+      isCacheValid: (userId: string) => {
+        const { cacheMetadata, activeRoadmap } = get();
+
+        // No cache or different user
+        if (!cacheMetadata.lastFetched || cacheMetadata.userId !== userId || !activeRoadmap) {
+          return false;
+        }
+
+        // Check if cache has expired
+        const now = Date.now();
+        return now - cacheMetadata.lastFetched < cacheMetadata.ttl;
+      },
+
+      invalidateCache: () => {
+        set((state) => ({
+          cacheMetadata: {
+            ...state.cacheMetadata,
+            lastFetched: null,
+            userId: null,
+          },
+        }));
+      },
+
+      fetchActiveRoadmap: async (userId: string, forceRefresh = false) => {
+        const { isCacheValid } = get();
+
+        // Use cached data if valid and not forcing refresh
+        if (!forceRefresh && isCacheValid(userId)) {
+          console.log("[fetchActiveRoadmap] Using cached data");
+          return;
+        }
+
         set({ isLoading: true, error: null });
 
         try {
@@ -72,11 +122,16 @@ export const useRoadmapStore = create<RoadmapViewState>()(
             // Find the current step index (first non-completed step)
             const currentIndex = roadmap.steps.findIndex((step) => step.status !== "completed");
 
-            set({
+            set((state) => ({
               activeRoadmap: roadmap,
               currentStepIndex: currentIndex === -1 ? roadmap.steps.length - 1 : currentIndex,
               isLoading: false,
-            });
+              cacheMetadata: {
+                lastFetched: Date.now(),
+                ttl: state.cacheMetadata.ttl, // Preserve existing TTL
+                userId,
+              },
+            }));
           } else {
             set({ activeRoadmap: null, isLoading: false });
           }
@@ -114,113 +169,84 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           const supabase = createClient();
           console.log("[markStepCompleted] Starting update for stepId:", stepId);
 
-          // Start transaction-like behavior by updating step status first
-          console.log("[markStepCompleted] Updating step status to 'completed'");
-          const { error: updateError } = await supabase
-            .from("roadmap_steps")
-            .update({ status: "completed" })
-            .eq("id", stepId);
+          // Use the atomic RPC function to complete step and unlock next
+          console.log("[markStepCompleted] Calling RPC function complete_step_and_unlock_next");
 
-          if (updateError) {
-            const errorMessage = `Failed to mark step as completed: ${updateError.message}`;
-            console.error("[markStepCompleted] Step update failed:", updateError);
+          // Define the expected response type
+          interface StepCompletionResult {
+            completed_step_id: string;
+            unlocked_step_id: string | null;
+            all_steps_completed: boolean;
+            roadmap_completed: boolean;
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data, error } = (await (supabase.rpc as any)("complete_step_and_unlock_next", {
+            p_step_id: stepId,
+            p_roadmap_id: activeRoadmap.id,
+          })) as { data: StepCompletionResult | null; error: Error | null };
+
+          if (error || !data) {
+            const errorMessage = `Failed to update step: ${error?.message || "Unknown error"}`;
+            console.error("[markStepCompleted] RPC function failed:", error);
             set({ error: errorMessage, isLoading: false });
             throw new Error(errorMessage);
           }
 
-          console.log("[markStepCompleted] Step marked as completed successfully");
+          console.log("[markStepCompleted] RPC function returned:", data);
 
           // Get current step index
           const completedStepIndex = activeRoadmap.steps.findIndex((s) => s.id === stepId);
           console.log("[markStepCompleted] Completed step index:", completedStepIndex);
 
           // Build updated steps array
-          let updatedSteps = [...activeRoadmap.steps];
+          const updatedSteps = [...activeRoadmap.steps];
           updatedSteps[completedStepIndex] = {
             ...updatedSteps[completedStepIndex],
             status: "completed" as const,
           };
 
-          // Unlock next step if exists
-          if (completedStepIndex !== -1 && completedStepIndex < updatedSteps.length - 1) {
-            const nextStep = updatedSteps[completedStepIndex + 1];
-            console.log("[markStepCompleted] Next step status:", nextStep.status);
-
-            if (nextStep.status === "locked") {
-              console.log("[markStepCompleted] Unlocking next step:", nextStep.id);
-
-              // Update next step to unlocked in database
-              const { error: unlockError } = await supabase
-                .from("roadmap_steps")
-                .update({ status: "unlocked" })
-                .eq("id", nextStep.id);
-
-              if (unlockError) {
-                console.error("[markStepCompleted] Failed to unlock next step:", unlockError);
-                set({
-                  error: `Step completed but failed to unlock next step: ${unlockError.message}`,
-                  isLoading: false,
-                });
-                throw new Error(`Failed to unlock next step: ${unlockError.message}`);
-              }
-
-              console.log("[markStepCompleted] Next step unlocked successfully");
-
-              // Update local state only after successful database update
-              updatedSteps[completedStepIndex + 1] = {
-                ...nextStep,
+          // If a next step was unlocked, update it in local state
+          if (data.unlocked_step_id && completedStepIndex < updatedSteps.length - 1) {
+            const nextStepIndex = updatedSteps.findIndex(
+              (step) => step.id === data.unlocked_step_id
+            );
+            if (nextStepIndex !== -1) {
+              console.log("[markStepCompleted] Next step unlocked:", data.unlocked_step_id);
+              updatedSteps[nextStepIndex] = {
+                ...updatedSteps[nextStepIndex],
                 status: "unlocked" as const,
               };
-            } else {
-              console.log("[markStepCompleted] Next step is already unlocked or completed");
             }
           } else {
             console.log("[markStepCompleted] No next step to unlock (this was the last step)");
           }
 
-          // Check if all steps are completed
-          const allCompleted = updatedSteps.every((step) => step.status === "completed");
-          const roadmapStatus = allCompleted ? "completed" : "active";
+          // Update roadmap status based on RPC result
+          const roadmapStatus = data.roadmap_completed ? "completed" : "active";
           console.log(
             "[markStepCompleted] All steps completed:",
-            allCompleted,
+            data.all_steps_completed,
             "Roadmap status:",
             roadmapStatus
           );
 
-          // Update roadmap status if needed
-          if (allCompleted) {
-            console.log("[markStepCompleted] Updating roadmap status to completed");
-            const { error: roadmapError } = await supabase
-              .from("roadmaps")
-              .update({
-                status: "completed",
-                completed_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              })
-              .eq("id", activeRoadmap.id);
-
-            if (roadmapError) {
-              console.error("[markStepCompleted] Failed to update roadmap status:", roadmapError);
-              set({
-                error: `Failed to update roadmap status: ${roadmapError.message}`,
-                isLoading: false,
-              });
-              throw new Error(`Failed to update roadmap status: ${roadmapError.message}`);
-            }
-          }
-
           // Only update local state after all database operations succeed
-          set({
+          set((state) => ({
             activeRoadmap: {
               ...activeRoadmap,
               steps: updatedSteps,
               status: roadmapStatus as "active" | "completed",
-              ...(allCompleted && { completed_at: new Date().toISOString() }),
+              ...(data.roadmap_completed && { completed_at: new Date().toISOString() }),
             },
             currentStepIndex: completedStepIndex + 1,
             isLoading: false,
-          });
+            // Update cache timestamp since we modified data
+            cacheMetadata: {
+              ...state.cacheMetadata,
+              lastFetched: Date.now(),
+            },
+          }));
 
           console.log("[markStepCompleted] Operation completed successfully");
         } catch (error) {
@@ -239,6 +265,11 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           error: null,
           currentStep: null,
           knowledgeContent: null,
+          cacheMetadata: {
+            lastFetched: null,
+            ttl: DEFAULT_CACHE_TTL,
+            userId: null,
+          },
         });
       },
     }),
@@ -249,6 +280,7 @@ export const useRoadmapStore = create<RoadmapViewState>()(
         currentStepIndex: state.currentStepIndex,
         currentStep: state.currentStep,
         knowledgeContent: state.knowledgeContent,
+        cacheMetadata: state.cacheMetadata,
       }),
     }
   )
