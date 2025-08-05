@@ -312,11 +312,12 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                     >
                       <Star
                         className={cn(
-                          "h-10 w-10 transition-all duration-200",
+                          "transition-all duration-200",
                           rating >= star || hoveredStar >= star
                             ? "fill-current drop-shadow-[0_2px_4px_rgba(255,215,0,0.4)] scale-110"
                             : "hover:scale-110"
                         )}
+                        style={{ width: "36px", height: "36px" }}
                       />
                     </Button>
                   ))}
