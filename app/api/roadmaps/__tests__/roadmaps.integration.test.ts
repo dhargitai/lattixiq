@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { NextRequest } from "next/server";
 import { setupIntegrationTestAuth, teardownIntegrationTestAuth } from "@/tests/utils/auth-mocks";
 import { POST } from "../route";
@@ -43,7 +43,7 @@ interface RoadmapApiResponse {
 }
 
 // Helper to create a NextRequest
-function createRequest(body: any, headers: Record<string, string> = {}) {
+function createRequest(body: unknown, headers: Record<string, string> = {}) {
   return new NextRequest("http://localhost:3000/api/roadmaps", {
     method: "POST",
     headers: {

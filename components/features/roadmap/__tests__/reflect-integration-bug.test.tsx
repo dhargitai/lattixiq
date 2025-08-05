@@ -97,7 +97,7 @@ describe("ReflectScreen Integration Bug Test", () => {
       }
       if (table === "roadmap_steps") {
         return {
-          update: vi.fn().mockImplementation((data: any) => {
+          update: vi.fn().mockImplementation((data: Record<string, unknown>) => {
             if (data.status === "completed") {
               stepUpdateCalled = true;
             }

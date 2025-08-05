@@ -65,7 +65,7 @@ describe("Step Unlock Logic Investigation", () => {
       .sort((a, b) => a.order - b.order)
       .slice(0, 1);
 
-    const nextStep = nextSteps[0];
+    const [nextStep] = nextSteps;
     console.log("Database query result:", nextStep);
 
     if (nextStep && nextStep.status === "locked") {
@@ -85,7 +85,7 @@ describe("Step Unlock Logic Investigation", () => {
       .sort((a, b) => a.order - b.order)
       .slice(0, 1);
 
-    const nextStepMulti = nextStepsMulti[0];
+    const [nextStepMulti] = nextStepsMulti;
     console.log("Multi-roadmap test:", nextStepMulti);
     expect(nextStepMulti.id).toBe("step-3"); // Should still find the correct next step
   });

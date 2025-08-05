@@ -20,12 +20,10 @@ describe("Service Worker Registration", () => {
         register: vi.fn().mockResolvedValue(mockRegistration),
         ready: Promise.resolve(mockRegistration),
       },
-    } as any;
+    } as unknown as Navigator;
 
-    // Import and execute the registration component
-    const { ServiceWorkerRegistration } = await import(
-      "@/components/features/notifications/ServiceWorkerRegistration"
-    );
+    // Import the component (it will auto-register)
+    await import("@/components/features/notifications/ServiceWorkerRegistration");
 
     // The component should be used in layout
     expect(global.navigator.serviceWorker.register).toBeDefined();
@@ -38,7 +36,7 @@ describe("Service Worker Registration", () => {
       serviceWorker: {
         register: vi.fn().mockRejectedValue(new Error("Registration failed")),
       },
-    } as any;
+    } as unknown as Navigator;
 
     // The registration should not throw
     const registerSW = async () => {
@@ -56,7 +54,7 @@ describe("Service Worker Registration", () => {
   });
 
   it("should handle browsers without service worker support", () => {
-    global.navigator = {} as any;
+    global.navigator = {} as unknown as Navigator;
 
     expect("serviceWorker" in navigator).toBe(false);
   });
@@ -67,7 +65,7 @@ describe("Notification Permission", () => {
     global.Notification = {
       permission: "default",
       requestPermission: vi.fn().mockResolvedValue("granted"),
-    } as any;
+    } as unknown as typeof Notification;
 
     const permission = await Notification.requestPermission();
 
@@ -79,7 +77,7 @@ describe("Notification Permission", () => {
     global.Notification = {
       permission: "default",
       requestPermission: vi.fn().mockResolvedValue("denied"),
-    } as any;
+    } as unknown as typeof Notification;
 
     const permission = await Notification.requestPermission();
 

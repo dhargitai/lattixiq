@@ -104,7 +104,7 @@ describe("Cron Job Performance Tests", () => {
       refillRate: 10, // 10 tokens per second
       lastRefill: Date.now(),
 
-      consume: function (tokens: number): boolean {
+      consume(tokens: number): boolean {
         // Refill tokens based on time passed
         const now = Date.now();
         const timePassed = (now - this.lastRefill) / 1000;
@@ -139,7 +139,7 @@ describe("Cron Job Performance Tests", () => {
 
   it("should handle concurrent notification sending efficiently", async () => {
     const sendNotification = async (
-      userId: string
+      _userId: string
     ): Promise<{ success: boolean; time: number }> => {
       const start = performance.now();
       // Simulate API call to send notification
@@ -176,11 +176,11 @@ describe("Cron Job Performance Tests", () => {
 
   it("should implement efficient database connection pooling", async () => {
     const connectionPool = {
-      connections: [] as any[],
+      connections: [] as unknown[],
       maxConnections: 10,
       activeConnections: 0,
 
-      acquire: async function () {
+      async acquire() {
         if (this.activeConnections >= this.maxConnections) {
           // Wait for a connection to be available
           await new Promise((resolve) => setTimeout(resolve, 10));
@@ -189,7 +189,7 @@ describe("Cron Job Performance Tests", () => {
         return { id: Math.random() };
       },
 
-      release: function (connection: any) {
+      release(_connection: unknown) {
         this.activeConnections--;
       },
     };
@@ -228,19 +228,19 @@ describe("Cron Job Performance Tests", () => {
       notificationsSent: 0,
       errors: 0,
 
-      start: function () {
+      start() {
         this.startTime = performance.now();
       },
 
-      end: function () {
+      end() {
         this.endTime = performance.now();
       },
 
-      getDuration: function () {
+      getDuration() {
         return this.endTime - this.startTime;
       },
 
-      getMetrics: function () {
+      getMetrics() {
         return {
           duration: this.getDuration(),
           usersProcessed: this.usersProcessed,
