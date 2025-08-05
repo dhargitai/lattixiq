@@ -42,7 +42,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
     useEffect(() => {
       if (user) {
         setReminderEnabled(user.reminder_enabled || false);
-        setReminderTime(user.reminder_time || "09:00");
+        setReminderTime(user.reminder_time || "09:00:00");
       }
     }, [user]);
 
@@ -267,21 +267,21 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                           disabled={!reminderEnabled}
                           className="px-3 py-2 text-base border-2 border-gray-200 rounded-lg bg-white text-gray-700 cursor-pointer transition-all duration-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 disabled:cursor-not-allowed"
                         >
-                          <option value="06:00">6:00 AM</option>
-                          <option value="07:00">7:00 AM</option>
-                          <option value="08:00">8:00 AM</option>
-                          <option value="09:00">9:00 AM</option>
-                          <option value="10:00">10:00 AM</option>
-                          <option value="11:00">11:00 AM</option>
-                          <option value="12:00">12:00 PM</option>
-                          <option value="13:00">1:00 PM</option>
-                          <option value="14:00">2:00 PM</option>
-                          <option value="15:00">3:00 PM</option>
-                          <option value="16:00">4:00 PM</option>
-                          <option value="17:00">5:00 PM</option>
-                          <option value="18:00">6:00 PM</option>
-                          <option value="19:00">7:00 PM</option>
-                          <option value="20:00">8:00 PM</option>
+                          <option value="06:00:00">6:00 AM</option>
+                          <option value="07:00:00">7:00 AM</option>
+                          <option value="08:00:00">8:00 AM</option>
+                          <option value="09:00:00">9:00 AM</option>
+                          <option value="10:00:00">10:00 AM</option>
+                          <option value="11:00:00">11:00 AM</option>
+                          <option value="12:00:00">12:00 PM</option>
+                          <option value="13:00:00">1:00 PM</option>
+                          <option value="14:00:00">2:00 PM</option>
+                          <option value="15:00:00">3:00 PM</option>
+                          <option value="16:00:00">4:00 PM</option>
+                          <option value="17:00:00">5:00 PM</option>
+                          <option value="18:00:00">6:00 PM</option>
+                          <option value="19:00:00">7:00 PM</option>
+                          <option value="20:00:00">8:00 PM</option>
                         </select>
                       </div>
                     </div>

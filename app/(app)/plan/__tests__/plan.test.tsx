@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { PlanScreen } from "@/components/features/roadmap/PlanScreen";
+import { useUserSettings } from "@/lib/hooks/useUserSettings";
 
 // Mock Next.js navigation
 vi.mock("next/navigation", () => ({
@@ -15,8 +16,14 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: vi.fn(),
 }));
 
+// Mock useUserSettings hook
+vi.mock("@/lib/hooks/useUserSettings", () => ({
+  useUserSettings: vi.fn(),
+}));
+
 describe("Plan Screen", () => {
   const mockPush = vi.fn();
+  const mockUpdateReminderSettings = vi.fn();
   const mockSupabase = {
     from: vi.fn(),
   };
@@ -60,6 +67,14 @@ describe("Plan Screen", () => {
       push: mockPush,
     });
     (createClient as Mock).mockReturnValue(mockSupabase);
+    // Default mock for useUserSettings - no user data
+    (useUserSettings as Mock).mockReturnValue({
+      user: null,
+      isLoading: false,
+      error: null,
+      updateReminderSettings: mockUpdateReminderSettings,
+      refetch: vi.fn(),
+    });
   });
 
   it("should display Implementation Intention form for mental models", async () => {
@@ -345,5 +360,52 @@ describe("Plan Screen", () => {
       expect(mockSupabase.from).toHaveBeenCalledWith("roadmap_steps");
       expect(mockPush).toHaveBeenCalledWith("/roadmap");
     });
+  });
+
+  it("should select correct reminder time when user has reminder_enabled and reminder_time set", async () => {
+    // Mock user with reminder settings
+    const mockUser = {
+      id: "user-1",
+      email: "test@example.com",
+      reminder_enabled: true,
+      reminder_time: "11:00:00",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    (useUserSettings as Mock).mockReturnValue({
+      user: mockUser,
+      isLoading: false,
+      error: null,
+      updateReminderSettings: mockUpdateReminderSettings,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <PlanScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        goalExamples={[mockGoalExample]}
+      />
+    );
+
+    // Wait for the component to update with user settings
+    await waitFor(() => {
+      // Check that the reminder switch is enabled
+      const reminderSwitch = screen.getByRole("switch", { name: /daily reminder/i });
+      expect(reminderSwitch).toHaveAttribute("aria-checked", "true");
+    });
+
+    // Check that the correct time option is selected
+    const timeSelector = screen.getByLabelText(/remind me at:/i) as HTMLSelectElement;
+    expect(timeSelector.value).toBe("11:00:00");
+
+    // Verify that the "11:00 AM" option is selected
+    const selectedOption = timeSelector.querySelector(
+      'option[value="11:00:00"]'
+    ) as HTMLOptionElement;
+    expect(selectedOption).not.toBeNull();
+    expect(selectedOption.selected).toBe(true);
+    expect(selectedOption.textContent).toBe("11:00 AM");
   });
 });
