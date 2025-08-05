@@ -9,7 +9,7 @@
  */
 
 import type { PostgrestError } from "@supabase/supabase-js";
-import type { Database } from "./database.types";
+// import type { Database } from "./database.types";
 
 // RPC function parameter types
 export interface CompleteStepParams {
@@ -85,11 +85,17 @@ export type RpcFunctionName = keyof CustomRpcFunctions;
 
 // Helper function for type-safe RPC calls
 export async function rpcCall<T extends RpcFunctionName>(
-  supabase: any,
+  supabase: {
+    rpc: (
+      name: string,
+      params: Record<string, unknown>
+    ) => Promise<{ data: unknown | null; error: PostgrestError | null }>;
+  },
   functionName: T,
   params: CustomRpcFunctions[T]["params"]
 ): Promise<{ data: CustomRpcFunctions[T]["result"] | null; error: PostgrestError | null }> {
-  return supabase.rpc(functionName, params);
+  const result = await supabase.rpc(functionName, params as unknown as Record<string, unknown>);
+  return result as { data: CustomRpcFunctions[T]["result"] | null; error: PostgrestError | null };
 }
 
 // Usage example:

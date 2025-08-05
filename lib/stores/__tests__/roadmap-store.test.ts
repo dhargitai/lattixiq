@@ -1,6 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useRoadmapStore } from "../roadmap-store";
-import type { Roadmap } from "@/lib/supabase/types";
+import type { KnowledgeContent } from "@/lib/supabase/types";
+import type { Roadmap as DBRoadmap, RoadmapStep as DBRoadmapStep } from "@/lib/supabase/types";
+
+// Match the types from the store
+interface Roadmap extends DBRoadmap {
+  steps: RoadmapStep[];
+}
+
+interface RoadmapStep extends DBRoadmapStep {
+  knowledge_content: KnowledgeContent;
+}
 import {
   createSupabaseMock,
   createSupabaseMockWithData,
@@ -46,13 +56,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-1",
           order: 0,
           status: "unlocked" as const,
-          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          knowledge_content: {
+            id: "content-1",
+            title: "Content 1",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     } as Roadmap;
@@ -64,7 +83,9 @@ describe("roadmap-store - step unlocking bug", () => {
         error: null,
       },
     });
-    vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+    vi.mocked(createClient).mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>
+    );
 
     const store = useRoadmapStore.getState();
 
@@ -99,7 +120,9 @@ describe("roadmap-store - step unlocking bug", () => {
         error: null,
       },
     });
-    vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+    vi.mocked(createClient).mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>
+    );
 
     // Set a very short TTL for testing BEFORE getting the store
     useRoadmapStore.setState({
@@ -148,7 +171,9 @@ describe("roadmap-store - step unlocking bug", () => {
         error: null,
       },
     });
-    vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+    vi.mocked(createClient).mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>
+    );
 
     const store = useRoadmapStore.getState();
 
@@ -176,20 +201,29 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-1",
           order: 0,
           status: "unlocked" as const,
-          knowledge_content: { id: "content-1", title: "Content 1" },
+          knowledge_content: {
+            id: "content-1",
+            title: "Content 1",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     } as Roadmap;
 
     const initialTimestamp = Date.now() - 1000; // 1 second ago
     useRoadmapStore.setState({
-      activeRoadmap: testRoadmap,
+      activeRoadmap: testRoadmap as Roadmap,
       cacheMetadata: {
         lastFetched: initialTimestamp,
         ttl: 5 * 60 * 1000,
@@ -206,7 +240,15 @@ describe("roadmap-store - step unlocking bug", () => {
 
   it("should clear cache on resetState", () => {
     useRoadmapStore.setState({
-      activeRoadmap: { id: "test" } as any,
+      activeRoadmap: {
+        id: "test",
+        user_id: "user-1",
+        status: "active" as const,
+        completed_at: null,
+        created_at: "2025-01-01T00:00:00Z",
+        goal_description: "Test goal",
+        steps: [],
+      } as Roadmap,
       cacheMetadata: {
         lastFetched: Date.now(),
         ttl: 5 * 60 * 1000,
@@ -230,7 +272,9 @@ describe("roadmap-store - step unlocking bug", () => {
     mockSupabase = createSupabaseMock();
 
     // Mock the createClient function
-    vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+    vi.mocked(createClient).mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>
+    );
   });
 
   afterEach(() => {
@@ -254,13 +298,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-1",
           order: 0,
           status: "unlocked" as const,
-          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          knowledge_content: {
+            id: "content-1",
+            title: "Content 1",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-2",
@@ -268,13 +321,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-2",
           order: 1,
           status: "locked" as const,
-          knowledge_content: { id: "content-2", title: "Content 2" } as any,
+          knowledge_content: {
+            id: "content-2",
+            title: "Content 2",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-3",
@@ -282,13 +344,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-3",
           order: 2,
           status: "locked" as const,
-          knowledge_content: { id: "content-3", title: "Content 3" } as any,
+          knowledge_content: {
+            id: "content-3",
+            title: "Content 3",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     };
@@ -296,7 +367,7 @@ describe("roadmap-store - step unlocking bug", () => {
     // No need to override anything - the default mock will handle the RPC call correctly
 
     // Set up the store with the test roadmap
-    useRoadmapStore.setState({ activeRoadmap: testRoadmap });
+    useRoadmapStore.setState({ activeRoadmap: testRoadmap as Roadmap });
 
     // Get the store instance
     const store = useRoadmapStore.getState();
@@ -336,13 +407,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-1",
           order: 0,
           status: "unlocked" as const,
-          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          knowledge_content: {
+            id: "content-1",
+            title: "Content 1",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test situation",
           plan_trigger: "test trigger",
           plan_action: "test action",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-2",
@@ -350,13 +430,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-2",
           order: 1,
           status: "locked" as const,
-          knowledge_content: { id: "content-2", title: "Content 2" } as any,
+          knowledge_content: {
+            id: "content-2",
+            title: "Content 2",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test situation",
           plan_trigger: "test trigger",
           plan_action: "test action",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     } as Roadmap;
@@ -378,7 +467,7 @@ describe("roadmap-store - step unlocking bug", () => {
     );
 
     // Set up the store
-    useRoadmapStore.setState({ activeRoadmap: testRoadmap });
+    useRoadmapStore.setState({ activeRoadmap: testRoadmap as Roadmap });
 
     const store = useRoadmapStore.getState();
 
@@ -422,13 +511,22 @@ describe("roadmap-store - step unlocking bug", () => {
           knowledge_content_id: "content-1",
           order: 0,
           status: "unlocked" as const,
-          knowledge_content: { id: "content-1", title: "Content 1" },
+          knowledge_content: {
+            id: "content-1",
+            title: "Content 1",
+            description: "Test description",
+            estimated_time: 10,
+            type: "cognitive-bias",
+            category: "Test category",
+            application: "Test application",
+            keywords: ["test"],
+            summary: "Test summary",
+            embedding: null,
+          } as KnowledgeContent,
           plan_situation: "test",
           plan_trigger: "test",
           plan_action: "test",
           plan_created_at: "2025-01-01T00:00:00Z",
-          created_at: "2025-01-01T00:00:00Z",
-          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     } as Roadmap;
@@ -452,7 +550,7 @@ describe("roadmap-store - step unlocking bug", () => {
       }
     );
 
-    useRoadmapStore.setState({ activeRoadmap: testRoadmap });
+    useRoadmapStore.setState({ activeRoadmap: testRoadmap as Roadmap });
 
     const store = useRoadmapStore.getState();
 

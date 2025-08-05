@@ -40,21 +40,29 @@ export interface MockSupabaseClient {
       data: { user: Database["public"]["Tables"]["users"]["Row"] | null };
       error: Error | null;
     }>;
-    signInWithPassword: (
-      credentials: any
-    ) => Promise<{
-      data: { user: Database["public"]["Tables"]["users"]["Row"] | null; session: any };
+    signInWithPassword: (credentials: { email: string; password: string }) => Promise<{
+      data: {
+        user: Database["public"]["Tables"]["users"]["Row"] | null;
+        session: Record<string, unknown>;
+      };
       error: Error | null;
     }>;
     signOut: () => Promise<{ error: Error | null }>;
   };
   from: (table: string) => {
-    select: (columns?: string) => Promise<{ data: any[] | null; error: Error | null }>;
-    insert: (values: any) => Promise<{ data: any[] | null; error: Error | null }>;
-    update: (values: any) => Promise<{ data: any[] | null; error: Error | null }>;
-    delete: () => Promise<{ data: any[] | null; error: Error | null }>;
+    select: (columns?: string) => Promise<{ data: unknown[] | null; error: Error | null }>;
+    insert: (
+      values: Record<string, unknown>
+    ) => Promise<{ data: unknown[] | null; error: Error | null }>;
+    update: (
+      values: Record<string, unknown>
+    ) => Promise<{ data: unknown[] | null; error: Error | null }>;
+    delete: () => Promise<{ data: unknown[] | null; error: Error | null }>;
   };
-  rpc: (functionName: string, params?: any) => Promise<{ data: any; error: Error | null }>;
+  rpc: (
+    functionName: string,
+    params?: Record<string, unknown>
+  ) => Promise<{ data: unknown; error: Error | null }>;
 }
 
 // Factory functions for creating mocks
@@ -83,7 +91,7 @@ export function createMockSupabaseClient(
   return {
     auth: {
       getUser: async () => ({ data: { user: null }, error: null }),
-      signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+      signInWithPassword: async () => ({ data: { user: null, session: {} }, error: null }),
       signOut: async () => ({ error: null }),
     },
     from: () => ({
@@ -98,12 +106,12 @@ export function createMockSupabaseClient(
 }
 
 // Type helpers for testing
-export type MockFunction<T extends (...args: any[]) => any> = (
+export type MockFunction<T extends (...args: unknown[]) => unknown> = (
   ...args: Parameters<T>
 ) => ReturnType<T>;
 
 export type MockedModule<T> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? MockFunction<T[K]> : T[K];
+  [K in keyof T]: T[K] extends (...args: unknown[]) => unknown ? MockFunction<T[K]> : T[K];
 };
 
 // Example usage:

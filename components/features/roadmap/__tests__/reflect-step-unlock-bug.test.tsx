@@ -56,18 +56,6 @@ describe("ReflectScreen Step Unlock Bug", () => {
     plan_created_at: "2025-01-01T10:00:00Z",
   };
 
-  const mockNextStep = {
-    id: "step-2",
-    knowledge_content_id: "content-2",
-    roadmap_id: "roadmap-1",
-    order: 1,
-    status: "locked" as const,
-    plan_situation: null,
-    plan_trigger: null,
-    plan_action: null,
-    plan_created_at: null,
-  };
-
   const mockKnowledgeContent = {
     id: "content-1",
     title: "Test Mental Model",

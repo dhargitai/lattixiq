@@ -35,7 +35,7 @@ interface ReflectScreenProps {
 const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
   ({ step, knowledgeContent, roadmap: _roadmap }, ref) => {
     const router = useRouter();
-    const { markStepCompleted, activeRoadmap, fetchActiveRoadmap } = useRoadmapStore();
+    const { activeRoadmap, fetchActiveRoadmap } = useRoadmapStore();
     const [reflectionText, setReflectionText] = useState("");
     const [learningText, setLearningText] = useState("");
     const [rating, setRating] = useState(0);
