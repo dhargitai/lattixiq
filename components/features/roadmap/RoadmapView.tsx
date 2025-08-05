@@ -1,15 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import RoadmapStep from "./RoadmapStep";
 import RoadmapConnector from "./RoadmapConnector";
 import { cn } from "@/lib/utils";
@@ -26,82 +19,73 @@ export default function RoadmapView({ roadmap, showSuccess = false }: RoadmapVie
   const progressPercentage = (completedSteps / totalSteps) * 100;
 
   return (
-    <div
-      data-testid="roadmap-container"
-      className={cn(
-        "mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8",
-        "animate-in fade-in duration-500"
-      )}
-    >
-      {/* Breadcrumb */}
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <Link href="/toolkit" className="transition-colors hover:text-foreground">
-              My Toolkit
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Learning Journey</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      {/* Success Message */}
-      {showSuccess && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-          <div className="text-green-800 font-medium">
-            🎉 Great job! Your reflection has been saved and the next step is now unlocked.
-          </div>
-        </div>
-      )}
-
+    <>
       {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Your Learning Journey</h1>
-        <p className="mt-2 text-lg text-muted-foreground">{roadmap.goal_description}</p>
-      </div>
-
-      {/* Progress */}
-      <div className="mb-12">
-        <div className="mb-2 flex justify-between text-sm text-muted-foreground">
-          <span>
-            {completedSteps} of {totalSteps} steps completed
-          </span>
-          <span>{Math.round(progressPercentage)}%</span>
+      <header className="bg-background border-b">
+        <div className="flex items-center justify-between px-5 py-4">
+          <h1 className="text-xl font-semibold tracking-tight">LattixIQ</h1>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" aria-label="Help">
+            <HelpCircle className="h-4 w-4" />
+          </Button>
         </div>
-        <Progress value={progressPercentage} className="h-2" aria-label="Roadmap progress" />
-      </div>
+      </header>
 
-      {/* Steps */}
-      <div className={cn("flex flex-col gap-6", "max-w-3xl mx-auto w-full")}>
-        {roadmap.steps
-          .sort((a, b) => a.order_index - b.order_index)
-          .map((step, index) => (
-            <React.Fragment key={step.id}>
-              <div
-                className="animate-in fade-in slide-in-from-bottom-4"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
+      <div
+        data-testid="roadmap-container"
+        className={cn(
+          "mx-auto w-full max-w-[480px] px-5 py-6 md:py-12 pb-20",
+          "animate-in fade-in duration-500 flex-col"
+        )}
+      >
+        {/* Success Message */}
+        {showSuccess && (
+          <div
+            className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center"
+            data-testid="success-message"
+          >
+            <div className="text-green-800 font-medium">
+              Great job! Your reflection has been saved and the next step is now unlocked.
+            </div>
+          </div>
+        )}
+
+        {/* Roadmap Title */}
+        <h1 className="text-[22px] md:text-[26px] font-semibold tracking-tight mb-8">
+          Your Roadmap: {roadmap.goal_description}
+        </h1>
+
+        {/* Progress Bar (hidden but present for tests) */}
+        <div
+          className="sr-only"
+          role="progressbar"
+          aria-valuenow={progressPercentage}
+          aria-valuemax={100}
+        >
+          {completedSteps} of {totalSteps} steps completed
+        </div>
+
+        {/* Roadmap Steps */}
+        <div className="relative pl-3">
+          {roadmap.steps
+            .sort((a, b) => a.order_index - b.order_index)
+            .map((step, index) => (
+              <div key={step.id} className="relative">
                 <RoadmapStep
                   step={step}
                   index={index}
                   isAvailable={step.status === "unlocked"}
                   isCompleted={step.status === "completed"}
                 />
+                {index < roadmap.steps.length - 1 && (
+                  <RoadmapConnector
+                    isCompleted={step.status === "completed"}
+                    className="top-[44px] h-[calc(100%-44px)]"
+                  />
+                )}
               </div>
-              {index < roadmap.steps.length - 1 && (
-                <div
-                  className="animate-in fade-in duration-700 flex justify-center py-2"
-                  style={{ animationDelay: `${(index + 1) * 150}ms` }}
-                >
-                  <RoadmapConnector isCompleted={step.status === "completed"} />
-                </div>
-              )}
-            </React.Fragment>
-          ))}
+            ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -17,6 +17,7 @@ vi.mock("next/navigation", () => ({
     forward: vi.fn(),
     refresh: vi.fn(),
   }),
+  usePathname: () => "/roadmap",
 }));
 
 vi.mock("@/lib/supabase/server", () => ({

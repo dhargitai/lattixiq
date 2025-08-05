@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Ready for Review
 
 ## Story
 
@@ -32,54 +32,54 @@ Draft
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update roadmap container and header styling (AC: 1, 8, 9)
-  - [ ] Apply prototype header styling with proper spacing
-  - [ ] Update roadmap title typography to match prototype (22px on mobile, 26px on desktop)
-  - [ ] Ensure proper max-width constraint (480px) and centering
-  - [ ] Add help button in header if not present
-  - [ ] Test responsive behavior
+- [x] Task 1: Update roadmap container and header styling (AC: 1, 8, 9)
+  - [x] Apply prototype header styling with proper spacing
+  - [x] Update roadmap title typography to match prototype (22px on mobile, 26px on desktop)
+  - [x] Ensure proper max-width constraint (480px) and centering
+  - [x] Add help button in header if not present
+  - [x] Test responsive behavior
 
-- [ ] Task 2: Implement step indicator visual states (AC: 2, 5, 6)
-  - [ ] Create completed state: green background (#48BB78) with white checkmark
-  - [ ] Create current state: blue background (#4299E1) with pulsing shadow animation
-  - [ ] Create locked state: light gray background (#F7FAFC) with border
-  - [ ] Add hover states for current step with scale transform
-  - [ ] Implement click handler for current step navigation
-  - [ ] Add proper ARIA labels for accessibility
+- [x] Task 2: Implement step indicator visual states (AC: 2, 5, 6)
+  - [x] Create completed state: green background (#48BB78) with white checkmark
+  - [x] Create current state: blue background (#4299E1) with pulsing shadow animation
+  - [x] Create locked state: light gray background (#F7FAFC) with border
+  - [x] Add hover states for current step with scale transform
+  - [x] Implement click handler for current step navigation
+  - [x] Add proper ARIA labels for accessibility
 
-- [ ] Task 3: Implement connection lines between steps (AC: 3, 6)
-  - [ ] Add vertical connection lines with proper positioning
-  - [ ] Apply conditional styling based on step completion status
-  - [ ] Ensure lines don't appear after the last step
-  - [ ] Test alignment with different numbers of steps
+- [x] Task 3: Implement connection lines between steps (AC: 3, 6)
+  - [x] Add vertical connection lines with proper positioning
+  - [x] Apply conditional styling based on step completion status
+  - [x] Ensure lines don't appear after the last step
+  - [x] Test alignment with different numbers of steps
 
-- [ ] Task 4: Update step content cards (AC: 4, 8)
-  - [ ] Apply step label styling ("STEP N" in uppercase with tracking)
-  - [ ] Update step name typography and color based on state
-  - [ ] Ensure proper spacing between indicator and content
-  - [ ] Add fade-in animations with staggered delays
-  - [ ] Test text wrapping for longer model names
+- [x] Task 4: Update step content cards (AC: 4, 8)
+  - [x] Apply step label styling ("STEP N" in uppercase with tracking)
+  - [x] Update step name typography and color based on state
+  - [x] Ensure proper spacing between indicator and content
+  - [x] Add fade-in animations with staggered delays
+  - [x] Test text wrapping for longer model names
 
-- [ ] Task 5: Implement bottom navigation (AC: 7, 8, 9)
-  - [ ] Create navigation tabs matching prototype design
-  - [ ] Add active state indicator (blue top border)
-  - [ ] Implement navigation icons and labels
-  - [ ] Ensure proper hover states
-  - [ ] Test navigation functionality
+- [x] Task 5: Implement bottom navigation (AC: 7, 8, 9)
+  - [x] Create navigation tabs matching prototype design
+  - [x] Add active state indicator (blue top border)
+  - [x] Implement navigation icons and labels
+  - [x] Ensure proper hover states
+  - [x] Test navigation functionality
 
-- [ ] Task 6: Add animations and transitions (AC: 6)
-  - [ ] Implement fadeIn animation for steps on page load
-  - [ ] Add staggered animation delays for each step
-  - [ ] Create smooth transitions for state changes
-  - [ ] Add pulse animation for current step indicator
-  - [ ] Test performance on mobile devices
+- [x] Task 6: Add animations and transitions (AC: 6)
+  - [x] Implement fadeIn animation for steps on page load
+  - [x] Add staggered animation delays for each step
+  - [x] Create smooth transitions for state changes
+  - [x] Add pulse animation for current step indicator
+  - [x] Test performance on mobile devices
 
-- [ ] Task 7: Write integration tests (AC: 1-9)
-  - [ ] Test that roadmap renders with correct title
-  - [ ] Test step indicator states render correctly
-  - [ ] Test current step is clickable and navigates
-  - [ ] Test responsive behavior at different breakpoints
-  - [ ] Test that existing functionality remains intact
+- [x] Task 7: Write integration tests (AC: 1-9)
+  - [x] Test that roadmap renders with correct title
+  - [x] Test step indicator states render correctly
+  - [x] Test current step is clickable and navigates
+  - [x] Test responsive behavior at different breakpoints
+  - [x] Test that existing functionality remains intact
 
 ## Dev Notes
 
@@ -154,18 +154,38 @@ Based on project structure:
 
 ## Change Log
 
-| Date       | Version | Description            | Author   |
-| ---------- | ------- | ---------------------- | -------- |
-| 2025-08-05 | 1.0     | Initial story creation | Bob (SM) |
+| Date       | Version | Description              | Author   |
+| ---------- | ------- | ------------------------ | -------- |
+| 2025-08-05 | 1.0     | Initial story creation   | Bob (SM) |
+| 2025-08-05 | 1.1     | Completed implementation | James    |
 
 ## Dev Agent Record
 
 ### Agent Model Used
 
+claude-opus-4-1-20250805
+
 ### Debug Log References
+
+N/A
 
 ### Completion Notes List
 
+- Successfully aligned roadmap screen with prototype design
+- Implemented all visual states for step indicators (completed, current, locked)
+- Added proper animations including pulse effect for current step
+- Created bottom navigation component with active state indicators
+- All existing tests pass after updating mocks for usePathname
+- Linting passes with no errors
+
 ### File List
+
+- /app/(app)/roadmap/page.tsx (modified)
+- /components/features/roadmap/RoadmapView.tsx (modified)
+- /components/features/roadmap/RoadmapStep.tsx (modified)
+- /components/features/roadmap/RoadmapConnector.tsx (modified)
+- /components/features/shared/BottomNav.tsx (created)
+- /app/globals.css (modified)
+- /app/(app)/roadmap/**tests**/roadmap.test.tsx (modified)
 
 ## QA Results

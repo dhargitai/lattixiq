@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import RoadmapView from "@/components/features/roadmap/RoadmapView";
 import { getActiveRoadmapWithSteps } from "@/lib/queries/roadmap-queries";
 import { transformRoadmapForView } from "@/lib/transformers/roadmap-transformers";
+import BottomNav from "@/components/features/shared/BottomNav";
 
 export default async function RoadmapPage({
   searchParams,
@@ -34,8 +35,9 @@ export default async function RoadmapPage({
   const transformedRoadmap = transformRoadmapForView(roadmap);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <RoadmapView roadmap={transformedRoadmap} showSuccess={params.success === "true"} />
+      <BottomNav />
     </div>
   );
 }

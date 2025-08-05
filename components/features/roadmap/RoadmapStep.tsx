@@ -2,10 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Lock, CheckCircle2, Circle } from "lucide-react";
+import { Lock, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TransformedStep } from "@/lib/transformers/roadmap-transformers";
 
@@ -31,62 +28,86 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
     }
   };
 
-  const getIcon = () => {
+  const getStepIndicator = () => {
     if (isCompleted) {
-      return <CheckCircle2 className="h-6 w-6 text-green-600" />;
+      return (
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-500 text-white">
+          <Check className="h-5 w-5" strokeWidth={3} />
+        </div>
+      );
     }
     if (isAvailable) {
-      return <Circle className="h-6 w-6 text-primary" />;
+      return (
+        <button
+          onClick={handleClick}
+          className={cn(
+            "flex h-11 w-11 items-center justify-center rounded-full",
+            "bg-blue-500 text-white font-semibold text-lg",
+            "cursor-pointer transition-all duration-200",
+            "hover:scale-105 hover:shadow-lg hover:shadow-blue-200/50",
+            "active:scale-95",
+            "ring-4 ring-blue-100 animate-pulse-ring"
+          )}
+          aria-label={`Current step ${index + 1}`}
+        >
+          {index + 1}
+        </button>
+      );
     }
-    return <Lock className="h-6 w-6 text-muted-foreground" />;
+    return (
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-50 border-2 border-gray-200">
+        <Lock className="h-4 w-4 text-gray-400" />
+      </div>
+    );
   };
 
-  const getCategoryBadge = () => {
-    const variant = step.knowledge_content.type === "mental-model" ? "default" : "secondary";
-    const label =
-      step.knowledge_content.type === "mental-model"
-        ? "Mental Model"
-        : step.knowledge_content.type === "cognitive-bias"
-          ? "Cognitive Bias"
-          : "Fallacy";
-    return <Badge variant={variant}>{label}</Badge>;
-  };
+  const stepLabel = isAvailable ? `Step ${index + 1} • Current` : `Step ${index + 1}`;
 
   return (
-    <Card
+    <div
       data-testid={`roadmap-step-${index}`}
       className={cn(
-        "relative transition-all duration-200",
-        "w-full",
-        isAvailable && "hover:shadow-lg hover:scale-[1.02] cursor-pointer",
-        !isAvailable && "opacity-60",
-        "transform-gpu" // Enable GPU acceleration for smooth animations
+        "relative flex items-start pb-8",
+        "animate-fade-in",
+        !isAvailable && isCompleted === false && "opacity-50"
       )}
-      onClick={handleClick}
-      aria-disabled={!isAvailable}
+      style={{ animationDelay: `${index * 100}ms` }}
+      aria-disabled={!isAvailable && !isCompleted}
     >
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-              {getIcon()}
-            </div>
-            <div>
-              <CardTitle className="text-lg">{step.knowledge_content.title}</CardTitle>
-              {getCategoryBadge()}
-            </div>
-          </div>
-          <span className="text-sm text-muted-foreground">Step {index + 1}</span>
+      {/* Step Indicator */}
+      <div className="mr-5 flex-shrink-0 relative z-10">{getStepIndicator()}</div>
+
+      {/* Step Content */}
+      <div className="flex-1 pt-2.5">
+        <div
+          className={cn(
+            "text-sm font-medium uppercase tracking-wider mb-1",
+            isAvailable && "text-blue-500",
+            isCompleted && "text-gray-600",
+            !isAvailable && !isCompleted && "text-gray-400"
+          )}
+        >
+          {stepLabel}
         </div>
-      </CardHeader>
-      <CardContent>
-        <CardDescription>{step.knowledge_content.summary}</CardDescription>
+        <h2
+          className={cn(
+            "text-lg font-medium leading-snug",
+            isCompleted && "text-gray-700",
+            isAvailable && "text-gray-900",
+            !isAvailable && !isCompleted && "text-gray-400 blur-[3px]"
+          )}
+        >
+          {step.knowledge_content.title}
+        </h2>
         {isAvailable && index === 0 && (
-          <Button className="mt-4 w-full" size="sm">
-            Start Learning
-          </Button>
+          <button
+            onClick={handleClick}
+            className="mt-3 text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors"
+          >
+            Start Learning →
+          </button>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
