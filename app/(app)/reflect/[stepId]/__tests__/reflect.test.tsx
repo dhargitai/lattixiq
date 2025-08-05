@@ -174,7 +174,7 @@ describe("Reflect Page", () => {
     const reflectionText = screen.getByTestId("reflection-text");
     expect(reflectionText).toHaveAttribute(
       "placeholder",
-      "What happened when you tried to apply this concept? What did you learn?"
+      "What happened when you tried to apply this concept?"
     );
   });
 
@@ -345,6 +345,18 @@ describe("Reflect Page", () => {
     await waitFor(() => {
       expect(applicationLogInsert.insert).toHaveBeenCalled();
       expect(mockMarkStepCompleted).toHaveBeenCalledWith("test-step-id");
+    });
+
+    // Should show success dialog instead of immediate navigation
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+    });
+
+    // Click continue button to navigate
+    const continueButton = screen.getByText("Continue to Roadmap");
+    await user.click(continueButton);
+
+    await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
     });
   });

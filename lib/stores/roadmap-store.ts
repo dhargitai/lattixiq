@@ -114,7 +114,7 @@ export const useRoadmapStore = create<RoadmapViewState>()(
           const supabase = createClient();
           console.log("[markStepCompleted] Starting update for stepId:", stepId);
 
-          // Update step status in database
+          // Start transaction-like behavior by updating step status first
           console.log("[markStepCompleted] Updating step status to 'completed'");
           const { error: updateError } = await supabase
             .from("roadmap_steps")
@@ -130,24 +130,25 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
           console.log("[markStepCompleted] Step marked as completed successfully");
 
-          // Update local state
-          const updatedSteps = activeRoadmap.steps.map((step) => {
-            if (step.id === stepId) {
-              return { ...step, status: "completed" as const };
-            }
-            return step;
-          });
-
-          // Unlock next step if exists
-          const completedStepIndex = updatedSteps.findIndex((s) => s.id === stepId);
+          // Get current step index
+          const completedStepIndex = activeRoadmap.steps.findIndex((s) => s.id === stepId);
           console.log("[markStepCompleted] Completed step index:", completedStepIndex);
 
+          // Build updated steps array
+          let updatedSteps = [...activeRoadmap.steps];
+          updatedSteps[completedStepIndex] = {
+            ...updatedSteps[completedStepIndex],
+            status: "completed" as const,
+          };
+
+          // Unlock next step if exists
           if (completedStepIndex !== -1 && completedStepIndex < updatedSteps.length - 1) {
             const nextStep = updatedSteps[completedStepIndex + 1];
             console.log("[markStepCompleted] Next step status:", nextStep.status);
 
             if (nextStep.status === "locked") {
               console.log("[markStepCompleted] Unlocking next step:", nextStep.id);
+
               // Update next step to unlocked in database
               const { error: unlockError } = await supabase
                 .from("roadmap_steps")
@@ -156,17 +157,20 @@ export const useRoadmapStore = create<RoadmapViewState>()(
 
               if (unlockError) {
                 console.error("[markStepCompleted] Failed to unlock next step:", unlockError);
-                // Don't fail the entire operation, but log the error
-                const warning = `Step completed but failed to unlock next step: ${unlockError.message}`;
-                console.warn("[markStepCompleted]", warning);
-              } else {
-                console.log("[markStepCompleted] Next step unlocked successfully");
-                // Update local state only if database update succeeded
-                updatedSteps[completedStepIndex + 1] = {
-                  ...nextStep,
-                  status: "unlocked" as const,
-                };
+                set({
+                  error: `Step completed but failed to unlock next step: ${unlockError.message}`,
+                  isLoading: false,
+                });
+                throw new Error(`Failed to unlock next step: ${unlockError.message}`);
               }
+
+              console.log("[markStepCompleted] Next step unlocked successfully");
+
+              // Update local state only after successful database update
+              updatedSteps[completedStepIndex + 1] = {
+                ...nextStep,
+                status: "unlocked" as const,
+              };
             } else {
               console.log("[markStepCompleted] Next step is already unlocked or completed");
             }
@@ -189,20 +193,30 @@ export const useRoadmapStore = create<RoadmapViewState>()(
             console.log("[markStepCompleted] Updating roadmap status to completed");
             const { error: roadmapError } = await supabase
               .from("roadmaps")
-              .update({ status: "completed" })
+              .update({
+                status: "completed",
+                completed_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              })
               .eq("id", activeRoadmap.id);
 
             if (roadmapError) {
               console.error("[markStepCompleted] Failed to update roadmap status:", roadmapError);
-              // Don't fail the operation, but log the error
+              set({
+                error: `Failed to update roadmap status: ${roadmapError.message}`,
+                isLoading: false,
+              });
+              throw new Error(`Failed to update roadmap status: ${roadmapError.message}`);
             }
           }
 
+          // Only update local state after all database operations succeed
           set({
             activeRoadmap: {
               ...activeRoadmap,
               steps: updatedSteps,
               status: roadmapStatus as "active" | "completed",
+              ...(allCompleted && { completed_at: new Date().toISOString() }),
             },
             currentStepIndex: completedStepIndex + 1,
             isLoading: false,

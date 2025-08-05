@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,14 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useRoadmapStore } from "@/lib/stores/roadmap-store";
 import { logReminderCleanup } from "@/lib/notifications/reminder-cleanup";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -29,10 +37,14 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
     const router = useRouter();
     const { markStepCompleted, activeRoadmap, fetchActiveRoadmap } = useRoadmapStore();
     const [reflectionText, setReflectionText] = useState("");
+    const [learningText, setLearningText] = useState("");
     const [rating, setRating] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [hoveredStar, setHoveredStar] = useState(0);
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const reflectionTextAreaRef = useRef<HTMLTextAreaElement>(null);
+    const learningTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
     // Ensure roadmap is loaded for store consistency, but handle gracefully if not available
     useEffect(() => {
@@ -49,6 +61,19 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
       };
       ensureRoadmapLoaded();
     }, [activeRoadmap, fetchActiveRoadmap]);
+
+    // Auto-resize textareas
+    useEffect(() => {
+      const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
+        if (textarea) {
+          textarea.style.height = "auto";
+          textarea.style.height = `${Math.max(120, textarea.scrollHeight)}px`;
+        }
+      };
+
+      resizeTextarea(reflectionTextAreaRef.current);
+      resizeTextarea(learningTextAreaRef.current);
+    }, [reflectionText, learningText]);
 
     const minTextLength = 50;
     const isValid = reflectionText.length >= minTextLength && rating > 0;
@@ -88,7 +113,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
           user_id: user.id,
           roadmap_step_id: step.id,
           situation_text: reflectionText,
-          learning_text: reflectionText, // Combined for V1
+          learning_text: learningText || reflectionText, // Use separate learning text if provided
           effectiveness_rating: rating,
           created_at: new Date().toISOString(),
         };
@@ -116,6 +141,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             // Since we have the step data and roadmap from props, we can update directly
             const supabase = createClient();
 
+            // Use a transaction to ensure atomic updates
             // Update step status directly
             const { error: stepUpdateError } = await supabase
               .from("roadmap_steps")
@@ -129,21 +155,41 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
               );
             }
 
-            // Check if we need to unlock next step
-            const { data: nextStep } = await supabase
-              .from("roadmap_steps")
-              .select("id, status, order")
-              .eq("roadmap_id", step.roadmap_id)
-              .gt("order", step.order)
-              .order("order", { ascending: true })
-              .limit(1)
-              .single();
-
-            if (nextStep && nextStep.status === "locked") {
-              await supabase
+            // Ensure we unlock the next step even if there are issues
+            try {
+              // Check if we need to unlock next step
+              const { data: nextStep } = await supabase
                 .from("roadmap_steps")
-                .update({ status: "unlocked" })
-                .eq("id", nextStep.id);
+                .select("id, status, order")
+                .eq("roadmap_id", step.roadmap_id)
+                .gt("order", step.order)
+                .order("order", { ascending: true })
+                .limit(1)
+                .single();
+
+              if (nextStep && nextStep.status === "locked") {
+                const { error: unlockError } = await supabase
+                  .from("roadmap_steps")
+                  .update({ status: "unlocked" })
+                  .eq("id", nextStep.id);
+
+                if (unlockError) {
+                  console.error("[ReflectScreen] Failed to unlock next step:", unlockError);
+                  // Don't throw error here - let the user continue with a warning
+                  console.warn(
+                    "[ReflectScreen] Step completed but next step unlocking failed. Please refresh the page."
+                  );
+                } else {
+                  console.log("[ReflectScreen] Successfully unlocked next step");
+                }
+              } else if (nextStep) {
+                console.log("[ReflectScreen] Next step is already unlocked or does not exist");
+              } else {
+                console.log("[ReflectScreen] This was the last step in the roadmap");
+              }
+            } catch (nextStepError) {
+              console.error("[ReflectScreen] Error in next step unlocking:", nextStepError);
+              // Continue with success - user can refresh to sync
             }
 
             console.log("[ReflectScreen] Successfully updated step using direct approach");
@@ -168,9 +214,12 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
         // Add a small delay to ensure database operations complete
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        console.log("[ReflectScreen] All operations completed successfully, navigating to roadmap");
-        // Navigate back to roadmap with success indicator
-        router.push("/roadmap?success=true");
+        console.log(
+          "[ReflectScreen] All operations completed successfully, showing success dialog"
+        );
+        // Show success dialog instead of immediate navigation
+        setShowSuccessDialog(true);
+        setIsLoading(false);
       } catch (err) {
         console.error("[ReflectScreen] Submission failed:", err);
         setError(err instanceof Error ? err.message : "Failed to save reflection");
@@ -180,6 +229,11 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
 
     const handleBack = () => {
       router.push(`/learn/${step.id}?from=reflect`);
+    };
+
+    const handleSuccessDialogClose = () => {
+      setShowSuccessDialog(false);
+      router.push("/roadmap?success=true");
     };
 
     return (
@@ -227,20 +281,39 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Text Area */}
+            {/* Situation Text Area */}
             <div className="space-y-2">
               <Label htmlFor="reflection">Describe what happened</Label>
               <Textarea
+                ref={reflectionTextAreaRef}
                 id="reflection"
                 data-testid="reflection-text"
-                placeholder="What happened when you tried to apply this concept? What did you learn?"
+                placeholder="What happened when you tried to apply this concept?"
                 value={reflectionText}
                 onChange={(e) => setReflectionText(e.target.value)}
-                className="min-h-[120px] resize-none"
+                className="min-h-[120px] overflow-hidden transition-all"
                 disabled={isLoading}
               />
               <div className="text-sm text-muted-foreground text-right">
                 {reflectionText.length}/{minTextLength} characters (minimum)
+              </div>
+            </div>
+
+            {/* Learning Text Area */}
+            <div className="space-y-2">
+              <Label htmlFor="learning">What did you learn?</Label>
+              <Textarea
+                ref={learningTextAreaRef}
+                id="learning"
+                data-testid="learning-text"
+                placeholder="What insights did you gain? How will you apply this differently next time?"
+                value={learningText}
+                onChange={(e) => setLearningText(e.target.value)}
+                className="min-h-[100px] overflow-hidden transition-all"
+                disabled={isLoading}
+              />
+              <div className="text-sm text-muted-foreground text-right">
+                <span className="italic">Optional but encouraged</span>
               </div>
             </div>
 
@@ -298,6 +371,29 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             </Button>
           </CardContent>
         </Card>
+
+        {/* Success Dialog */}
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent className="sm:max-w-md text-center" showCloseButton={false}>
+            <DialogHeader>
+              <div className="mx-auto mb-4 text-6xl animate-bounce">🎉</div>
+              <DialogTitle className="text-2xl">Excellent Work!</DialogTitle>
+              <DialogDescription className="text-base mt-2">
+                You&apos;ve successfully completed this step. The next mental model in your roadmap
+                is now unlocked!
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-6">
+              <Button
+                onClick={handleSuccessDialogClose}
+                className="w-full sm:w-auto mx-auto"
+                size="lg"
+              >
+                Continue to Roadmap
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

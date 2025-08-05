@@ -1,0 +1,356 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { useRouter } from "next/navigation";
+import ReflectScreen from "../ReflectScreen";
+
+// Mock dependencies
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(),
+}));
+
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => mockSupabase,
+}));
+
+vi.mock("@/lib/notifications/reminder-cleanup", () => ({
+  logReminderCleanup: vi.fn().mockResolvedValue(undefined),
+}));
+
+// Mock the roadmap store
+const mockMarkStepCompleted = vi.fn();
+const mockFetchActiveRoadmap = vi.fn();
+vi.mock("@/lib/stores/roadmap-store", () => ({
+  useRoadmapStore: () => ({
+    markStepCompleted: mockMarkStepCompleted,
+    activeRoadmap: { id: "test-roadmap-id" },
+    fetchActiveRoadmap: mockFetchActiveRoadmap,
+  }),
+}));
+
+// Define mockSupabase and mockRouter
+const mockSupabase = {
+  auth: {
+    getUser: vi.fn(),
+  },
+  from: vi.fn(),
+};
+
+const mockRouter = {
+  push: vi.fn(),
+  back: vi.fn(),
+};
+
+describe("ReflectScreen Enhanced Features", () => {
+  const mockUser = { id: "test-user-id" };
+  const mockStep = {
+    id: "step-1",
+    knowledge_content_id: "content-1",
+    roadmap_id: "roadmap-1",
+    order: 0,
+    status: "unlocked" as const,
+    plan_situation: "When I feel overwhelmed",
+    plan_trigger: "at work",
+    plan_action: "Take 5 deep breaths",
+    plan_created_at: "2025-01-01T10:00:00Z",
+  };
+
+  const mockKnowledgeContent = {
+    id: "content-1",
+    title: "Test Mental Model",
+    content: "Test content",
+    application: "Test application",
+    category: "cognitive-bias",
+    description: "Test description",
+    embedding: null,
+    keywords: ["test"],
+    summary: "Test summary",
+    type: "mental-model" as const,
+  };
+
+  const mockRoadmap = {
+    id: "roadmap-1",
+    user_id: "test-user-id",
+    goal_description: "Test goal",
+    completed_at: null,
+    created_at: "2025-01-01T00:00:00Z",
+    status: "active" as const,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (useRouter as any).mockReturnValue(mockRouter);
+    mockSupabase.auth.getUser.mockResolvedValue({ data: { user: mockUser } });
+    mockMarkStepCompleted.mockResolvedValue(undefined);
+  });
+
+  it("should render separate 'What did you learn?' field", async () => {
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    // Check for both text areas
+    expect(screen.getByTestId("reflection-text")).toBeInTheDocument();
+    expect(screen.getByTestId("learning-text")).toBeInTheDocument();
+
+    // Check labels
+    expect(screen.getByText("Describe what happened")).toBeInTheDocument();
+    expect(screen.getByText("What did you learn?")).toBeInTheDocument();
+
+    // Check placeholders
+    expect(screen.getByTestId("reflection-text")).toHaveAttribute(
+      "placeholder",
+      "What happened when you tried to apply this concept?"
+    );
+    expect(screen.getByTestId("learning-text")).toHaveAttribute(
+      "placeholder",
+      "What insights did you gain? How will you apply this differently next time?"
+    );
+
+    // Check for optional text
+    expect(screen.getByText("Optional but encouraged")).toBeInTheDocument();
+  });
+
+  it("should save separate situation and learning text", async () => {
+    const mockApplicationLogInsert = {
+      insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
+    };
+
+    mockSupabase.from.mockImplementation((table: string) => {
+      if (table === "application_logs") {
+        return mockApplicationLogInsert;
+      }
+      return { select: vi.fn().mockReturnThis() };
+    });
+
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Fill out both text areas with different content
+    const reflectionTextarea = screen.getByTestId("reflection-text");
+    const learningTextarea = screen.getByTestId("learning-text");
+
+    await user.type(
+      reflectionTextarea,
+      "I tried the technique and it worked surprisingly well in the meeting."
+    );
+    await user.type(
+      learningTextarea,
+      "I learned that taking a pause helps me think more clearly before responding."
+    );
+
+    // Select rating
+    await user.click(screen.getByTestId("star-4"));
+
+    // Submit
+    await user.click(screen.getByTestId("submit-button"));
+
+    await waitFor(() => {
+      expect(mockApplicationLogInsert.insert).toHaveBeenCalledWith({
+        user_id: mockUser.id,
+        roadmap_step_id: mockStep.id,
+        situation_text: "I tried the technique and it worked surprisingly well in the meeting.",
+        learning_text:
+          "I learned that taking a pause helps me think more clearly before responding.",
+        effectiveness_rating: 4,
+        created_at: expect.any(String),
+      });
+    });
+  });
+
+  it("should auto-resize textareas as user types", async () => {
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+    const reflectionTextarea = screen.getByTestId("reflection-text") as HTMLTextAreaElement;
+    const learningTextarea = screen.getByTestId("learning-text") as HTMLTextAreaElement;
+
+    // Check initial classes - should not have resize-none
+    expect(reflectionTextarea).not.toHaveClass("resize-none");
+    expect(learningTextarea).not.toHaveClass("resize-none");
+
+    // Check overflow handling
+    expect(reflectionTextarea).toHaveClass("overflow-hidden");
+    expect(learningTextarea).toHaveClass("overflow-hidden");
+
+    // Type long text that would normally require scrolling
+    const longText = "This is a very long text. ".repeat(20);
+    await user.type(reflectionTextarea, longText);
+
+    // The height should have been adjusted (we can't directly test the style.height in jsdom)
+    // but we can verify the textarea accepts the long text
+    expect(reflectionTextarea.value).toBe(longText);
+  });
+
+  it("should show success dialog instead of immediate navigation", async () => {
+    const mockApplicationLogInsert = {
+      insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
+    };
+
+    mockSupabase.from.mockImplementation((table: string) => {
+      if (table === "application_logs") {
+        return mockApplicationLogInsert;
+      }
+      return { select: vi.fn().mockReturnThis() };
+    });
+
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Fill form and submit
+    await user.type(
+      screen.getByTestId("reflection-text"),
+      "Test reflection that is longer than 50 characters to meet the minimum"
+    );
+    await user.click(screen.getByTestId("star-5"));
+    await user.click(screen.getByTestId("submit-button"));
+
+    // Wait for success dialog to appear
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "You've successfully completed this step. The next mental model in your roadmap is now unlocked!"
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByText("Continue to Roadmap")).toBeInTheDocument();
+    });
+
+    // Should see celebration emoji
+    expect(screen.getByText("🎉")).toBeInTheDocument();
+
+    // Router should NOT have been called yet
+    expect(mockRouter.push).not.toHaveBeenCalled();
+
+    // Click the continue button in dialog
+    await user.click(screen.getByText("Continue to Roadmap"));
+
+    // Now router should be called
+    await waitFor(() => {
+      expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
+    });
+  });
+
+  it("should handle case where learning text is empty", async () => {
+    const mockApplicationLogInsert = {
+      insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
+    };
+
+    mockSupabase.from.mockImplementation((table: string) => {
+      if (table === "application_logs") {
+        return mockApplicationLogInsert;
+      }
+      return { select: vi.fn().mockReturnThis() };
+    });
+
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Only fill situation text, leave learning text empty
+    await user.type(
+      screen.getByTestId("reflection-text"),
+      "Test reflection that is longer than 50 characters to meet the minimum"
+    );
+    await user.click(screen.getByTestId("star-3"));
+    await user.click(screen.getByTestId("submit-button"));
+
+    await waitFor(() => {
+      expect(mockApplicationLogInsert.insert).toHaveBeenCalledWith({
+        user_id: mockUser.id,
+        roadmap_step_id: mockStep.id,
+        situation_text: "Test reflection that is longer than 50 characters to meet the minimum",
+        learning_text: "Test reflection that is longer than 50 characters to meet the minimum", // Falls back to situation text
+        effectiveness_rating: 3,
+        created_at: expect.any(String),
+      });
+    });
+  });
+
+  it("should maintain form state when navigating to learn and back", async () => {
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Fill out form partially
+    await user.type(screen.getByTestId("reflection-text"), "Partial reflection text");
+    await user.type(screen.getByTestId("learning-text"), "Partial learning");
+    await user.click(screen.getByTestId("star-2"));
+
+    // Click back to learn
+    await user.click(screen.getByTestId("back-button"));
+
+    expect(mockRouter.push).toHaveBeenCalledWith(`/learn/${mockStep.id}?from=reflect`);
+
+    // Note: In real app, form state would be lost unless persisted
+    // This test verifies the navigation behavior
+  });
+
+  it("should show correct character count for situation text", async () => {
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+    const reflectionTextarea = screen.getByTestId("reflection-text");
+
+    // Initially should show 0/50
+    expect(screen.getByText("0/50 characters (minimum)")).toBeInTheDocument();
+
+    // Type some text
+    await user.type(reflectionTextarea, "Short text");
+
+    // Should update count
+    expect(screen.getByText("10/50 characters (minimum)")).toBeInTheDocument();
+
+    // Type enough to meet minimum
+    await user.type(
+      reflectionTextarea,
+      " that is now long enough to meet the minimum character requirement"
+    );
+
+    // Should show count without minimum indicator
+    expect(screen.getByText("77/50 characters (minimum)")).toBeInTheDocument();
+  });
+});

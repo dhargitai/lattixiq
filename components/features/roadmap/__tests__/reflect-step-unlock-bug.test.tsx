@@ -207,6 +207,15 @@ describe("ReflectScreen Step Unlock Bug", () => {
       expect(mockNextStepUnlock.eq).toHaveBeenCalledWith("id", mockNextStep.id);
     });
 
+    // Should show success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+    });
+
+    // Click continue to navigate
+    const user2 = userEvent.setup();
+    await user2.click(screen.getByText("Continue to Roadmap"));
+
     await waitFor(() => {
       // Should navigate back to roadmap
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
@@ -280,6 +289,18 @@ describe("ReflectScreen Step Unlock Bug", () => {
       expect(mockApplicationLogInsert.insert).toHaveBeenCalled();
       expect(mockStepUpdate.update).toHaveBeenCalledWith({ status: "completed" });
       expect(mockNextStepQuery.single).toHaveBeenCalled();
+    });
+
+    // Should show success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+    });
+
+    // Click continue to navigate
+    const user2 = userEvent.setup();
+    await user2.click(screen.getByText("Continue to Roadmap"));
+
+    await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
     });
   });
@@ -349,6 +370,18 @@ describe("ReflectScreen Step Unlock Bug", () => {
       expect(mockApplicationLogInsert.insert).toHaveBeenCalled();
       expect(mockStepUpdate.update).toHaveBeenCalledWith({ status: "completed" });
       expect(mockNextStepQuery.single).toHaveBeenCalled();
+    });
+
+    // Should show success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+    });
+
+    // Click continue to navigate
+    const user2 = userEvent.setup();
+    await user2.click(screen.getByText("Continue to Roadmap"));
+
+    await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
     });
 
