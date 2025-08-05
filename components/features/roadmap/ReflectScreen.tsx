@@ -10,6 +10,7 @@ import { ArrowLeft, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useRoadmapStore } from "@/lib/stores/roadmap-store";
+import { logReminderCleanup } from "@/lib/notifications/reminder-cleanup";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -154,6 +155,14 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                 : "Your reflection was saved, but there was an issue updating your progress. Please try refreshing the page."
             );
           }
+        }
+
+        // Log reminder cleanup for completed plan
+        try {
+          await logReminderCleanup(step.id, user.id);
+        } catch (cleanupError) {
+          // Don't fail the whole flow if cleanup logging fails
+          console.error("[ReflectScreen] Failed to log reminder cleanup:", cleanupError);
         }
 
         // Add a small delay to ensure database operations complete

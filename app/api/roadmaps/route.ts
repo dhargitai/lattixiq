@@ -20,8 +20,11 @@ export async function POST(request: NextRequest) {
 
     const { goalDescription } = body;
 
-    // E2E test mode - return mock response
-    if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
+    // Integration test mode - skip E2E mock response
+    if (process.env.INTEGRATION_TEST === "true" || process.env.NODE_ENV === "test") {
+      // Skip E2E mode and proceed with normal flow
+    } else if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
+      // E2E test mode - return mock response
       console.log("E2E test mode - returning mock roadmap response");
 
       // Validate goal description even in test mode
@@ -156,10 +159,13 @@ export async function POST(request: NextRequest) {
     );
 
     // Return the generated roadmap with database ID
-    return NextResponse.json({
-      ...generatedRoadmap,
-      roadmapId,
-    });
+    return NextResponse.json(
+      {
+        ...generatedRoadmap,
+        roadmapId,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error generating roadmap:", error);
 

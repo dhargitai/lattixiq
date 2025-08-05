@@ -127,6 +127,56 @@ export type Database = {
         };
         Relationships: [];
       };
+      notification_logs: {
+        Row: {
+          body: string;
+          created_at: string | null;
+          delivered_at: string | null;
+          delivery_status: string | null;
+          error_message: string | null;
+          id: string;
+          notification_type: string;
+          roadmap_step_id: string | null;
+          scheduled_for: string | null;
+          title: string;
+          user_id: string | null;
+        };
+        Insert: {
+          body: string;
+          created_at?: string | null;
+          delivered_at?: string | null;
+          delivery_status?: string | null;
+          error_message?: string | null;
+          id?: string;
+          notification_type?: string;
+          roadmap_step_id?: string | null;
+          scheduled_for?: string | null;
+          title: string;
+          user_id?: string | null;
+        };
+        Update: {
+          body?: string;
+          created_at?: string | null;
+          delivered_at?: string | null;
+          delivery_status?: string | null;
+          error_message?: string | null;
+          id?: string;
+          notification_type?: string;
+          roadmap_step_id?: string | null;
+          scheduled_for?: string | null;
+          title?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_roadmap_step_id_fkey";
+            columns: ["roadmap_step_id"];
+            isOneToOne: false;
+            referencedRelation: "roadmap_steps";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       roadmap_steps: {
         Row: {
           id: string;
@@ -219,6 +269,10 @@ export type Database = {
           email: string | null;
           id: string;
           notification_prefs: Json | null;
+          reminder_enabled: boolean | null;
+          reminder_last_sent: string | null;
+          reminder_time: string | null;
+          reminder_timezone: string | null;
           stripe_customer_id: string | null;
           subscription_status: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
@@ -228,6 +282,10 @@ export type Database = {
           email?: string | null;
           id: string;
           notification_prefs?: Json | null;
+          reminder_enabled?: boolean | null;
+          reminder_last_sent?: string | null;
+          reminder_time?: string | null;
+          reminder_timezone?: string | null;
           stripe_customer_id?: string | null;
           subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
@@ -237,6 +295,10 @@ export type Database = {
           email?: string | null;
           id?: string;
           notification_prefs?: Json | null;
+          reminder_enabled?: boolean | null;
+          reminder_last_sent?: string | null;
+          reminder_time?: string | null;
+          reminder_timezone?: string | null;
           stripe_customer_id?: string | null;
           subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;

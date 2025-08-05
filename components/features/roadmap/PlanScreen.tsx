@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { ChevronDown, ArrowLeft, Lightbulb, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { useUserSettings } from "@/lib/hooks/useUserSettings";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -26,15 +27,24 @@ export interface PlanScreenProps extends React.HTMLAttributes<HTMLDivElement> {
 export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
   ({ step, knowledgeContent, goalExamples, className, ...props }, ref) => {
     const router = useRouter();
+    const { user, updateReminderSettings } = useUserSettings();
     const [showExample, setShowExample] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [reminderEnabled, setReminderEnabled] = useState(true);
+    const [reminderEnabled, setReminderEnabled] = useState(false);
     const [reminderTime, setReminderTime] = useState("09:00");
     const [formData, setFormData] = useState({
       situation: "",
       action: "",
     });
+
+    // Initialize reminder settings from global user settings
+    useEffect(() => {
+      if (user) {
+        setReminderEnabled(user.reminder_enabled || false);
+        setReminderTime(user.reminder_time || "09:00");
+      }
+    }, [user]);
 
     const contentType = knowledgeContent.type;
     const isMentalModel = contentType === "mental-model";
@@ -77,6 +87,17 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
 
         if (updateError) {
           throw new Error(updateError.message);
+        }
+
+        // Update global reminder settings if changed
+        if (
+          user &&
+          (reminderEnabled !== user.reminder_enabled || reminderTime !== user.reminder_time)
+        ) {
+          await updateReminderSettings({
+            reminder_enabled: reminderEnabled,
+            reminder_time: reminderTime,
+          });
         }
 
         // Navigate back to roadmap
@@ -201,9 +222,14 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
 
                   {/* Reminder Section */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                      REMINDER
-                    </h3>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                        REMINDER
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        These settings apply to all your active plans
+                      </p>
+                    </div>
                     <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-5 space-y-4">
                       {/* Reminder Toggle */}
                       <div className="flex items-center justify-between">

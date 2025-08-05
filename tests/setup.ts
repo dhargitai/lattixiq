@@ -1,4 +1,4 @@
-import { beforeAll, afterEach, vi } from "vitest";
+import { beforeAll, afterEach, afterAll, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
@@ -29,4 +29,10 @@ beforeAll(() => {
     unobserve: vi.fn(),
     disconnect: vi.fn(),
   }));
+});
+
+// Clean up environment variables after all tests
+afterAll(() => {
+  // Clean up any test-specific environment variables
+  delete process.env.INTEGRATION_TEST;
 });

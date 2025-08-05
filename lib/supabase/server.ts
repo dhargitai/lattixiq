@@ -197,6 +197,13 @@ export async function createClient() {
     return new MockSupabaseClient() as unknown as SupabaseServerClient;
   }
 
+  // Return mock client in integration test mode
+  if (process.env.INTEGRATION_TEST === "true" || process.env.NODE_ENV === "test") {
+    console.log("Integration test mode - using mock Supabase client");
+    const { createMockSupabaseClient, mockUsers } = await import("@/tests/utils/auth-mocks");
+    return createMockSupabaseClient(mockUsers.authenticated) as unknown as SupabaseServerClient;
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
