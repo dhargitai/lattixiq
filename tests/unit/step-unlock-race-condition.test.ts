@@ -21,7 +21,7 @@ describe("Step Unlocking Race Condition Bug", () => {
     };
   });
 
-  it("should demonstrate the race condition in step unlocking", async () => {
+  it("should demonstrate atomic step completion prevents race conditions", async () => {
     // Setup mock data
     const step = {
       id: "step-1",
@@ -32,184 +32,109 @@ describe("Step Unlocking Race Condition Bug", () => {
       plan_action: "Test action",
     };
 
-    const nextStep = {
-      id: "step-2",
-      roadmap_id: "roadmap-1",
-      order: 1,
-      status: "locked",
-    };
-
-    // Mock database operations with realistic delays
-    const mockUpdateStep = vi.fn().mockImplementation(() => {
-      // Simulate database latency
-      return new Promise((resolve) => setTimeout(() => resolve({ error: null }), 50));
+    // Mock RPC function that handles atomic operations
+    const mockRpc = vi.fn().mockImplementation((functionName: string, params: any) => {
+      return new Promise((resolve) => {
+        // Simulate database latency
+        setTimeout(() => {
+          resolve({
+            data: {
+              completed_step_id: params.p_step_id,
+              unlocked_step_id: "step-2",
+              all_steps_completed: false,
+              roadmap_completed: false,
+            },
+            error: null,
+          });
+        }, 100);
+      });
     });
 
-    const mockUpdateNextStep = vi.fn().mockImplementation(() => {
-      // Simulate slower database operation for next step
-      return new Promise((resolve) => setTimeout(() => resolve({ error: null }), 100));
-    });
+    mockSupabase.rpc = mockRpc;
 
-    const mockSelectNextStep = vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: nextStep, error: null }),
-    });
-
-    mockSupabase.from.mockImplementation((table: string) => {
-      if (table === "roadmap_steps") {
-        return {
-          update: mockUpdateStep,
-          select: mockSelectNextStep,
-          eq: vi.fn().mockReturnThis(),
-        };
-      }
-      if (table === "application_logs") {
-        return {
-          insert: vi.fn().mockResolvedValue({ error: null }),
-        };
-      }
-      return { update: vi.fn(), select: vi.fn() };
-    });
-
-    // Test the race condition scenario
-    const markStepCompletedWithRaceCondition = async () => {
+    // Test the atomic completion scenario
+    const markStepCompletedAtomically = async () => {
       try {
-        // This simulates the ReflectScreen fallback mechanism
+        // Use RPC function for atomic step completion and next step unlocking
+        const { data, error } = await mockSupabase.rpc("complete_step_and_unlock_next", {
+          p_step_id: step.id,
+          p_roadmap_id: step.roadmap_id,
+        });
 
-        // Step 1: Mark current step as completed
-        await mockSupabase.from("roadmap_steps").update({ status: "completed" }).eq("id", step.id);
-
-        // Step 2: Find next step
-        const { data: nextStepData } = await mockSupabase
-          .from("roadmap_steps")
-          .select("id, status, order")
-          .eq("roadmap_id", step.roadmap_id)
-          .gt("order", step.order)
-          .order("order", { ascending: true })
-          .limit(1)
-          .single();
-
-        if (nextStepData && nextStepData.status === "locked") {
-          // Step 3: Unlock next step - THIS MIGHT BE RACE CONDITION
-          await mockSupabase
-            .from("roadmap_steps")
-            .update({ status: "unlocked" })
-            .eq("id", nextStepData.id);
+        if (error) {
+          throw error;
         }
 
-        // Step 4: Navigate immediately (potential race condition)
+        // Only navigate if operation succeeds
         mockRouter.push("/roadmap?success=true");
-
-        return { success: true };
+        return { success: true, data };
       } catch (error) {
         return { success: false, error: (error as Error).message };
       }
     };
 
     // Execute the test
-    const result = await markStepCompletedWithRaceCondition();
+    const result = await markStepCompletedAtomically();
 
-    // Verify the operations completed
+    // Verify the RPC was called correctly
     expect(result.success).toBe(true);
-    expect(mockUpdateStep).toHaveBeenCalledWith({ status: "completed" });
-    expect(mockUpdateNextStep).toHaveBeenCalledWith({ status: "unlocked" });
+    expect(mockRpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+      p_step_id: step.id,
+      p_roadmap_id: step.roadmap_id,
+    });
     expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
   });
 
-  it("should demonstrate the bug where unlock fails silently", async () => {
-    // Setup mock with error in unlock operation
+  it("should demonstrate RPC properly handles unlock failures", async () => {
+    // Setup mock with error in RPC function
     const step = {
       id: "step-1",
       roadmap_id: "roadmap-1",
       order: 0,
     };
 
-    const nextStep = {
-      id: "step-2",
-      roadmap_id: "roadmap-1",
-      order: 1,
-      status: "locked",
-    };
-
-    // Mock successful step completion but failed unlock
-    const mockUpdateStep = vi.fn().mockResolvedValue({ error: null });
-    const mockUpdateNextStep = vi.fn().mockResolvedValue({
-      error: { message: "Foreign key constraint violation" },
+    // Mock RPC function that fails
+    const mockRpc = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: "Failed to unlock next step: Foreign key constraint violation" },
     });
 
-    const mockSelectNextStep = vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: nextStep, error: null }),
-    });
+    mockSupabase.rpc = mockRpc;
 
-    mockSupabase.from.mockImplementation((table: string) => {
-      if (table === "roadmap_steps") {
-        return {
-          update: mockUpdateStep,
-          select: mockSelectNextStep,
-          eq: vi.fn().mockReturnThis(),
-        };
-      }
-      return { update: vi.fn(), select: vi.fn() };
-    });
-
-    // Test the silent failure scenario
-    const markStepCompletedWithSilentFailure = async () => {
+    // Test proper error handling with RPC
+    const markStepCompletedWithErrorHandling = async () => {
       try {
-        // Mark current step as completed
-        const { error: stepError } = await mockSupabase
-          .from("roadmap_steps")
-          .update({ status: "completed" })
-          .eq("id", step.id);
+        // Use RPC function for atomic step completion
+        const { data, error } = await mockSupabase.rpc("complete_step_and_unlock_next", {
+          p_step_id: step.id,
+          p_roadmap_id: step.roadmap_id,
+        });
 
-        if (stepError) throw stepError;
-
-        // Find next step
-        const { data: nextStepData } = await mockSupabase
-          .from("roadmap_steps")
-          .select("id, status, order")
-          .eq("roadmap_id", step.roadmap_id)
-          .gt("order", step.order)
-          .order("order", { ascending: true })
-          .limit(1)
-          .single();
-
-        if (nextStepData && nextStepData.status === "locked") {
-          // This might fail silently
-          const { error: unlockError } = await mockSupabase
-            .from("roadmap_steps")
-            .update({ status: "unlocked" })
-            .eq("id", nextStepData.id);
-
-          if (unlockError) {
-            // BUG: This error is not being handled properly
-            console.warn("Failed to unlock next step:", unlockError.message);
-            // User sees success, but next step remains locked
-          }
+        if (error) {
+          // The fix: RPC errors are properly propagated to the user
+          throw new Error(`Failed to complete step: ${error.message}`);
         }
 
-        // Always navigate to roadmap regardless of unlock success
+        // Only navigate if the entire operation succeeds
         mockRouter.push("/roadmap?success=true");
-
-        return { success: true, stepCompleted: true };
+        return { success: true, data };
       } catch (error) {
+        // The fix: user is informed of the failure
+        console.error("Step completion failed:", error);
         return { success: false, error: (error as Error).message };
       }
     };
 
     // Execute the test
-    const result = await markStepCompletedWithSilentFailure();
+    const result = await markStepCompletedWithErrorHandling();
 
-    // The bug: function succeeds even when unlock fails
-    expect(result.success).toBe(true);
-    expect(result.stepCompleted).toBe(true);
-    expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
-    expect(mockUpdateNextStep).toHaveBeenCalledWith({ status: "unlocked" });
+    // The fix: function properly fails when unlock fails
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("Failed to complete step");
+    expect(mockRpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+      p_step_id: step.id,
+      p_roadmap_id: step.roadmap_id,
+    });
+    expect(mockRouter.push).not.toHaveBeenCalled(); // Navigation only on success
   });
 });

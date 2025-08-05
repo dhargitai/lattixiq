@@ -235,6 +235,10 @@ export function createSupabaseMockWithData(mockData: Record<string, any>) {
     builder.then = vi.fn((resolve: Function, reject?: Function) => {
       const mockResponse = mockData[table];
       if (mockResponse) {
+        // Ensure roadmaps always have steps property for Roadmap type compatibility
+        if (table === "roadmaps" && mockResponse.data && !mockResponse.data.steps) {
+          mockResponse.data.steps = [];
+        }
         return resolve(mockResponse);
       }
       return originalThen(resolve, reject);

@@ -24,7 +24,7 @@ export default class FailFilesReporter {
     for (const [filePath, failedTests] of failedFiles) {
       console.log(filePath);
       for (const test of failedTests) {
-        console.log(`- ${test.description} at line ${test.line}`);
+        console.log(`- ${test.description}`);
       }
     }
   }
@@ -39,7 +39,6 @@ export default class FailFilesReporter {
         if (task.result?.state === "fail" || task.result?.state === "failed") {
           failedTests.push({
             description: task.name || task.title || "Unnamed test",
-            line: task.location?.line || task.line || "unknown",
           });
         }
       } else if (task.type === "suite" || task.type === "describe") {
@@ -65,7 +64,6 @@ export default class FailFilesReporter {
 
           failedTests.push({
             description,
-            line: task.location?.line || task.line || "unknown",
           });
         }
       } else if (task.type === "suite" || task.type === "describe") {

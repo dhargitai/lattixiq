@@ -30,6 +30,15 @@ const mockSupabase = {
     getUser: vi.fn().mockResolvedValue({ data: { user: mockUser } }),
   },
   from: vi.fn(),
+  rpc: vi.fn().mockResolvedValue({
+    data: {
+      completed_step_id: "step-1",
+      unlocked_step_id: "step-2",
+      all_steps_completed: false,
+      roadmap_completed: false,
+    },
+    error: null,
+  }),
 };
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -77,46 +86,11 @@ describe("ReflectScreen Integration Bug Test", () => {
   });
 
   it("should demonstrate the step unlock bug when roadmap store is empty", async () => {
-    let stepUpdateCalled = false;
-    let nextStepQueryCalled = false;
-    let nextStepUnlockCalled = false;
-
-    // Mock the next step to be locked
-    const mockNextStep = {
-      id: "step-2",
-      status: "locked",
-      order: 1,
-    };
-
-    // Setup mock implementation to track calls
+    // Setup mock implementation for application logs
     mockSupabase.from.mockImplementation((table: string) => {
       if (table === "application_logs") {
         return {
           insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
-        };
-      }
-      if (table === "roadmap_steps") {
-        return {
-          update: vi.fn().mockImplementation((data: Record<string, unknown>) => {
-            if (data.status === "completed") {
-              stepUpdateCalled = true;
-            }
-            if (data.status === "unlocked") {
-              nextStepUnlockCalled = true;
-            }
-            return {
-              eq: vi.fn().mockResolvedValue({ data: {}, error: null }),
-            };
-          }),
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          gt: vi.fn().mockReturnThis(),
-          order: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          single: vi.fn().mockImplementation(() => {
-            nextStepQueryCalled = true;
-            return Promise.resolve({ data: mockNextStep, error: null });
-          }),
         };
       }
       return {};
@@ -146,7 +120,24 @@ describe("ReflectScreen Integration Bug Test", () => {
     // Submit the form
     await user.click(screen.getByTestId("submit-button"));
 
-    // Wait for the submission to complete
+    // Verify the RPC function was called with correct parameters
+    await waitFor(() => {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+        p_step_id: "step-1",
+        p_roadmap_id: "roadmap-1",
+      });
+    });
+
+    // Should show success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+    });
+
+    // Click continue button to navigate
+    const continueButton = screen.getByText("Continue to Roadmap");
+    await user.click(continueButton);
+
+    // Now wait for navigation
     await waitFor(
       () => {
         expect(mockPush).toHaveBeenCalledWith("/roadmap?success=true");
@@ -154,15 +145,7 @@ describe("ReflectScreen Integration Bug Test", () => {
       { timeout: 3000 }
     );
 
-    // Verify the sequence of operations happened correctly
-    expect(stepUpdateCalled).toBe(true);
-    expect(nextStepQueryCalled).toBe(true);
-    // This should be true if the bug is fixed, false if bug exists
-    expect(nextStepUnlockCalled).toBe(true);
-
     console.log("Integration test results:");
-    console.log("- Step marked as completed:", stepUpdateCalled);
-    console.log("- Next step queried:", nextStepQueryCalled);
-    console.log("- Next step unlocked:", nextStepUnlockCalled);
+    console.log("- RPC function called successfully");
   });
 });

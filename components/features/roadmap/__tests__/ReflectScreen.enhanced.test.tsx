@@ -34,6 +34,7 @@ const mockSupabase = {
     getUser: vi.fn(),
   },
   from: vi.fn(),
+  rpc: vi.fn(),
 };
 
 const mockRouter = {
@@ -83,6 +84,15 @@ describe("ReflectScreen Enhanced Features", () => {
     (useRouter as any).mockReturnValue(mockRouter);
     mockSupabase.auth.getUser.mockResolvedValue({ data: { user: mockUser } });
     mockMarkStepCompleted.mockResolvedValue(undefined);
+    mockSupabase.rpc.mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: "step-2",
+        all_steps_completed: false,
+        roadmap_completed: false,
+      },
+      error: null,
+    });
   });
 
   it("should render separate 'What did you learn?' field", async () => {

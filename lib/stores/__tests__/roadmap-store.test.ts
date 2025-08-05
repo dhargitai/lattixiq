@@ -32,10 +32,10 @@ const resetStore = () => {
 describe("roadmap-store - step unlocking bug", () => {
   it("should use cached data when cache is valid", async () => {
     const userId = "user-1";
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: userId,
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
@@ -43,13 +43,19 @@ describe("roadmap-store - step unlocking bug", () => {
         {
           id: "step-1",
           roadmap_id: "roadmap-1",
-          title: "Step 1",
+          knowledge_content_id: "content-1",
           order: 0,
-          status: "unlocked",
-          knowledge_content: { id: "content-1", title: "Content 1" },
+          status: "unlocked" as const,
+          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
-    };
+    } as Roadmap;
 
     // Create mock with specific data
     mockSupabase = createSupabaseMockWithData({
@@ -77,15 +83,15 @@ describe("roadmap-store - step unlocking bug", () => {
 
   it("should invalidate cache when TTL expires", async () => {
     const userId = "user-1";
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: userId,
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
       steps: [],
-    };
+    } as Roadmap;
 
     mockSupabase = createSupabaseMockWithData({
       roadmaps: {
@@ -126,15 +132,15 @@ describe("roadmap-store - step unlocking bug", () => {
   it("should invalidate cache for different user", async () => {
     const userId1 = "user-1";
     const userId2 = "user-2";
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: userId1,
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
       steps: [],
-    };
+    } as Roadmap;
 
     mockSupabase = createSupabaseMockWithData({
       roadmaps: {
@@ -156,10 +162,10 @@ describe("roadmap-store - step unlocking bug", () => {
   });
 
   it("should update cache timestamp when step is completed", async () => {
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: "user-1",
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
@@ -167,13 +173,19 @@ describe("roadmap-store - step unlocking bug", () => {
         {
           id: "step-1",
           roadmap_id: "roadmap-1",
-          title: "Step 1",
+          knowledge_content_id: "content-1",
           order: 0,
-          status: "unlocked",
+          status: "unlocked" as const,
           knowledge_content: { id: "content-1", title: "Content 1" },
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
-    };
+    } as Roadmap;
 
     const initialTimestamp = Date.now() - 1000; // 1 second ago
     useRoadmapStore.setState({
@@ -228,10 +240,10 @@ describe("roadmap-store - step unlocking bug", () => {
 
   it("should unlock the next step when a step is completed", async () => {
     // Setup test data
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: "user-1",
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
@@ -239,26 +251,44 @@ describe("roadmap-store - step unlocking bug", () => {
         {
           id: "step-1",
           roadmap_id: "roadmap-1",
-          title: "Step 1",
+          knowledge_content_id: "content-1",
           order: 0,
-          status: "unlocked",
-          knowledge_content: { id: "content-1", title: "Content 1" },
+          status: "unlocked" as const,
+          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-2",
           roadmap_id: "roadmap-1",
-          title: "Step 2",
+          knowledge_content_id: "content-2",
           order: 1,
-          status: "locked",
-          knowledge_content: { id: "content-2", title: "Content 2" },
+          status: "locked" as const,
+          knowledge_content: { id: "content-2", title: "Content 2" } as any,
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-3",
           roadmap_id: "roadmap-1",
-          title: "Step 3",
+          knowledge_content_id: "content-3",
           order: 2,
-          status: "locked",
-          knowledge_content: { id: "content-3", title: "Content 3" },
+          status: "locked" as const,
+          knowledge_content: { id: "content-3", title: "Content 3" } as any,
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
     };
@@ -292,10 +322,10 @@ describe("roadmap-store - step unlocking bug", () => {
 
   it("should handle database errors during next step unlocking", async () => {
     // Setup test data
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: "user-1",
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
@@ -303,21 +333,33 @@ describe("roadmap-store - step unlocking bug", () => {
         {
           id: "step-1",
           roadmap_id: "roadmap-1",
-          title: "Step 1",
+          knowledge_content_id: "content-1",
           order: 0,
-          status: "unlocked",
-          knowledge_content: { id: "content-1", title: "Content 1" },
+          status: "unlocked" as const,
+          knowledge_content: { id: "content-1", title: "Content 1" } as any,
+          plan_situation: "test situation",
+          plan_trigger: "test trigger",
+          plan_action: "test action",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
         {
           id: "step-2",
           roadmap_id: "roadmap-1",
-          title: "Step 2",
+          knowledge_content_id: "content-2",
           order: 1,
-          status: "locked",
-          knowledge_content: { id: "content-2", title: "Content 2" },
+          status: "locked" as const,
+          knowledge_content: { id: "content-2", title: "Content 2" } as any,
+          plan_situation: "test situation",
+          plan_trigger: "test trigger",
+          plan_action: "test action",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
-    };
+    } as Roadmap;
 
     // Mock RPC to fail on unlock operation
     (mockSupabase.rpc as ReturnType<typeof vi.fn>) = vi.fn(
@@ -366,10 +408,10 @@ describe("roadmap-store - step unlocking bug", () => {
 
   it("should handle edge case: last step completion", async () => {
     // Setup test data with only one step
-    const testRoadmap: Roadmap & { steps: Array<Record<string, unknown>> } = {
+    const testRoadmap = {
       id: "roadmap-1",
       user_id: "user-1",
-      status: "active",
+      status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
       goal_description: "Test goal description",
@@ -377,13 +419,19 @@ describe("roadmap-store - step unlocking bug", () => {
         {
           id: "step-1",
           roadmap_id: "roadmap-1",
-          title: "Step 1",
+          knowledge_content_id: "content-1",
           order: 0,
-          status: "unlocked",
+          status: "unlocked" as const,
           knowledge_content: { id: "content-1", title: "Content 1" },
+          plan_situation: "test",
+          plan_trigger: "test",
+          plan_action: "test",
+          plan_created_at: "2025-01-01T00:00:00Z",
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
         },
       ],
-    };
+    } as Roadmap;
 
     // Mock RPC for last step completion (roadmap should be marked as completed)
     (mockSupabase.rpc as ReturnType<typeof vi.fn>) = vi.fn(

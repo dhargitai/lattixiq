@@ -34,6 +34,7 @@ const mockSupabase = {
     getUser: vi.fn(),
   },
   from: vi.fn(),
+  rpc: vi.fn(),
 };
 
 const mockRouter = {
@@ -106,44 +107,22 @@ describe("ReflectScreen Step Unlock Bug", () => {
       insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
     };
 
-    // Mock successful step update
-    const mockStepUpdate = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    };
-
-    // Mock successful next step query and unlock
-    const mockNextStepQuery = {
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: mockNextStep, error: null }),
-    };
-
-    const mockNextStepUnlock = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    };
-
     mockSupabase.from.mockImplementation((table: string) => {
       if (table === "application_logs") {
         return mockApplicationLogInsert;
       }
-      if (table === "roadmap_steps") {
-        // For the step update call
-        if (mockStepUpdate.update.mock.calls.length === 0) {
-          return mockStepUpdate;
-        }
-        // For the next step query call
-        if (mockNextStepQuery.select.mock.calls.length === 0) {
-          return mockNextStepQuery;
-        }
-        // For the next step unlock call
-        return mockNextStepUnlock;
-      }
       return { select: vi.fn().mockReturnThis() };
+    });
+
+    // Mock successful RPC call for step completion
+    mockSupabase.rpc.mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: "step-2",
+        all_steps_completed: false,
+        roadmap_completed: false,
+      },
+      error: null,
     });
 
     // Render the component
@@ -171,7 +150,7 @@ describe("ReflectScreen Step Unlock Bug", () => {
     // Submit the form
     await user.click(screen.getByTestId("submit-button"));
 
-    // Verify the fallback mechanism was triggered
+    // Verify the RPC mechanism was triggered
     await waitFor(() => {
       // Should save reflection first
       expect(mockApplicationLogInsert.insert).toHaveBeenCalledWith({
@@ -182,29 +161,14 @@ describe("ReflectScreen Step Unlock Bug", () => {
         effectiveness_rating: 4,
         created_at: expect.any(String),
       });
-
-      // Should try the roadmap store first (which fails)
-      expect(mockMarkStepCompleted).toHaveBeenCalledWith(mockStep.id);
     });
 
     await waitFor(() => {
-      // Should fall back to direct database update for current step
-      expect(mockStepUpdate.update).toHaveBeenCalledWith({ status: "completed" });
-      expect(mockStepUpdate.eq).toHaveBeenCalledWith("id", mockStep.id);
-    });
-
-    await waitFor(() => {
-      // Should query for next step
-      expect(mockNextStepQuery.select).toHaveBeenCalledWith("id, status, order");
-      expect(mockNextStepQuery.eq).toHaveBeenCalledWith("roadmap_id", mockStep.roadmap_id);
-      expect(mockNextStepQuery.gt).toHaveBeenCalledWith("order", mockStep.order);
-    });
-
-    await waitFor(() => {
-      // BUG: This is what should happen but currently doesn't
-      // Should unlock the next step since it's status is "locked"
-      expect(mockNextStepUnlock.update).toHaveBeenCalledWith({ status: "unlocked" });
-      expect(mockNextStepUnlock.eq).toHaveBeenCalledWith("id", mockNextStep.id);
+      // Should use RPC function for atomic step completion
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+        p_step_id: "step-1",
+        p_roadmap_id: "roadmap-1",
+      });
     });
 
     // Should show success dialog
@@ -228,35 +192,22 @@ describe("ReflectScreen Step Unlock Bug", () => {
       insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
     };
 
-    // Mock successful step update
-    const mockStepUpdate = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    };
-
-    // Mock no next step found
-    const mockNextStepQuery = {
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-    };
-
     mockSupabase.from.mockImplementation((table: string) => {
       if (table === "application_logs") {
         return mockApplicationLogInsert;
       }
-      if (table === "roadmap_steps") {
-        // For the step update call
-        if (mockStepUpdate.update.mock.calls.length === 0) {
-          return mockStepUpdate;
-        }
-        // For the next step query call
-        return mockNextStepQuery;
-      }
       return { select: vi.fn().mockReturnThis() };
+    });
+
+    // Mock RPC call for last step (no next step to unlock)
+    mockSupabase.rpc.mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: null,
+        all_steps_completed: true,
+        roadmap_completed: true,
+      },
+      error: null,
     });
 
     // Use the last step in roadmap
@@ -284,11 +235,13 @@ describe("ReflectScreen Step Unlock Bug", () => {
 
     await user.click(screen.getByTestId("submit-button"));
 
-    // Should complete without trying to unlock non-existent next step
+    // Should complete using RPC
     await waitFor(() => {
       expect(mockApplicationLogInsert.insert).toHaveBeenCalled();
-      expect(mockStepUpdate.update).toHaveBeenCalledWith({ status: "completed" });
-      expect(mockNextStepQuery.single).toHaveBeenCalled();
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+        p_step_id: lastStep.id,
+        p_roadmap_id: lastStep.roadmap_id,
+      });
     });
 
     // Should show success dialog
@@ -306,41 +259,27 @@ describe("ReflectScreen Step Unlock Bug", () => {
   });
 
   it("should handle case when next step is already unlocked", async () => {
-    const alreadyUnlockedStep = { ...mockNextStep, status: "unlocked" as const };
-
-    // Mock successful reflection save and step update
+    // Mock successful reflection save
     const mockApplicationLogInsert = {
       insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    };
-
-    const mockStepUpdate = {
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockResolvedValue({ data: {}, error: null }),
-    };
-
-    // Mock next step is already unlocked
-    const mockNextStepQuery = {
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: alreadyUnlockedStep, error: null }),
     };
 
     mockSupabase.from.mockImplementation((table: string) => {
       if (table === "application_logs") {
         return mockApplicationLogInsert;
       }
-      if (table === "roadmap_steps") {
-        // For the step update call
-        if (mockStepUpdate.update.mock.calls.length === 0) {
-          return mockStepUpdate;
-        }
-        // For the next step query call
-        return mockNextStepQuery;
-      }
       return { select: vi.fn().mockReturnThis() };
+    });
+
+    // Mock RPC call - next step is already unlocked, so just completes current
+    mockSupabase.rpc.mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: null, // No unlock needed
+        all_steps_completed: false,
+        roadmap_completed: false,
+      },
+      error: null,
     });
 
     render(
@@ -365,11 +304,13 @@ describe("ReflectScreen Step Unlock Bug", () => {
 
     await user.click(screen.getByTestId("submit-button"));
 
-    // Should complete without trying to unlock already unlocked step
+    // Should complete using RPC
     await waitFor(() => {
       expect(mockApplicationLogInsert.insert).toHaveBeenCalled();
-      expect(mockStepUpdate.update).toHaveBeenCalledWith({ status: "completed" });
-      expect(mockNextStepQuery.single).toHaveBeenCalled();
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+        p_step_id: "step-1",
+        p_roadmap_id: "roadmap-1",
+      });
     });
 
     // Should show success dialog
@@ -383,15 +324,6 @@ describe("ReflectScreen Step Unlock Bug", () => {
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");
-    });
-
-    // Should NOT try to unlock since it's already unlocked
-    await waitFor(() => {
-      const roadmapStepsCalls = mockSupabase.from.mock.calls.filter(
-        (call) => call[0] === "roadmap_steps"
-      );
-      // Should only be 2 calls: step update and next step query (no unlock)
-      expect(roadmapStepsCalls).toHaveLength(2);
     });
   });
 });

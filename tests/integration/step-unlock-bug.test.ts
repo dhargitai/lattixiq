@@ -46,98 +46,72 @@ describe("Step Unlocking Bug - Integration Test", () => {
       },
     ];
 
-    // Mock database responses
-    const mockUpdate = vi.fn().mockResolvedValue({ error: null });
-    const mockSelect = vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnValue({
-        gt: vi.fn().mockReturnValue({
-          order: vi.fn().mockReturnValue({
-            limit: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockSteps[1],
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      }),
+    // Mock RPC function for atomic step completion
+    const mockRpc = vi.fn().mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: "step-2",
+        all_steps_completed: false,
+        roadmap_completed: false,
+      },
+      error: null,
     });
 
-    mockSupabase.from.mockImplementation((table: string) => {
-      if (table === "roadmap_steps") {
-        return {
-          update: mockUpdate,
-          select: mockSelect,
-          eq: vi.fn(),
-        };
-      }
-      return { update: vi.fn(), select: vi.fn() };
-    });
-
-    // Test the unlock logic directly
-    const mockMarkCompleted = async (stepId: string) => {
-      // This simulates the logic from roadmap-store.ts
-      await mockSupabase.from("roadmap_steps").update({ status: "completed" }).eq("id", stepId);
-
-      // Find next step
-      const { data: nextStep } = await mockSupabase
-        .from("roadmap_steps")
-        .select("id, status, order")
-        .eq("roadmap_id", "roadmap-1")
-        .gt("order", 0)
-        .order("order", { ascending: true })
-        .limit(1)
-        .single();
-
-      if (nextStep && nextStep.status === "locked") {
-        await mockSupabase
-          .from("roadmap_steps")
-          .update({ status: "unlocked" })
-          .eq("id", nextStep.id);
-      }
-    };
+    mockSupabase.from = vi.fn();
+    mockSupabase.rpc = mockRpc;
 
     // Execute the test
-    await mockMarkCompleted("step-1");
+    const result = await mockSupabase.rpc("complete_step_and_unlock_next", {
+      p_step_id: "step-1",
+      p_roadmap_id: "roadmap-1",
+    });
 
-    // Verify the calls
-    expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, { status: "completed" });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, { status: "unlocked" });
+    // Verify the RPC was called correctly
+    expect(mockRpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+      p_step_id: "step-1",
+      p_roadmap_id: "roadmap-1",
+    });
+    expect(result.data).toEqual({
+      completed_step_id: "step-1",
+      unlocked_step_id: "step-2",
+      all_steps_completed: false,
+      roadmap_completed: false,
+    });
   });
 
-  it("should handle case where next step unlock silently fails", async () => {
-    // This reproduces the reported bug
-    const mockUpdate = vi
-      .fn()
-      .mockResolvedValueOnce({ error: null }) // Mark completed succeeds
-      .mockResolvedValueOnce({ error: { message: "Database error" } }); // Unlock fails
+  it("should handle case where RPC function fails to unlock next step", async () => {
+    // This reproduces the reported bug scenario using the RPC function
+    const mockRpc = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: "Failed to unlock next step: Database error" },
+    });
 
-    mockSupabase.from.mockImplementation(() => ({ update: mockUpdate }));
+    mockSupabase.rpc = mockRpc;
 
-    // Test the bug scenario
+    // Test the bug scenario with RPC approach
     let errorCaught = false;
     try {
-      // This simulates the direct database approach used in ReflectScreen fallback
       const supabase = createClient();
 
-      // This works
-      await supabase.from("roadmap_steps").update({ status: "completed" }).eq("id", "step-1");
+      // This should fail atomically - the bug is now properly handled
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase.rpc as any)("complete_step_and_unlock_next", {
+        p_step_id: "step-1",
+        p_roadmap_id: "roadmap-1",
+      });
 
-      // This fails silently - the bug
-      const { error: unlockError } = await supabase
-        .from("roadmap_steps")
-        .update({ status: "unlocked" })
-        .eq("id", "step-2");
-
-      if (unlockError) {
-        throw new Error(`Failed to unlock next step: ${unlockError.message}`);
+      if (error) {
+        throw new Error(`Failed to complete step: ${error.message}`);
       }
     } catch (error) {
       errorCaught = true;
-      expect((error as Error).message).toContain("Failed to unlock next step");
+      expect((error as Error).message).toContain("Failed to complete step");
     }
 
     expect(errorCaught).toBe(true);
+    expect(mockRpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+      p_step_id: "step-1",
+      p_roadmap_id: "roadmap-1",
+    });
   });
 });

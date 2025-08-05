@@ -24,6 +24,15 @@ const mockSupabase = {
     getUser: vi.fn(),
   },
   from: vi.fn(),
+  rpc: vi.fn().mockResolvedValue({
+    data: {
+      completed_step_id: "test-step-id",
+      unlocked_step_id: "next-step-id",
+      all_steps_completed: false,
+      roadmap_completed: false,
+    },
+    error: null,
+  }),
 };
 
 const mockRouter = {
@@ -344,7 +353,10 @@ describe("Reflect Page", () => {
 
     await waitFor(() => {
       expect(applicationLogInsert.insert).toHaveBeenCalled();
-      expect(mockMarkStepCompleted).toHaveBeenCalledWith("test-step-id");
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("complete_step_and_unlock_next", {
+        p_step_id: "test-step-id",
+        p_roadmap_id: "test-roadmap-id",
+      });
     });
 
     // Should show success dialog instead of immediate navigation
