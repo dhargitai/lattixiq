@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -33,7 +32,7 @@ interface ReflectScreenProps {
 }
 
 const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
-  ({ step, knowledgeContent, roadmap: _roadmap }, ref) => {
+  ({ step, knowledgeContent: _knowledgeContent, roadmap: _roadmap }, ref) => {
     const router = useRouter();
     const { activeRoadmap, fetchActiveRoadmap } = useRoadmapStore();
     const [reflectionText, setReflectionText] = useState("");
@@ -113,7 +112,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
           user_id: user.id,
           roadmap_step_id: step.id,
           situation_text: reflectionText,
-          learning_text: learningText || reflectionText, // Use separate learning text if provided
+          learning_text: learningText,
           effectiveness_rating: rating,
           created_at: new Date().toISOString(),
         };
@@ -189,171 +188,210 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
     };
 
     return (
-      <div ref={ref} className="container max-w-2xl mx-auto px-4 py-6" data-testid="reflect-screen">
+      <div ref={ref} className="min-h-screen bg-[#FAFBFC]" data-testid="reflect-screen">
         {/* Header */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            className="mb-4"
-            data-testid="back-button"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Learn
-          </Button>
+        <header className="bg-white py-4 px-5 border-b border-gray-200 shadow-sm">
+          <div className="container max-w-2xl mx-auto flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="text-[#4299E1] hover:text-[#3182CE] hover:bg-[#F7FAFC] font-medium text-base flex items-center gap-2 p-2 -ml-2"
+              data-testid="back-button"
+            >
+              <ArrowLeft className="h-[18px] w-[18px]" />
+              Back to Learn
+            </Button>
+            <span className="text-sm text-gray-500">Step {step.order + 1} • Reflect</span>
+          </div>
+        </header>
 
-          <div className="text-sm text-muted-foreground mb-2">Step {step.order + 1} • Reflect</div>
-          <h1 className="text-2xl font-bold">Log Your Application</h1>
-        </div>
+        {/* Main Content */}
+        <div className="container max-w-2xl mx-auto px-5 py-8" data-testid="reflect-content">
+          {/* Reflection Container */}
+          <div className="bg-white rounded-2xl p-8 md:p-10 shadow-[0_4px_12px_rgba(0,0,0,0.05)] animate-fade-in-up">
+            <h1 className="text-[28px] font-bold text-[#1A202C] mb-2">Log Your Application</h1>
+            <div className="h-[3px] bg-gradient-to-r from-[#48BB78] to-[#38A169] w-[60px] rounded-sm mb-6"></div>
 
-        {/* Plan Reminder */}
-        {step.plan_situation && step.plan_trigger && step.plan_action && (
-          <Card
-            className="mb-6 border-l-4 border-l-green-500 bg-green-50"
-            data-testid="plan-reminder"
-          >
-            <CardHeader>
-              <CardTitle className="text-base text-green-800">🎯 Your Plan:</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-green-700 italic">
-                IF: {step.plan_situation} {step.plan_trigger} → THEN: {step.plan_action}
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Reflection Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{knowledgeContent.title}</CardTitle>
-            <CardDescription>
-              How did your plan to &quot;{step.plan_action}&quot; go?
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Situation Text Area */}
-            <div className="space-y-2">
-              <Label htmlFor="reflection">Describe what happened</Label>
-              <Textarea
-                ref={reflectionTextAreaRef}
-                id="reflection"
-                data-testid="reflection-text"
-                placeholder="What happened when you tried to apply this concept?"
-                value={reflectionText}
-                onChange={(e) => setReflectionText(e.target.value)}
-                className="min-h-[120px] overflow-hidden transition-all"
-                disabled={isLoading}
-              />
-              <div className="text-sm text-muted-foreground text-right">
-                {reflectionText.length}/{minTextLength} characters (minimum)
-              </div>
-            </div>
-
-            {/* Learning Text Area */}
-            <div className="space-y-2">
-              <Label htmlFor="learning">What did you learn?</Label>
-              <Textarea
-                ref={learningTextAreaRef}
-                id="learning"
-                data-testid="learning-text"
-                placeholder="What insights did you gain? How will you apply this differently next time?"
-                value={learningText}
-                onChange={(e) => setLearningText(e.target.value)}
-                className="min-h-[100px] overflow-hidden transition-all"
-                disabled={isLoading}
-              />
-              <div className="text-sm text-muted-foreground text-right">
-                <span className="italic">Optional but encouraged</span>
-              </div>
-            </div>
-
-            {/* Star Rating */}
-            <div className="space-y-2">
-              <Label>How effective was this model for you?</Label>
+            {/* Plan Reminder */}
+            {step.plan_situation && step.plan_trigger && step.plan_action && (
               <div
-                className="flex items-center justify-center space-x-2 py-2"
-                data-testid="star-rating"
+                className="bg-gradient-to-br from-[#F0FFF4] to-[#E6FFFA] border-l-4 border-l-[#48BB78] p-5 mb-8 rounded-lg relative overflow-hidden animate-slide-in-left"
+                data-testid="plan-reminder"
               >
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Button
-                    key={star}
-                    variant="ghost"
-                    size="sm"
-                    className={cn(
-                      "p-1 hover:bg-transparent transition-all",
-                      rating >= star || hoveredStar >= star ? "text-yellow-500" : "text-gray-300"
-                    )}
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoveredStar(star)}
-                    onMouseLeave={() => setHoveredStar(0)}
-                    disabled={isLoading}
-                    data-testid={`star-${star}`}
-                    aria-label={`Rate ${star} stars`}
-                  >
-                    <Star
-                      className={cn(
-                        "h-8 w-8 transition-all",
-                        rating >= star || hoveredStar >= star ? "fill-current" : ""
-                      )}
-                    />
-                  </Button>
-                ))}
-              </div>
-              {(hoveredStar || rating) > 0 && (
-                <p className="text-sm text-center text-muted-foreground">
-                  {getRatingText(hoveredStar || rating)}
+                <div className="absolute top-5 right-5 text-2xl opacity-30">🎯 </div>
+                <div className="text-sm font-semibold text-[#22543D] uppercase tracking-wider mb-2">
+                  Your Plan:{" "}
+                </div>
+                <p className="text-base text-[#2F855A] italic leading-relaxed relative z-10">
+                  IF: {step.plan_situation} {step.plan_trigger} → THEN: {step.plan_action}
                 </p>
-              )}
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">
-                <div className="font-medium mb-1">⚠️ Error</div>
-                <div>{error}</div>
-                {error.includes("refresh") && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.location.reload()}
-                    className="mt-2 text-red-600 border-red-300 hover:bg-red-50"
-                  >
-                    Refresh Page
-                  </Button>
-                )}
               </div>
             )}
 
-            {/* Submit Button */}
-            <Button
-              onClick={handleSubmit}
-              disabled={!isValid || isLoading}
-              className="w-full"
-              size="lg"
-              data-testid="submit-button"
-            >
-              {isLoading ? "Saving..." : "Complete & Unlock Next Step"}
-            </Button>
-          </CardContent>
-        </Card>
+            <p className="text-xl text-[#2D3748] font-medium mb-6">
+              How did your plan to &quot;{step.plan_action}&quot; go?
+            </p>
+
+            {/* Form Content */}
+            <div className="space-y-8">
+              {/* Situation Text Area */}
+              <div className="space-y-2">
+                <Label htmlFor="reflection" className="text-base font-semibold text-[#2D3748]">
+                  Describe what happened
+                </Label>
+                <Textarea
+                  ref={reflectionTextAreaRef}
+                  id="reflection"
+                  data-testid="reflection-text"
+                  placeholder="Share your experience applying this concept. What worked? What didn't? What did you learn?"
+                  value={reflectionText}
+                  onChange={(e) => setReflectionText(e.target.value)}
+                  className="min-h-[140px] overflow-hidden transition-all duration-300 border-2 border-gray-200 rounded-[10px] px-4 py-4 text-base leading-relaxed bg-[#FAFBFC] focus:bg-white focus:border-[#48BB78] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(72,187,120,0.1)] placeholder:italic placeholder:text-gray-400"
+                  disabled={isLoading}
+                />
+                <div
+                  className={cn(
+                    "text-sm text-right transition-colors duration-200",
+                    reflectionText.length >= minTextLength ? "text-[#48BB78]" : "text-gray-500"
+                  )}
+                >
+                  {reflectionText.length >= minTextLength
+                    ? `${reflectionText.length} characters`
+                    : `${reflectionText.length} / ${minTextLength} minimum`}
+                </div>
+              </div>
+
+              {/* Learning Text Area - Enhanced Section */}
+              <div className="bg-[#F8FAFC] p-5 rounded-xl border border-gray-100 space-y-3 transition-all duration-300 hover:bg-[#F3F7FB]">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">💡</span>
+                  <Label htmlFor="learning" className="text-base font-semibold text-[#2D3748]">
+                    What did you learn?
+                  </Label>
+                </div>
+                <Textarea
+                  ref={learningTextAreaRef}
+                  id="learning"
+                  data-testid="learning-text"
+                  placeholder="What insights did you gain? How will you apply this differently next time? (This helps solidify your learning!)"
+                  value={learningText}
+                  onChange={(e) => setLearningText(e.target.value)}
+                  className="min-h-[120px] overflow-hidden transition-all duration-300 border-2 border-gray-200 rounded-[10px] px-4 py-4 text-base leading-relaxed bg-white focus:border-[#48BB78] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(72,187,120,0.1)] placeholder:italic placeholder:text-gray-400"
+                  disabled={isLoading}
+                />
+                <div className="text-sm text-gray-500 italic">
+                  Optional but encouraged - deeper reflection leads to better learning
+                </div>
+              </div>
+
+              {/* Star Rating */}
+              <div className="text-center py-4">
+                <Label className="text-lg font-semibold text-[#2D3748] block mb-5">
+                  How effective was this model for you?
+                </Label>
+                <div
+                  className="flex items-center justify-center gap-3 mb-3"
+                  data-testid="star-rating"
+                >
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "p-0 hover:bg-transparent transition-all duration-200",
+                        rating >= star || hoveredStar >= star ? "text-[#FFD700]" : "text-gray-300"
+                      )}
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoveredStar(star)}
+                      onMouseLeave={() => setHoveredStar(0)}
+                      disabled={isLoading}
+                      data-testid={`star-${star}`}
+                      aria-label={`Rate ${star} stars`}
+                    >
+                      <Star
+                        className={cn(
+                          "h-10 w-10 transition-all duration-200",
+                          rating >= star || hoveredStar >= star
+                            ? "fill-current drop-shadow-[0_2px_4px_rgba(255,215,0,0.4)] scale-110"
+                            : "hover:scale-110"
+                        )}
+                      />
+                    </Button>
+                  ))}
+                </div>
+                <div className="h-5">
+                  {(hoveredStar || rating) > 0 && (
+                    <p className="text-sm text-gray-500 animate-fade-in">
+                      {getRatingText(hoveredStar || rating)}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="p-4 text-sm text-red-700 bg-[#FEF2F2] rounded-lg border border-red-200 animate-fade-in">
+                  <div className="flex items-center gap-2 font-semibold mb-1">
+                    <span className="text-lg">⚠️</span>
+                    <span>Error</span>
+                  </div>
+                  <div className="ml-7">{error}</div>
+                  {error.includes("refresh") && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.location.reload()}
+                      className="mt-3 ml-7 text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      Refresh Page
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <Button
+                onClick={handleSubmit}
+                disabled={!isValid || isLoading}
+                className="w-full bg-gradient-to-r from-[#48BB78] to-[#38A169] hover:from-[#38A169] hover:to-[#2F855A] text-white font-semibold text-lg py-7 rounded-[10px] shadow-[0_4px_12px_rgba(72,187,120,0.25)] hover:shadow-[0_6px_20px_rgba(72,187,120,0.35)] transform transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
+                size="lg"
+                data-testid="submit-button"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                    Saving...
+                  </span>
+                ) : (
+                  "Complete & Unlock Next Step"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {/* Success Dialog */}
         <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-          <DialogContent className="sm:max-w-md text-center" showCloseButton={false}>
+          <DialogContent
+            className="sm:max-w-md text-center bg-white rounded-2xl p-12"
+            showCloseButton={false}
+          >
             <DialogHeader>
-              <div className="mx-auto mb-4 text-6xl animate-bounce">🎉</div>
-              <DialogTitle className="text-2xl">Excellent Work!</DialogTitle>
-              <DialogDescription className="text-base mt-2">
+              <div className="mx-auto mb-6 text-7xl animate-bounce">🎉</div>
+              <DialogTitle className="text-2xl font-bold text-[#1A202C] mb-3">
+                Excellent Work!
+              </DialogTitle>
+              <DialogDescription className="text-base text-gray-600 leading-relaxed">
                 You&apos;ve successfully completed this step. The next mental model in your roadmap
                 is now unlocked!
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="mt-6">
+            <DialogFooter className="mt-8">
               <Button
                 onClick={handleSuccessDialogClose}
-                className="w-full sm:w-auto mx-auto"
+                className="w-full sm:w-auto mx-auto bg-[#48BB78] hover:bg-[#38A169] text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200"
                 size="lg"
               >
                 Continue to Roadmap

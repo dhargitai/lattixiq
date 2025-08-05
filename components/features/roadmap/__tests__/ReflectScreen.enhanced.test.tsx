@@ -115,15 +115,15 @@ describe("ReflectScreen Enhanced Features", () => {
     // Check placeholders
     expect(screen.getByTestId("reflection-text")).toHaveAttribute(
       "placeholder",
-      "What happened when you tried to apply this concept?"
+      "Share your experience applying this concept. What worked? What didn't? What did you learn?"
     );
     expect(screen.getByTestId("learning-text")).toHaveAttribute(
       "placeholder",
-      "What insights did you gain? How will you apply this differently next time?"
+      "What insights did you gain? How will you apply this differently next time? (This helps solidify your learning!)"
     );
 
     // Check for optional text
-    expect(screen.getByText("Optional but encouraged")).toBeInTheDocument();
+    expect(screen.getByText(/Optional but encouraged/i)).toBeInTheDocument();
   });
 
   it("should save separate situation and learning text", async () => {
@@ -319,7 +319,7 @@ describe("ReflectScreen Enhanced Features", () => {
         user_id: mockUser.id,
         roadmap_step_id: mockStep.id,
         situation_text: "Test reflection that is longer than 50 characters to meet the minimum",
-        learning_text: "Test reflection that is longer than 50 characters to meet the minimum", // Falls back to situation text
+        learning_text: "", // Empty learning text is allowed (optional field)
         effectiveness_rating: 3,
         created_at: expect.any(String),
       });
@@ -363,9 +363,9 @@ describe("ReflectScreen Enhanced Features", () => {
     const user = userEvent.setup();
     const reflectionTextarea = screen.getByTestId("reflection-text");
 
-    // Initially should show 0/50
+    // Initially should show 0 / 50 minimum
     await waitFor(() => {
-      expect(screen.getByText("0/50 characters (minimum)")).toBeInTheDocument();
+      expect(screen.getByText("0 / 50 minimum")).toBeInTheDocument();
     });
 
     // Type some text
@@ -373,7 +373,7 @@ describe("ReflectScreen Enhanced Features", () => {
 
     // Should update count
     await waitFor(() => {
-      expect(screen.getByText("10/50 characters (minimum)")).toBeInTheDocument();
+      expect(screen.getByText("10 / 50 minimum")).toBeInTheDocument();
     });
 
     // Clear and type enough to meet minimum
@@ -381,9 +381,9 @@ describe("ReflectScreen Enhanced Features", () => {
     const longText = "This text is now long enough to meet the minimum character requirement";
     await user.type(reflectionTextarea, longText);
 
-    // Should show updated count (actual length is 70 characters)
+    // Should show updated count without minimum text when requirement is met (actual length is 70 characters)
     await waitFor(() => {
-      expect(screen.getByText("70/50 characters (minimum)")).toBeInTheDocument();
+      expect(screen.getByText("70 characters")).toBeInTheDocument();
     });
   });
 });

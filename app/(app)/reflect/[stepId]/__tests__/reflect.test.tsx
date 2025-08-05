@@ -139,7 +139,7 @@ describe("Reflect Page", () => {
       const planReminder = screen.getByTestId("plan-reminder");
       expect(planReminder).toBeInTheDocument();
       expect(planReminder).toHaveTextContent(
-        `🎯 Your Plan:IF: ${mockStep.plan_situation} ${mockStep.plan_trigger} → THEN: ${mockStep.plan_action}`
+        `🎯 Your Plan: IF: ${mockStep.plan_situation} ${mockStep.plan_trigger} → THEN: ${mockStep.plan_action}`
       );
     });
   });
@@ -183,7 +183,7 @@ describe("Reflect Page", () => {
     const reflectionText = screen.getByTestId("reflection-text");
     expect(reflectionText).toHaveAttribute(
       "placeholder",
-      "What happened when you tried to apply this concept?"
+      "Share your experience applying this concept. What worked? What didn't? What did you learn?"
     );
   });
 
@@ -223,6 +223,9 @@ describe("Reflect Page", () => {
       "Test reflection that is longer than 50 characters to meet the minimum requirement"
     );
 
+    const learningTextarea = screen.getByTestId("learning-text");
+    await user.type(learningTextarea, "Test learning that is optional but encouraged");
+
     // Click the 5th star for rating
     const star5 = screen.getByTestId("star-5") || screen.getByLabelText("Rate 5 stars");
     await user.click(star5);
@@ -236,8 +239,7 @@ describe("Reflect Page", () => {
         roadmap_step_id: "test-step-id",
         situation_text:
           "Test reflection that is longer than 50 characters to meet the minimum requirement",
-        learning_text:
-          "Test reflection that is longer than 50 characters to meet the minimum requirement",
+        learning_text: "Test learning that is optional but encouraged",
         effectiveness_rating: 5,
         created_at: expect.any(String),
       });
