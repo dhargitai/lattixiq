@@ -1,344 +1,259 @@
-# Epic 6: Settings & User Preferences
+# Epic 6: Settings & User Preferences (MVP)
 
 ## Epic Overview
 
-**Epic Name:** Settings & User Preferences Management
+**Epic Name:** Settings & User Preferences - MVP
 **Epic ID:** EPIC-6
 **Priority:** High (P1)
 **Status:** Draft
-**Target Release:** MVP 1.1
+**Target Release:** MVP 1.0
 
 ## Epic Description
 
 ### Business Context
 
-The Settings & User Preferences epic provides users with control over their LattixIQ experience, enabling personalization of reminders, notifications, privacy settings, and account management. This epic is essential for user retention and engagement by allowing users to tailor the app to their individual learning style and schedule.
+The Settings page provides users with essential account management capabilities for the MVP release. This simplified implementation focuses on the core features users need: viewing account information, managing notifications, accessing billing, and logging out.
 
 ### User Problem
 
-Users need a centralized location to:
+Users need a simple, centralized location to:
 
-- Manage their account information and security
-- Control notification preferences and reminder schedules
-- Customize their learning experience (themes, accessibility)
-- Access support resources and documentation
-- Manage data privacy and export options
-- Control premium feature access and subscriptions
+- View their account email and login method
+- Access billing/subscription management
+- Control notification preferences
+- Log out of their account
 
 ### Solution Overview
 
-A comprehensive Settings screen that provides intuitive access to all user preferences, account management, and app customization options. The implementation follows the established design patterns from the prototype and maintains consistency with the overall app architecture.
+A clean, minimal Settings screen that provides only the essential account management features. The implementation follows the prototype design exactly and defers advanced features to post-MVP releases.
 
 ## Success Metrics
 
 ### Primary KPIs
 
-- Settings engagement rate: >60% of users customize at least one setting
-- Reminder opt-in rate: >70% of users enable notifications
-- Support ticket reduction: 30% decrease in basic configuration questions
-- User retention: 15% improvement for users who customize settings
+- Settings page load time: <200ms
+- Successful navigation to billing/pricing: 100% success rate
+- Notification preference saves: 100% success rate
+- Zero critical bugs in settings functionality
 
 ### Secondary Metrics
 
-- Average time to complete settings configuration: <2 minutes
-- Settings screen error rate: <1%
-- Feature discovery through settings: >40% find new features
-- Export feature usage: Track data portability adoption
+- User engagement with settings: Track page views
+- Notification opt-in rate: >70% of users
+- Support tickets related to settings: <5%
 
 ## User Stories
 
-### Story 6.1: Core Settings Screen Implementation
+### Story 6.1: Core Settings Screen - MVP
 
 **Priority:** P0 - Must Have
-**Size:** 5 points
-
-As a user, I want to access a centralized settings screen so that I can manage all my preferences in one place.
-
-**Acceptance Criteria:**
-
-- Settings screen accessible via bottom navigation
-- Organized into logical sections (Account, Notifications, Privacy, etc.)
-- Responsive design that works on mobile and desktop
-- Consistent with app design system
-
-### Story 6.2: Notification & Reminder Management
-
-**Priority:** P0 - Must Have
-**Size:** 8 points
-
-As a user, I want to control when and how I receive reminders so that they fit my schedule and preferences.
-
-**Acceptance Criteria:**
-
-- Toggle for enabling/disabling all notifications
-- Daily reminder time selector (grid or dropdown)
-- Reminder frequency options (daily, weekdays, custom)
-- Push notification permissions handling
-- Email notification preferences
-
-### Story 6.3: Account Management
-
-**Priority:** P0 - Must Have
-**Size:** 5 points
-
-As a user, I want to manage my account information so that I can keep my profile updated and secure.
-
-**Acceptance Criteria:**
-
-- View and edit profile information
-- Change email address with verification
-- Password change functionality
-- Account deletion option with confirmation
-- Session management (view active sessions)
-
-### Story 6.4: Theme & Accessibility Settings
-
-**Priority:** P1 - Should Have
-**Size:** 5 points
-
-As a user, I want to customize the visual appearance and accessibility features so that the app is comfortable for me to use.
-
-**Acceptance Criteria:**
-
-- Light/dark/system theme toggle
-- Font size adjustment (small, medium, large)
-- High contrast mode option
-- Reduce motion toggle
-- Settings persist across sessions
-
-### Story 6.5: Data & Privacy Management
-
-**Priority:** P1 - Should Have
-**Size:** 5 points
-
-As a user, I want to control my data and privacy settings so that I understand and control how my information is used.
-
-**Acceptance Criteria:**
-
-- Clear privacy policy link
-- Data export functionality (JSON/CSV)
-- Analytics opt-out option
-- Clear activity history option
-- GDPR compliance features (EU users)
-
-### Story 6.6: Premium Features & Subscription
-
-**Priority:** P1 - Should Have
-**Size:** 8 points
-
-As a user, I want to manage my subscription and premium features so that I can control my payment and access.
-
-**Acceptance Criteria:**
-
-- Current subscription status display
-- Upgrade/downgrade options
-- Payment method management
-- Billing history access
-- Cancel subscription flow
-
-### Story 6.7: Help & Support Integration
-
-**Priority:** P2 - Nice to Have
 **Size:** 3 points
 
-As a user, I want to access help and support resources so that I can resolve issues independently.
+As a user, I want to access a simple settings screen so that I can view my account info and manage basic preferences.
 
 **Acceptance Criteria:**
 
-- FAQ section or link
-- Contact support option
-- App version and debug info
-- Report bug functionality
-- Feature request submission
+1. Settings screen accessible via navigation
+2. Clean layout matching prototype design (prototypes/settings.html)
+3. Four main sections: Account, Billing, Notifications, Logout
+4. Responsive design for mobile and desktop
+5. Consistent with app's shadcn/ui New York design system
 
-### Story 6.8: Learning Preferences
+### Story 6.2: Account Information Display
 
-**Priority:** P2 - Nice to Have
-**Size:** 5 points
+**Priority:** P0 - Must Have  
+**Size:** 2 points
 
-As a user, I want to customize my learning preferences so that the app adapts to my learning style.
+As a user, I want to see my account email and login method so that I know which account I'm using.
 
 **Acceptance Criteria:**
 
-- Preferred content difficulty level
-- Learning pace settings (intensive, moderate, relaxed)
-- Content type preferences (text, video, audio)
-- Language preferences (if multi-language)
-- Reset progress options
+1. Display user's email address
+2. Show login method (Email or Google)
+3. Read-only display (no editing in MVP)
+4. Properly formatted and styled per prototype
+
+### Story 6.3: Billing Section
+
+**Priority:** P0 - Must Have
+**Size:** 2 points
+
+As a user, I want to access my billing information so that I can manage my subscription.
+
+**Acceptance Criteria:**
+
+1. Show current plan status (Free or Premium)
+2. If Premium: Link to Stripe customer portal (external)
+3. If Free: Link to internal /pricing page
+4. Clear visual distinction between plan types
+5. Plan badge styling per prototype
+
+### Story 6.4: Notification Preferences
+
+**Priority:** P0 - Must Have
+**Size:** 3 points
+
+As a user, I want to control my notification settings so that I receive reminders when I want them.
+
+**Acceptance Criteria:**
+
+1. Master toggle for all notifications
+2. Daily reminder time selector
+3. Settings persist across sessions
+4. Visual feedback on save
+5. Match prototype toggle and time selector design
+
+### Story 6.5: Logout Functionality
+
+**Priority:** P0 - Must Have
+**Size:** 1 point
+
+As a user, I want to log out of my account so that I can secure my session.
+
+**Acceptance Criteria:**
+
+1. Clear logout button at bottom of settings
+2. Red border styling per prototype
+3. Confirms logout action
+4. Redirects to login page after logout
+5. Clears all session data
 
 ## Technical Requirements
 
 ### Frontend Components
 
-- Settings screen main container (`/app/(app)/settings/page.tsx`)
-- Settings section components (`/components/settings/`)
-- Shared form components from UI library
-- Toast notifications for success/error states
+- Settings page: `/app/(app)/settings/page.tsx`
+- Settings components: `/components/settings/`
+- Reuse existing shadcn/ui components
 
 ### Backend Requirements
 
-- User preferences API endpoints
-- Notification service integration
-- Data export functionality
-- Subscription management (Stripe integration)
-- Audit logging for sensitive changes
+- User preferences API endpoint (notification settings only)
+- Integration with Supabase Auth for user data
+- Stripe customer portal URL generation (future)
 
-### Data Model
+### Data Model (Simplified)
 
 ```typescript
 interface UserPreferences {
   userId: string;
   notifications: {
     enabled: boolean;
-    dailyReminderTime: string;
-    frequency: "daily" | "weekdays" | "custom";
-    emailEnabled: boolean;
-    pushEnabled: boolean;
+    dailyReminderTime: string; // "HH:mm" format
   };
-  theme: "light" | "dark" | "system";
-  accessibility: {
-    fontSize: "small" | "medium" | "large";
-    highContrast: boolean;
-    reduceMotion: boolean;
-  };
-  privacy: {
-    analyticsEnabled: boolean;
-    dataRetention: number; // days
-  };
-  learning: {
-    difficulty: "beginner" | "intermediate" | "advanced";
-    pace: "intensive" | "moderate" | "relaxed";
+}
+
+interface UserAccount {
+  email: string;
+  provider: "email" | "google";
+  subscription: {
+    status: "free" | "premium";
+    stripeCustomerId?: string;
   };
 }
 ```
 
 ### Security Considerations
 
-- Require password confirmation for sensitive changes
-- Rate limiting on settings updates
-- Audit trail for account changes
-- Secure data export with authentication
-- HTTPS only for all settings operations
+- Require authentication for settings access
+- Secure logout with session cleanup
+- HTTPS only for all operations
 
 ## Dependencies
 
 ### Internal Dependencies
 
-- Authentication system (Epic 0)
-- Notification service (Epic 2)
-- User profile data model
-- Stripe integration for subscriptions
-- Analytics service
+- Authentication system (Supabase Auth)
+- Navigation components
+- shadcn/ui component library
 
 ### External Dependencies
 
-- Push notification services (Firebase/OneSignal)
-- Email service (SendGrid/AWS SES)
-- Payment processor (Stripe)
-- Export libraries (json2csv)
+- Stripe (for billing portal - future)
+- Supabase (for auth and preferences)
 
 ## Risks & Mitigations
 
-### Risk 1: Platform-specific notification handling
-
-**Impact:** High
-**Probability:** Medium
-**Mitigation:** Use cross-platform notification service, test extensively on iOS/Android
-
-### Risk 2: Data export compliance requirements
+### Risk 1: Stripe integration complexity
 
 **Impact:** Medium
 **Probability:** Low
-**Mitigation:** Implement GDPR-compliant export formats, consult legal for requirements
+**Mitigation:** Use Stripe's hosted customer portal, minimal custom implementation
 
-### Risk 3: Settings sync conflicts
+### Risk 2: Notification settings not persisting
 
-**Impact:** Medium
-**Probability:** Medium
-**Mitigation:** Implement optimistic UI updates with conflict resolution
+**Impact:** High  
+**Probability:** Low
+**Mitigation:** Implement proper error handling and retry logic
 
 ## Design & UX Considerations
 
 ### Design Principles
 
-- Progressive disclosure (show advanced settings on demand)
-- Clear labeling and descriptions
-- Immediate feedback for changes
-- Undo capability for destructive actions
-- Consistent with overall app design system
+- Match prototype exactly (prototypes/settings.html)
+- Minimal and clean interface
+- Clear visual hierarchy
+- Consistent spacing and styling
 
 ### Prototype References
 
 - Settings screen: `/prototypes/settings.html`
-- Component mapping: `PROTOTYPE_COMPONENT_MAPPING.md`
-- Design system: New York style shadcn/ui components
+- Use exact styling for:
+  - Section headers (uppercase, letter-spacing)
+  - Settings items (white cards with borders)
+  - Toggle switches (48x28px)
+  - Logout button (red border)
 
 ### Accessibility Requirements
 
-- WCAG 2.1 AA compliance
 - Keyboard navigation support
-- Screen reader compatibility
-- Clear focus indicators
 - Proper ARIA labels
+- Focus indicators
+- Screen reader compatible
 
 ## Implementation Phases
 
-### Phase 1: Core Settings (Sprint 1)
+### Phase 1: MVP Release
 
-- Basic settings screen structure
-- Navigation integration
-- Account management basics
+- All 5 stories listed above
+- Basic functionality only
+- No advanced features
 
-### Phase 2: Notifications (Sprint 2)
+### Phase 2: Post-MVP (Future)
 
-- Reminder settings
-- Notification toggles
-- Time selector implementation
-
-### Phase 3: Customization (Sprint 3)
-
-- Theme settings
-- Accessibility options
-- Learning preferences
-
-### Phase 4: Advanced Features (Sprint 4)
-
-- Data export
-- Subscription management
-- Help integration
+- Email change with verification
+- Password management
+- Account deletion
+- Session management
+- Advanced notification options
+- Theme preferences
 
 ## Definition of Done
 
-- [ ] All user stories completed and tested
-- [ ] Settings persist across sessions
+- [ ] All MVP stories completed
+- [ ] Settings persist correctly
 - [ ] Mobile and desktop responsive
-- [ ] Accessibility audit passed
-- [ ] Performance metrics met (<200ms load time)
-- [ ] Security review completed
-- [ ] Documentation updated
-- [ ] Integration tests written
-- [ ] User acceptance testing passed
+- [ ] Matches prototype design exactly
+- [ ] No critical bugs
+- [ ] Tests written and passing
 
 ## Related Documentation
 
-- [UI Prototype Alignment Epic](./ui-prototype-alignment-epic.md)
+- [UI Prototype](../../prototypes/settings.html)
 - [Frontend Specification](../frontend-spec.md)
 - [Architecture Documentation](../architecture.md)
-- [Component Mapping](../PROTOTYPE_COMPONENT_MAPPING.md)
 
 ## Epic Status Updates
 
-| Date       | Status  | Notes                   |
-| ---------- | ------- | ----------------------- |
-| 2025-08-06 | Created | Initial epic definition |
+| Date       | Status  | Notes                          |
+| ---------- | ------- | ------------------------------ |
+| 2025-08-06 | Created | Initial epic definition        |
+| 2025-08-06 | Updated | Simplified to MVP requirements |
 
 ## Open Questions
 
-1. Should we implement biometric authentication for sensitive settings?
-2. What level of notification customization do we want (per feature vs global)?
-3. Do we need offline settings sync capability?
-4. Should settings changes trigger re-onboarding for major changes?
-5. What analytics should we track on settings usage?
+1. Stripe customer portal URL generation - needs API key setup
+2. Notification service provider selection (post-MVP)
 
 ---
 
