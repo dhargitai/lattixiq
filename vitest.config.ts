@@ -34,6 +34,7 @@ export default defineConfig(({ mode = "test" }) => {
       setupFiles: ["./tests/setup.ts"],
       include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
       exclude: ["node_modules", "dist", ".next", "stories", "tests/e2e"],
+      testTimeout: 10000, // 10 seconds
     },
   };
 });

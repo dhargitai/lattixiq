@@ -6,7 +6,6 @@ export interface UnlockedKnowledge {
   name: string;
   type: Database["public"]["Enums"]["knowledge_content_type"];
   category: string | null;
-  slug: string;
   completed_at: string;
 }
 
@@ -64,18 +63,11 @@ export async function getUnlockedKnowledge(): Promise<UnlockedKnowledge[]> {
   data.forEach((step) => {
     const content = step.knowledge_content;
     if (content && !knowledgeMap.has(content.id)) {
-      // Create slug from title
-      const slug = content.title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
-
       knowledgeMap.set(content.id, {
         id: content.id,
         name: content.title,
         type: content.type,
         category: content.category,
-        slug,
         completed_at: step.plan_created_at || new Date().toISOString(),
       });
     }

@@ -101,7 +101,7 @@ export function UnlockedKnowledgeModal({ open, onOpenChange }: UnlockedKnowledge
                 {knowledge.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => handleItemClick(item.slug)}
+                    onClick={() => handleItemClick(item.id)}
                     className="w-full p-4 text-left rounded-lg border hover:bg-accent hover:border-accent-foreground/20 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
