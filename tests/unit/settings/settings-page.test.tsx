@@ -6,6 +6,14 @@ import "@testing-library/jest-dom";
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
   usePathname: vi.fn(() => "/settings"),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  })),
 }));
 
 // Mock Supabase
@@ -100,7 +108,7 @@ describe("Settings Page", () => {
     expect(billingHeader).toBeInTheDocument();
 
     // Check for plan badge
-    const planBadge = screen.getByText("Free Tier");
+    const planBadge = screen.getByText("Free");
     expect(planBadge).toBeInTheDocument();
   });
 
