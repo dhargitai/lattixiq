@@ -13,12 +13,14 @@ interface NavigationCardsProps {
     text: string;
     date: string;
   } | null;
+  onLearnedModelsClick?: () => void;
 }
 
 export function NavigationCards({
   learnedModelsCount,
   completedRoadmapsCount,
   recentLogEntry,
+  onLearnedModelsClick,
 }: NavigationCardsProps) {
   const router = useRouter();
 
@@ -48,7 +50,7 @@ export function NavigationCards({
       <div className="space-y-3">
         <Card
           className="p-4 hover:shadow-md transition-all cursor-pointer hover:border-gray-300"
-          onClick={() => router.push("/models")}
+          onClick={onLearnedModelsClick || (() => router.push("/models"))}
           data-testid="navigation-card"
         >
           <div className="flex items-center justify-between">

@@ -8,7 +8,7 @@ import { QuickStats } from "@/components/features/toolkit/QuickStats";
 import { ActiveRoadmapCard } from "@/components/features/toolkit/ActiveRoadmapCard";
 import { ActiveRoadmapCardSkeleton } from "@/components/features/toolkit/ActiveRoadmapCardSkeleton";
 import { QuickActions } from "@/components/features/toolkit/QuickActions";
-import { NavigationCards } from "@/components/features/toolkit/NavigationCards";
+import { ToolkitClient } from "@/components/features/toolkit/ToolkitClient";
 import { EmptyState } from "@/components/features/toolkit/EmptyState";
 import { getToolkitData } from "@/lib/db/toolkit";
 
@@ -64,7 +64,7 @@ export default async function ToolkitPage() {
               currentStepId={toolkitData.currentStepId}
             />
 
-            <NavigationCards
+            <ToolkitClient
               learnedModelsCount={toolkitData.learnedModelsCount}
               completedRoadmapsCount={toolkitData.completedRoadmapsCount}
               recentLogEntry={toolkitData.recentLogEntry}
