@@ -3,14 +3,19 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, Shuffle } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 
 interface QuickActionsProps {
   hasActiveRoadmap: boolean;
   hasActivePlan: boolean;
+  currentStepId: string | null;
 }
 
-export function QuickActions({ hasActiveRoadmap, hasActivePlan }: QuickActionsProps) {
+export function QuickActions({
+  hasActiveRoadmap,
+  hasActivePlan,
+  currentStepId,
+}: QuickActionsProps) {
   const router = useRouter();
 
   if (!hasActiveRoadmap) {
@@ -30,26 +35,29 @@ export function QuickActions({ hasActiveRoadmap, hasActivePlan }: QuickActionsPr
 
   return (
     <div className="space-y-3">
-      {hasActivePlan && (
+      {hasActivePlan && currentStepId && (
         <Button
           variant="outline"
           className="w-full justify-start border-green-200 hover:bg-green-50 hover:border-green-300"
-          onClick={() => router.push("/reflect")}
+          onClick={() => router.push(`/reflect/${currentStepId}`)}
         >
           <Calendar className="mr-3 h-5 w-5 text-green-600" />
           <span className="text-gray-700">Today&apos;s Reflection</span>
         </Button>
       )}
 
-      <Button
-        variant="outline"
-        className="w-full justify-start hover:bg-gray-50"
-        onClick={() => router.push("/onboarding")}
-      >
-        <Plus className="mr-3 h-5 w-5 text-blue-600" />
-        <span className="text-gray-700">Start New Roadmap</span>
-      </Button>
+      {!hasActiveRoadmap && (
+        <Button
+          variant="outline"
+          className="w-full justify-start hover:bg-gray-50"
+          onClick={() => router.push("/onboarding")}
+        >
+          <Plus className="mr-3 h-5 w-5 text-blue-600" />
+          <span className="text-gray-700">Start New Roadmap</span>
+        </Button>
+      )}
 
+      {/* Explore Random Model - commented out for now
       <Button
         variant="outline"
         className="w-full justify-start hover:bg-gray-50"
@@ -58,6 +66,7 @@ export function QuickActions({ hasActiveRoadmap, hasActivePlan }: QuickActionsPr
         <Shuffle className="mr-3 h-5 w-5 text-purple-600" />
         <span className="text-gray-700">Explore Random Model</span>
       </Button>
+      */}
     </div>
   );
 }

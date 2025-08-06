@@ -39,7 +39,7 @@ export default async function ToolkitPage() {
       </header>
 
       <main className="flex-1 px-5 py-6 max-w-xl mx-auto w-full space-y-8">
-        <HeaderGreeting userName={user.email?.split("@")[0] || "Achiever"} />
+        <HeaderGreeting userName="Achiever" />
 
         {hasAnyActivity ? (
           <>
@@ -56,6 +56,7 @@ export default async function ToolkitPage() {
             <QuickActions
               hasActiveRoadmap={!!toolkitData.activeRoadmap}
               hasActivePlan={toolkitData.hasActivePlan}
+              currentStepId={toolkitData.currentStepId}
             />
 
             <NavigationCards

@@ -22,9 +22,9 @@ describe("Toolkit Components", () => {
   });
 
   describe("HeaderGreeting", () => {
-    it("should display personalized greeting", () => {
-      render(<HeaderGreeting userName="TestUser" />);
-      expect(screen.getByText("Welcome back, TestUser!")).toBeInTheDocument();
+    it("should display greeting with Achiever", () => {
+      render(<HeaderGreeting userName="Achiever" />);
+      expect(screen.getByText("Welcome back, Achiever!")).toBeInTheDocument();
     });
   });
 
@@ -108,7 +108,7 @@ describe("Toolkit Components", () => {
 
   describe("QuickActions", () => {
     it("should show start first roadmap button when no active roadmap", async () => {
-      render(<QuickActions hasActiveRoadmap={false} hasActivePlan={false} />);
+      render(<QuickActions hasActiveRoadmap={false} hasActivePlan={false} currentStepId={null} />);
 
       const button = screen.getByText("Start Your First Roadmap");
       expect(button).toBeInTheDocument();
@@ -118,29 +118,26 @@ describe("Toolkit Components", () => {
     });
 
     it("should show reflection button when active plan exists", () => {
-      render(<QuickActions hasActiveRoadmap={true} hasActivePlan={true} />);
+      render(
+        <QuickActions hasActiveRoadmap={true} hasActivePlan={true} currentStepId="step-123" />
+      );
 
       expect(screen.getByText("Today's Reflection")).toBeInTheDocument();
     });
 
-    it("should show all action buttons when roadmap is active", () => {
-      render(<QuickActions hasActiveRoadmap={true} hasActivePlan={false} />);
+    it("should NOT show Start New Roadmap when roadmap is active", () => {
+      render(<QuickActions hasActiveRoadmap={true} hasActivePlan={false} currentStepId={null} />);
 
-      expect(screen.getByText("Start New Roadmap")).toBeInTheDocument();
-      expect(screen.getByText("Explore Random Model")).toBeInTheDocument();
+      expect(screen.queryByText("Start New Roadmap")).not.toBeInTheDocument();
     });
 
-    it("should navigate correctly on button clicks", async () => {
-      render(<QuickActions hasActiveRoadmap={true} hasActivePlan={true} />);
+    it("should navigate to step reflection page on button click", async () => {
+      render(
+        <QuickActions hasActiveRoadmap={true} hasActivePlan={true} currentStepId="step-123" />
+      );
 
       await userEvent.click(screen.getByText("Today's Reflection"));
-      expect(mockPush).toHaveBeenCalledWith("/reflect");
-
-      await userEvent.click(screen.getByText("Start New Roadmap"));
-      expect(mockPush).toHaveBeenCalledWith("/onboarding");
-
-      await userEvent.click(screen.getByText("Explore Random Model"));
-      expect(mockPush).toHaveBeenCalledWith("/explore");
+      expect(mockPush).toHaveBeenCalledWith("/reflect/step-123");
     });
   });
 

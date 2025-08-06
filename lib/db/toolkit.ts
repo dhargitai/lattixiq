@@ -25,6 +25,7 @@ export interface ToolkitData {
   learnedModelsCount: number;
   completedRoadmapsCount: number;
   hasActivePlan: boolean;
+  currentStepId: string | null;
   recentLogEntry: {
     text: string;
     date: string;
@@ -80,6 +81,7 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
 
   let activeRoadmapData: ActiveRoadmapData | null = null;
   let hasActivePlan = false;
+  let currentStepId: string | null = null;
 
   if (activeRoadmap && "steps" in activeRoadmap) {
     const steps = activeRoadmap.steps || [];
@@ -87,6 +89,7 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
     const currentStep = steps.find((s: RoadmapStep) => s.status === "unlocked");
 
     if (currentStep) {
+      currentStepId = currentStep.id;
       hasActivePlan = !!(
         currentStep.plan_situation ||
         currentStep.plan_trigger ||
@@ -140,6 +143,7 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
     learnedModelsCount: totalLearned,
     completedRoadmapsCount: completedRoadmaps.length,
     hasActivePlan,
+    currentStepId,
     recentLogEntry,
   };
 }
