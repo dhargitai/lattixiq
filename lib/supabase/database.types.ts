@@ -1,10 +1,30 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)";
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -179,6 +199,7 @@ export type Database = {
       };
       roadmap_steps: {
         Row: {
+          completed_at: string | null;
           id: string;
           knowledge_content_id: string;
           order: number;
@@ -188,8 +209,10 @@ export type Database = {
           plan_trigger: string | null;
           roadmap_id: string;
           status: Database["public"]["Enums"]["roadmap_step_status"] | null;
+          updated_at: string | null;
         };
         Insert: {
+          completed_at?: string | null;
           id?: string;
           knowledge_content_id: string;
           order: number;
@@ -199,8 +222,10 @@ export type Database = {
           plan_trigger?: string | null;
           roadmap_id: string;
           status?: Database["public"]["Enums"]["roadmap_step_status"] | null;
+          updated_at?: string | null;
         };
         Update: {
+          completed_at?: string | null;
           id?: string;
           knowledge_content_id?: string;
           order?: number;
@@ -210,6 +235,7 @@ export type Database = {
           plan_trigger?: string | null;
           roadmap_id?: string;
           status?: Database["public"]["Enums"]["roadmap_step_status"] | null;
+          updated_at?: string | null;
         };
         Relationships: [
           {
@@ -235,6 +261,7 @@ export type Database = {
           goal_description: string | null;
           id: string;
           status: Database["public"]["Enums"]["roadmap_status"] | null;
+          updated_at: string | null;
           user_id: string;
         };
         Insert: {
@@ -243,6 +270,7 @@ export type Database = {
           goal_description?: string | null;
           id?: string;
           status?: Database["public"]["Enums"]["roadmap_status"] | null;
+          updated_at?: string | null;
           user_id: string;
         };
         Update: {
@@ -251,6 +279,7 @@ export type Database = {
           goal_description?: string | null;
           id?: string;
           status?: Database["public"]["Enums"]["roadmap_status"] | null;
+          updated_at?: string | null;
           user_id?: string;
         };
         Relationships: [
@@ -268,7 +297,6 @@ export type Database = {
           created_at: string | null;
           email: string | null;
           id: string;
-          notification_prefs: Json | null;
           reminder_enabled: boolean | null;
           reminder_last_sent: string | null;
           reminder_time: string | null;
@@ -281,7 +309,6 @@ export type Database = {
           created_at?: string | null;
           email?: string | null;
           id: string;
-          notification_prefs?: Json | null;
           reminder_enabled?: boolean | null;
           reminder_last_sent?: string | null;
           reminder_time?: string | null;
@@ -294,7 +321,6 @@ export type Database = {
           created_at?: string | null;
           email?: string | null;
           id?: string;
-          notification_prefs?: Json | null;
           reminder_enabled?: boolean | null;
           reminder_last_sent?: string | null;
           reminder_time?: string | null;
@@ -313,6 +339,10 @@ export type Database = {
       binary_quantize: {
         Args: { "": string } | { "": unknown };
         Returns: unknown;
+      };
+      complete_step_and_unlock_next: {
+        Args: { p_roadmap_id: string; p_step_id: string };
+        Returns: Json;
       };
       halfvec_avg: {
         Args: { "": number[] };
@@ -368,17 +398,17 @@ export type Database = {
       };
       match_knowledge_content: {
         Args: {
-          query_embedding: string;
-          match_threshold?: number;
           match_count?: number;
+          match_threshold?: number;
+          query_embedding: string;
         };
         Returns: {
+          summary: string;
+          similarity: number;
+          type: Database["public"]["Enums"]["knowledge_content_type"];
           id: string;
           title: string;
           category: string;
-          type: Database["public"]["Enums"]["knowledge_content_type"];
-          summary: string;
-          similarity: number;
         }[];
       };
       sparsevec_out: {
@@ -554,6 +584,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       ai_sentiment: ["positive", "negative", "neutral"],

@@ -68,22 +68,22 @@ Given the tightly integrated nature of Next.js, a Monorepo approach is recommend
 
 This section serves as the definitive, single source of truth for all technologies, frameworks, and services to be used in the LattixIQ project. All development must adhere to these choices and specified versions to ensure consistency and stability. 1111
 
-| Category | Technology | Version | Purpose | Rationale |
-| --- | --- | --- | --- | --- |
-| **Frontend Language** | TypeScript | `~5.5.3` | Primary language for type safety in the frontend. | Ensures code quality, improves developer experience, and reduces runtime errors. |
-| **Frontend Framework** | Next.js | `~15.0.0` | The core React framework for the application. | Provides a robust foundation with server-side rendering, static site generation, API routes, and a seamless developer experience. Works excellently with Netlify deployment. |
-| **UI Components** | shadcn/ui | `~2.0.0` | The component library for building the user interface. | Provides accessible, unstyled components that can be fully customized with Tailwind, perfectly matching our "Serene Minimalist" aesthetic. |
-| **Styling** | Tailwind CSS | `~4.0.0` | The utility-first CSS framework for all styling. | Enables rapid, consistent UI development and is the native styling solution for shadcn/ui. |
-| **State Management** | Zustand | `~4.5.2` | For managing complex, shared client-side state. | A simple, fast, and scalable state management solution that avoids the boilerplate of more complex libraries. Will be used only where Next.js's native state management is insufficient. |
-| **Backend** | Next.js API Routes | `~15.0.0` | For creating serverless API endpoints. | Tightly integrated with the frontend, providing a unified TypeScript codebase and simplifying the developer workflow. Deploys as serverless functions on Netlify. |
-| **Database** | Supabase (Postgres) | `~15.x` | The primary database for all user data. | A powerful, open-source relational database. Supabase provides a managed solution with excellent tooling and Row-Level Security (RLS) for data privacy. |
-| **Authentication** | Supabase Auth | `~2.0.0` | Handles all user authentication (Social & OTP). | Provides a secure, all-in-one solution for social logins (Google/Apple) and passwordless OTP, as required by the UI/UX spec. Integrates directly with database RLS. |
-| **Payments** | Stripe SDK | `latest` | For processing premium subscription payments. | Industry standard for payments, providing robust APIs, security, and a pre-built customer portal to manage subscriptions. |
-| **AI** | Vercel AI SDK | `~3.2.0` | For interacting with LLMs for personalization. | Simplifies streaming UI responses and connecting to various AI models, providing a seamless integration for our AI-powered features. |
-| **Unit/Integration Tests** | Vitest | `~1.6.0` | For testing components and functions. | A modern, fast test runner. Its powerful in-memory mocking capabilities are ideal for creating the **sandboxed test environment** you require. |
-| **E2E Testing** | Playwright | `~1.45.0` | For end-to-end testing of user flows. | A powerful browser automation tool that enables robust testing of both **happy and unhappy user paths** across different browsers. |
-| **CI/CD** | GitHub Actions + Netlify | `latest` | For continuous integration and deployment. | GitHub Actions for testing and quality checks. Netlify handles automatic deployments from the main branch, providing preview deployments for PRs. |
-| **Notifications** | To be determined | `N/A` | Handles sending app-related notification emails and push notifications. | We will build an abstracted `NotificationService` that can use any provider (e.g., Resend, Twilio) as an implementation detail, ensuring flexibility. |
+| Category                   | Technology               | Version   | Purpose                                                                 | Rationale                                                                                                                                                                                |
+| -------------------------- | ------------------------ | --------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend Language**      | TypeScript               | `~5.5.3`  | Primary language for type safety in the frontend.                       | Ensures code quality, improves developer experience, and reduces runtime errors.                                                                                                         |
+| **Frontend Framework**     | Next.js                  | `~15.0.0` | The core React framework for the application.                           | Provides a robust foundation with server-side rendering, static site generation, API routes, and a seamless developer experience. Works excellently with Netlify deployment.             |
+| **UI Components**          | shadcn/ui                | `~2.0.0`  | The component library for building the user interface.                  | Provides accessible, unstyled components that can be fully customized with Tailwind, perfectly matching our "Serene Minimalist" aesthetic.                                               |
+| **Styling**                | Tailwind CSS             | `~4.0.0`  | The utility-first CSS framework for all styling.                        | Enables rapid, consistent UI development and is the native styling solution for shadcn/ui.                                                                                               |
+| **State Management**       | Zustand                  | `~4.5.2`  | For managing complex, shared client-side state.                         | A simple, fast, and scalable state management solution that avoids the boilerplate of more complex libraries. Will be used only where Next.js's native state management is insufficient. |
+| **Backend**                | Next.js API Routes       | `~15.0.0` | For creating serverless API endpoints.                                  | Tightly integrated with the frontend, providing a unified TypeScript codebase and simplifying the developer workflow. Deploys as serverless functions on Netlify.                        |
+| **Database**               | Supabase (Postgres)      | `~15.x`   | The primary database for all user data.                                 | A powerful, open-source relational database. Supabase provides a managed solution with excellent tooling and Row-Level Security (RLS) for data privacy.                                  |
+| **Authentication**         | Supabase Auth            | `~2.0.0`  | Handles all user authentication (Social & OTP).                         | Provides a secure, all-in-one solution for social logins (Google/Apple) and passwordless OTP, as required by the UI/UX spec. Integrates directly with database RLS.                      |
+| **Payments**               | Stripe SDK               | `latest`  | For processing premium subscription payments.                           | Industry standard for payments, providing robust APIs, security, and a pre-built customer portal to manage subscriptions.                                                                |
+| **AI**                     | Vercel AI SDK            | `~3.2.0`  | For interacting with LLMs for personalization.                          | Simplifies streaming UI responses and connecting to various AI models, providing a seamless integration for our AI-powered features.                                                     |
+| **Unit/Integration Tests** | Vitest                   | `~1.6.0`  | For testing components and functions.                                   | A modern, fast test runner. Its powerful in-memory mocking capabilities are ideal for creating the **sandboxed test environment** you require.                                           |
+| **E2E Testing**            | Playwright               | `~1.45.0` | For end-to-end testing of user flows.                                   | A powerful browser automation tool that enables robust testing of both **happy and unhappy user paths** across different browsers.                                                       |
+| **CI/CD**                  | GitHub Actions + Netlify | `latest`  | For continuous integration and deployment.                              | GitHub Actions for testing and quality checks. Netlify handles automatic deployments from the main branch, providing preview deployments for PRs.                                        |
+| **Notifications**          | To be determined         | `N/A`     | Handles sending app-related notification emails and push notifications. | We will build an abstracted `NotificationService` that can use any provider (e.g., Resend, Twilio) as an implementation detail, ensuring flexibility.                                    |
 
 ## **3. Data Models**
 
@@ -93,171 +93,168 @@ This section defines the core data entities for the LattixIQ application. These 
 
 - **Purpose:** Stores user account information provided by Supabase Auth, along with application-specific preferences and state, including the testimonial tracking logic.
 - **Key Attributes:**
-    - `id` (UUID): Primary key, foreign key from `auth.users`.
-    - `email` (Text): The user's email address.
-    - `created_at` (Timestamp): Managed by Supabase.
-    - `stripe_customer_id` (Text, Nullable): To link the user with their Stripe subscription data.
-    - `subscription_status` (Enum: `free`, `premium`): The user's current payment plan.
-    - **`testimonial_state` (Enum: `not_asked`, `asked_first`, `dismissed_first`, `submitted`, `asked_second`, `dismissed_second`): Tracks the state of the Senja testimonial request flow.**
-    - `notification_prefs` (JSONB): Stores user preferences for notifications (e.g., `{ morning_digest_time: '08:00' }`).
+  - `id` (UUID): Primary key, foreign key from `auth.users`.
+  - `email` (Text): The user's email address.
+  - `created_at` (Timestamp): Managed by Supabase.
+  - `stripe_customer_id` (Text, Nullable): To link the user with their Stripe subscription data.
+  - `subscription_status` (Enum: `free`, `premium`): The user's current payment plan.
+  - **`testimonial_state` (Enum: `not_asked`, `asked_first`, `dismissed_first`, `submitted`, `asked_second`, `dismissed_second`): Tracks the state of the Senja testimonial request flow.**
+  - `reminder_enabled` (Boolean): Whether daily reminders are enabled.
+  - `reminder_time` (Time): Time of day for reminders (HH:MM format).
+  - `reminder_timezone` (Text): User's timezone for reminders.
+  - `reminder_last_sent` (Timestamp): Timestamp of last reminder sent.
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface User {
-      id: string;
-      email: string;
-      createdAt: string;
-      stripeCustomerId?: string;
-      subscriptionStatus: 'free' | 'premium';
-      testimonialState: 'not_asked' | 'asked_first' | 'dismissed_first' | 'submitted' | 'asked_second' | 'dismissed_second';
-      notificationPrefs: {
-        morningDigestTime?: string;
-        // ... other notification settings
-      };
-    }
-    ```
-    
+  ```tsx
+  interface User {
+    id: string;
+    email: string;
+    createdAt: string;
+    stripeCustomerId?: string;
+    subscriptionStatus: "free" | "premium";
+    testimonialState:
+      | "not_asked"
+      | "asked_first"
+      | "dismissed_first"
+      | "submitted"
+      | "asked_second"
+      | "dismissed_second";
+    reminderEnabled: boolean;
+    reminderTime: string;
+    reminderTimezone: string;
+    reminderLastSent?: string;
+  }
+  ```
 - **Relationships:** A User `has many` Roadmaps, `has many` ApplicationLogs.
 
 ### **2. Roadmap**
 
 - **Purpose:** Represents a single, personalized learning journey for a user, tied to a specific goal.
 - **Key Attributes:**
-    - `id` (UUID): Primary key.
-    - `user_id` (UUID): Foreign key linking to the `User` table.
-    - `goal_description` (Text): The user's stated goal for this roadmap (e.g., "Stop Procrastinating").
-    - `status` (Enum: `active`, `completed`): The current state of the roadmap.
-    - `created_at` (Timestamp): When the roadmap was generated.
-    - `completed_at` (Timestamp, Nullable): When the user finished the last step.
+  - `id` (UUID): Primary key.
+  - `user_id` (UUID): Foreign key linking to the `User` table.
+  - `goal_description` (Text): The user's stated goal for this roadmap (e.g., "Stop Procrastinating").
+  - `status` (Enum: `active`, `completed`): The current state of the roadmap.
+  - `created_at` (Timestamp): When the roadmap was generated.
+  - `completed_at` (Timestamp, Nullable): When the user finished the last step.
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface Roadmap {
-      id: string;
-      userId: string;
-      goalDescription: string;
-      status: 'active' | 'completed';
-      createdAt: string;
-      completedAt?: string;
-    }
-    ```
-    
+  ```tsx
+  interface Roadmap {
+    id: string;
+    userId: string;
+    goalDescription: string;
+    status: "active" | "completed";
+    createdAt: string;
+    completedAt?: string;
+  }
+  ```
 - **Relationships:** A Roadmap `belongs to` a User, `has many` RoadmapSteps.
 
 ### **3. RoadmapStep**
 
 - **Purpose:** Represents a single, ordered step within a Roadmap, linking to a specific Mental Model or Bias. Also stores the user's implementation plan for this step.
 - **Key Attributes:**
-    - `id` (UUID): Primary key.
-    - `roadmap_id` (UUID): Foreign key linking to the `Roadmap` table.
-    - `knowledge_content_id` (UUID): Foreign key linking to the `KnowledgeContent` table.
-    - `status` (Enum: `locked`, `unlocked`, `completed`): The user's progress on this step.
-    - `order` (Integer): The numerical order of the step within the roadmap (e.g., 1, 2, 3...).
-    - `plan_situation` (Text, Nullable): The context where the user plans to apply the concept (e.g., "During morning team meetings").
-    - `plan_trigger` (Text, Nullable): The specific cue that will prompt the action (e.g., "When I feel the urge to interrupt").
-    - `plan_action` (Text, Nullable): The intended response (e.g., "I'll write my thought down and wait for a pause").
-    - `plan_created_at` (Timestamp, Nullable): When the plan was created.
+  - `id` (UUID): Primary key.
+  - `roadmap_id` (UUID): Foreign key linking to the `Roadmap` table.
+  - `knowledge_content_id` (UUID): Foreign key linking to the `KnowledgeContent` table.
+  - `status` (Enum: `locked`, `unlocked`, `completed`): The user's progress on this step.
+  - `order` (Integer): The numerical order of the step within the roadmap (e.g., 1, 2, 3...).
+  - `plan_situation` (Text, Nullable): The context where the user plans to apply the concept (e.g., "During morning team meetings").
+  - `plan_trigger` (Text, Nullable): The specific cue that will prompt the action (e.g., "When I feel the urge to interrupt").
+  - `plan_action` (Text, Nullable): The intended response (e.g., "I'll write my thought down and wait for a pause").
+  - `plan_created_at` (Timestamp, Nullable): When the plan was created.
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface RoadmapStep {
-      id: string;
-      roadmapId: string;
-      knowledgeContentId: string;
-      status: 'locked' | 'unlocked' | 'completed';
-      order: number;
-      planSituation?: string;
-      planTrigger?: string;
-      planAction?: string;
-      planCreatedAt?: string;
-    }
-    ```
-    
+  ```tsx
+  interface RoadmapStep {
+    id: string;
+    roadmapId: string;
+    knowledgeContentId: string;
+    status: "locked" | "unlocked" | "completed";
+    order: number;
+    planSituation?: string;
+    planTrigger?: string;
+    planAction?: string;
+    planCreatedAt?: string;
+  }
+  ```
 - **Relationships:** A RoadmapStep `belongs to` a Roadmap, `has one` KnowledgeContent item, `has many` ApplicationLogs.
 
 ### **4. ApplicationLog**
 
 - **Purpose:** Stores the user's journal reflections from the "Reflect" screen. This is the core data for personalization.
 - **Key Attributes:**
-    - `id` (UUID): Primary key.
-    - `user_id` (UUID): Foreign key to the `User`.
-    - `roadmap_step_id` (UUID): Foreign key to the specific `RoadmapStep` this log is for.
-    - `situation_text` (Text): The user's description of what happened.
-    - `learning_text` (Text): The user's reflection on what they learned.
-    - `effectiveness_rating` (Integer): The user's self-rated score from 1-5.
-    - `ai_sentiment` (Enum, Nullable: `positive`, `negative`, `neutral`): Populated by our AI analysis.
-    - `ai_topics` (Array of Text, Nullable): Populated by our AI analysis (e.g., `['career', 'self-doubt']`).
-    - `created_at` (Timestamp).
+  - `id` (UUID): Primary key.
+  - `user_id` (UUID): Foreign key to the `User`.
+  - `roadmap_step_id` (UUID): Foreign key to the specific `RoadmapStep` this log is for.
+  - `situation_text` (Text): The user's description of what happened.
+  - `learning_text` (Text): The user's reflection on what they learned.
+  - `effectiveness_rating` (Integer): The user's self-rated score from 1-5.
+  - `ai_sentiment` (Enum, Nullable: `positive`, `negative`, `neutral`): Populated by our AI analysis.
+  - `ai_topics` (Array of Text, Nullable): Populated by our AI analysis (e.g., `['career', 'self-doubt']`).
+  - `created_at` (Timestamp).
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface ApplicationLog {
-      id: string;
-      userId: string;
-      roadmapStepId: string;
-      situationText: string;
-      learningText: string;
-      effectivenessRating: number; // 1-5
-      aiSentiment?: 'positive' | 'negative' | 'neutral';
-      aiTopics?: string[];
-      createdAt: string;
-    }
-    ```
-    
+  ```tsx
+  interface ApplicationLog {
+    id: string;
+    userId: string;
+    roadmapStepId: string;
+    situationText: string;
+    learningText: string;
+    effectivenessRating: number; // 1-5
+    aiSentiment?: "positive" | "negative" | "neutral";
+    aiTopics?: string[];
+    createdAt: string;
+  }
+  ```
 - **Relationships:** An ApplicationLog `belongs to` a User and `belongs to` a RoadmapStep.
 
 ### **5. KnowledgeContent**
 
 - **Purpose:** To be the single source of truth for all mental models, cognitive biases, and fallacies. This allows for dynamic content management.
 - **Key Attributes:**
-    - `id` (UUID): Primary key.
-    - `title` (Text): The name of the model (e.g., "Inversion").
-    - `category` (Text): The discipline (e.g., "Psychology").
-    - `type` (Enum: `mental-model`, `cognitive-bias`, `fallacy`).
-    - `summary` (Text): A brief, one-sentence explanation.
-    - `description` (Text): The detailed explanation of the concept.
-    - `application` (Text): General guidance on how to apply or spot the concept.
-    - `keywords` (Array of Text): For filtering and search.
-    - `embedding` (Vector): The vector embedding for semantic search, managed by `pgvector`.
+  - `id` (UUID): Primary key.
+  - `title` (Text): The name of the model (e.g., "Inversion").
+  - `category` (Text): The discipline (e.g., "Psychology").
+  - `type` (Enum: `mental-model`, `cognitive-bias`, `fallacy`).
+  - `summary` (Text): A brief, one-sentence explanation.
+  - `description` (Text): The detailed explanation of the concept.
+  - `application` (Text): General guidance on how to apply or spot the concept.
+  - `keywords` (Array of Text): For filtering and search.
+  - `embedding` (Vector): The vector embedding for semantic search, managed by `pgvector`.
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface KnowledgeContent {
-      id: string;
-      title: string;
-      category: string;
-      type: 'mental-model' | 'cognitive-bias' | 'fallacy';
-      summary: string;
-      description: string;
-      application: string;
-      keywords: string[];
-      // embedding is handled server-side
-    }
-    ```
-    
+  ```tsx
+  interface KnowledgeContent {
+    id: string;
+    title: string;
+    category: string;
+    type: "mental-model" | "cognitive-bias" | "fallacy";
+    summary: string;
+    description: string;
+    application: string;
+    keywords: string[];
+    // embedding is handled server-side
+  }
+  ```
 - **Relationships:** `has many` GoalExamples, `has many` RoadmapSteps.
 
 ### **6. GoalExample**
 
 - **Purpose:** To store personalized examples for applying knowledge to a specific goal. Normalizing this into a separate table is efficient.
 - **Key Attributes:**
-    - `id` (UUID): Primary key.
-    - `knowledge_content_id` (UUID): Foreign key to the `KnowledgeContent` table.
-    - `goal` (Text): The user goal category this example applies to (e.g., "Procrastination").
-    - `if_then_example` (Text, Nullable): Example for a mental model.
-    - `spotting_mission_example` (Text, Nullable): Example for a cognitive bias.
+  - `id` (UUID): Primary key.
+  - `knowledge_content_id` (UUID): Foreign key to the `KnowledgeContent` table.
+  - `goal` (Text): The user goal category this example applies to (e.g., "Procrastination").
+  - `if_then_example` (Text, Nullable): Example for a mental model.
+  - `spotting_mission_example` (Text, Nullable): Example for a cognitive bias.
 - **TypeScript Interface:**
-    
-    ```tsx
-    interface GoalExample {
-      id: string;
-      knowledgeContentId: string;
-      goal: string;
-      ifThenExample?: string;
-      spottingMissionExample?: string;
-    }
-    ```
-    
+  ```tsx
+  interface GoalExample {
+    id: string;
+    knowledgeContentId: string;
+    goal: string;
+    ifThenExample?: string;
+    spottingMissionExample?: string;
+  }
+  ```
 - **Relationships:** `belongs to` one KnowledgeContent item.
 
 ### **Vector Database Integration**
@@ -265,9 +262,9 @@ This section defines the core data entities for the LattixIQ application. These 
 We will leverage Supabase's built-in `pgvector` extension to handle semantic search, which keeps our architecture lean.
 
 - **Workflow:**
-    1. When a `KnowledgeContent` item is created or updated in our Postgres database, a Supabase Edge Function will automatically be triggered.
-    2. This function will take the text fields (`title`, `description`, `application`), use the Vercel AI SDK to generate a vector embedding from them, and save the resulting embedding into the `embedding` column of that item.
-    3. When a user sets a goal, the app's backend will perform a semantic search by comparing the user's vectorized goal against the `embedding` column directly in the database to find the most relevant content for their roadmap.
+  1. When a `KnowledgeContent` item is created or updated in our Postgres database, a Supabase Edge Function will automatically be triggered.
+  2. This function will take the text fields (`title`, `description`, `application`), use the Vercel AI SDK to generate a vector embedding from them, and save the resulting embedding into the `embedding` column of that item.
+  3. When a user sets a goal, the app's backend will perform a semantic search by comparing the user's vectorized goal against the `embedding` column directly in the database to find the most relevant content for their roadmap.
 
 ## **4. API Specification**
 
@@ -282,61 +279,60 @@ Authentication itself (social login, OTP) is handled client-side by the Supabase
 ### **Resource: Roadmaps (`/api/roadmaps`)**
 
 - **`POST /`**
-    - **Description:** Creates a new, personalized roadmap for the authenticated user. This endpoint will trigger the AI-powered semantic search on the backend to generate the roadmap steps.
-    - **Request Body:** `{ "goalDescription": "string" }`
-    - **Response (201):** The newly created `Roadmap` object, including an array of its associated `RoadmapStep` objects.
+  - **Description:** Creates a new, personalized roadmap for the authenticated user. This endpoint will trigger the AI-powered semantic search on the backend to generate the roadmap steps.
+  - **Request Body:** `{ "goalDescription": "string" }`
+  - **Response (201):** The newly created `Roadmap` object, including an array of its associated `RoadmapStep` objects.
 - **`GET /active`**
-    - **Description:** Fetches the user's currently active roadmap, if one exists.
-    - **Request Body:** None.
-    - **Response (200):** A single `Roadmap` object with its `RoadmapStep` objects, or `null` if none are active.
+  - **Description:** Fetches the user's currently active roadmap, if one exists.
+  - **Request Body:** None.
+  - **Response (200):** A single `Roadmap` object with its `RoadmapStep` objects, or `null` if none are active.
 - **`GET /`**
-    - **Description:** Fetches all of the user's roadmaps (active and completed).
-    - **Request Body:** None.
-    - **Response (200):** An array of `Roadmap` objects.
+  - **Description:** Fetches all of the user's roadmaps (active and completed).
+  - **Request Body:** None.
+  - **Response (200):** An array of `Roadmap` objects.
 
 ### **Resource: Roadmap Steps (`/api/roadmap-steps`)**
 
 - **`PATCH /:id/plan`**
-    - **Description:** Updates or creates the implementation plan for a roadmap step.
-    - **Request Body:** `{ "situation"?: "string", "trigger": "string", "action": "string" }`
-    - **Response (200):** The updated `RoadmapStep` object with the new plan.
+  - **Description:** Updates or creates the implementation plan for a roadmap step.
+  - **Request Body:** `{ "situation"?: "string", "trigger": "string", "action": "string" }`
+  - **Response (200):** The updated `RoadmapStep` object with the new plan.
 
 ### **Resource: Application Logs (`/api/logs`)**
 
 - **`POST /`**
-    - **Description:** Submits a new journal reflection for a roadmap step. This action will trigger two backend processes: 1) Unlocking the next `RoadmapStep`. 2) Asynchronously sending the text content to the Vercel AI SDK for analysis (sentiment, topics).
-    - **Request Body:** `{ "roadmapStepId": "string", "situationText": "string", "learningText": "string", "effectivenessRating": number }`
-    - **Response (201):** The newly created `ApplicationLog` object.
+  - **Description:** Submits a new journal reflection for a roadmap step. This action will trigger two backend processes: 1) Unlocking the next `RoadmapStep`. 2) Asynchronously sending the text content to the Vercel AI SDK for analysis (sentiment, topics).
+  - **Request Body:** `{ "roadmapStepId": "string", "situationText": "string", "learningText": "string", "effectivenessRating": number }`
+  - **Response (201):** The newly created `ApplicationLog` object.
 - **`GET /`**
-    - **Description:** Fetches all of the user's application logs.
-    - **Request Body:** None.
-    - **Response (200):** An array of `ApplicationLog` objects.
-
+  - **Description:** Fetches all of the user's application logs.
+  - **Request Body:** None.
+  - **Response (200):** An array of `ApplicationLog` objects.
 
 ### **Resource: Knowledge Content (`/api/knowledge`)**
 
 - **`GET /:id`**
-    - **Description:** Fetches the detailed content for a single mental model or bias.
-    - **Request Body:** None.
-    - **Response (200):** A `KnowledgeContent` object, including an array of its associated `GoalExample` objects.
+  - **Description:** Fetches the detailed content for a single mental model or bias.
+  - **Request Body:** None.
+  - **Response (200):** A `KnowledgeContent` object, including an array of its associated `GoalExample` objects.
 
 ### **Resource: User (`/api/user`)**
 
 - **`PATCH /me`**
-    - **Description:** Updates the authenticated user's preferences or state.
-    - **Request Body:** `{ "notificationPrefs"?: object, "testimonialState"?: "dismissed_first" | "submitted" | ... }`
-    - **Response (200):** The updated `User` object.
+  - **Description:** Updates the authenticated user's preferences or state.
+  - **Request Body:** `{ "notificationPrefs"?: object, "testimonialState"?: "dismissed_first" | "submitted" | ... }`
+  - **Response (200):** The updated `User` object.
 
 ### **Resource: Payments (`/api/payments`)**
 
 - **`POST /create-checkout-session`**
-    - **Description:** Creates a Stripe checkout session for a new subscription.
-    - **Request Body:** `{ "priceId": "string" }`
-    - **Response (200):** `{ "url": "string" }` (The URL to redirect the user to Stripe Checkout).
+  - **Description:** Creates a Stripe checkout session for a new subscription.
+  - **Request Body:** `{ "priceId": "string" }`
+  - **Response (200):** `{ "url": "string" }` (The URL to redirect the user to Stripe Checkout).
 - **`POST /create-portal-session`**
-    - **Description:** Creates a Stripe Customer Portal session for managing an existing subscription.
-    - **Request Body:** None.
-    - **Response (200):** `{ "url": "string" }` (The URL to redirect the user to the Stripe Portal).
+  - **Description:** Creates a Stripe Customer Portal session for managing an existing subscription.
+  - **Request Body:** None.
+  - **Response (200):** `{ "url": "string" }` (The URL to redirect the user to the Stripe Portal).
 
 ## **5. System Components**
 
@@ -391,7 +387,7 @@ This diagram shows how these logical components interact to deliver the applicat
 ```mermaid
 graph TD
     UserInterface[Frontend Client] -- API Calls --> APILayer[Next.js API Routes]
-    
+
     APILayer -- Auth & DB Queries --> SupabaseService[Supabase Service]
     APILayer -- AI Tasks --> AIService[AI Service]
     APILayer -- Payment Processing --> PaymentService[Payment Service]
@@ -425,16 +421,16 @@ sequenceDiagram
     Frontend->>SupabaseAuth: verifyOtp(otp)
     SupabaseAuth-->>Frontend: Returns session (JWT)
     Note over SupabaseAuth, SupabaseDB: Trigger creates public.User profile
-    
+
     Frontend->>User: Displays goal selection screen
     User->>Frontend: Enters goal description
     Frontend->>APIRoutes: POST /api/roadmaps {goal}
-    
+
     APIRoutes->>AIService: generateRoadmap(goal)
     AIService->>SupabaseDB: Semantic search on KnowledgeContent vectors
     SupabaseDB-->>AIService: Returns relevant model IDs
     AIService-->>APIRoutes: Returns curated list of steps
-    
+
     APIRoutes->>SupabaseDB: Creates Roadmap & RoadmapSteps records
     SupabaseDB-->>APIRoutes: Confirms creation
     APIRoutes-->>Frontend: Returns new Roadmap object
@@ -456,12 +452,12 @@ sequenceDiagram
     User->>Frontend: Clicks on current roadmap step
     Note over Frontend: Displays Learn & Plan screens (client-side)
     User->>Frontend: Submits reflection from Reflect screen
-    
+
     Frontend->>APIRoutes: POST /api/logs {reflectionData}
     APIRoutes->>SupabaseDB: Saves new ApplicationLog
     APIRoutes->>SupabaseDB: Updates RoadmapStep status to 'completed' & unlocks next step
     SupabaseDB-->>APIRoutes: Confirms updates
-    
+
     APIRoutes-->>Frontend: Returns success response (201)
     Frontend->>User: Shows updated roadmap with progress (optimistic UI update)
 
@@ -500,7 +496,7 @@ CREATE TYPE knowledge_content_type AS ENUM ('mental-model', 'cognitive-bias', 'f
 -- Enable the pgvector extension
 CREATE EXTENSION IF NOT EXISTS vector;
 -- Stores public user profile information, extending Supabase's auth.users
-CREATE TABLE "public"."users" ( "id" uuid PRIMARY KEY NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, "email" text, "created_at" timestamptz DEFAULT now(), "stripe_customer_id" text, "subscription_status" subscription_status DEFAULT 'free'::subscription_status, "testimonial_state" testimonial_state DEFAULT 'not_asked'::testimonial_state, "notification_prefs" jsonb
+CREATE TABLE "public"."users" ( "id" uuid PRIMARY KEY NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, "email" text, "created_at" timestamptz DEFAULT now(), "stripe_customer_id" text, "subscription_status" subscription_status DEFAULT 'free'::subscription_status, "testimonial_state" testimonial_state DEFAULT 'not_asked'::testimonial_state, "reminder_enabled" boolean DEFAULT false, "reminder_time" time DEFAULT '09:00'::time, "reminder_timezone" text DEFAULT 'UTC', "reminder_last_sent" timestamptz
 );
 -- Stores the structured content for each mental model, bias, etc.
 CREATE TABLE "public"."knowledge_content" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "title" text NOT NULL, "category" text, "type" knowledge_content_type NOT NULL, "summary" text, "description" text, "application" text, "keywords" text[], "embedding" vector(1536) -- For OpenAI's text-embedding-ada-002 model
@@ -671,7 +667,6 @@ ON public.goal_examples FOR SELECT
 USING (auth.role() = 'authenticated');
 ```
 
-
 ## **8. Frontend Architecture**
 
 This section provides the detailed technical guide for all frontend development. Adherence to these patterns is crucial for creating a maintainable, scalable, and consistent user interface.
@@ -679,65 +674,60 @@ This section provides the detailed technical guide for all frontend development.
 ### **Component Architecture**
 
 - **Component Organization:** We will follow a tiered structure within the `/components` directory to ensure a clear separation of concerns.
-    
-    ```
-    /components
-    ├── /ui         # Raw, unstyled components from shadcn/ui (Button, Input, etc.)
-    ├── /shared     # Application-specific, reusable components built from /ui components
-    |   ├── RoadmapCard.tsx
-    |   └── SiteHeader.tsx
-    └── /features   # Components specific to a single feature or route
-        ├── /settings
-        |   └── NotificationToggles.tsx
-        └── /roadmap
-            └── Step.tsx
-    ```
-    
+  ```
+  /components
+  ├── /ui         # Raw, unstyled components from shadcn/ui (Button, Input, etc.)
+  ├── /shared     # Application-specific, reusable components built from /ui components
+  |   ├── RoadmapCard.tsx
+  |   └── SiteHeader.tsx
+  └── /features   # Components specific to a single feature or route
+      ├── /settings
+      |   └── NotificationToggles.tsx
+      └── /roadmap
+          └── Step.tsx
+  ```
 - **Component Template:** All new React components must follow this standard template for consistency.
-    
-    ```tsx
-    // /features/roadmap/components/Step.tsx
-    
-    import * as React from 'react';
-    import { cn } from '@/lib/utils'; // For combining Tailwind classes
-    import { Button } from '@/components/ui/button';
-    
-    // 1. Define component props with TypeScript
-    interface StepProps extends React.HTMLAttributes<HTMLDivElement> {
-      stepNumber: number;
-      title: string;
-      status: 'locked' | 'unlocked' | 'completed';
+  ```tsx
+  // /features/roadmap/components/Step.tsx
+
+  import * as React from "react";
+  import { cn } from "@/lib/utils"; // For combining Tailwind classes
+  import { Button } from "@/components/ui/button";
+
+  // 1. Define component props with TypeScript
+  interface StepProps extends React.HTMLAttributes<HTMLDivElement> {
+    stepNumber: number;
+    title: string;
+    status: "locked" | "unlocked" | "completed";
+  }
+
+  // 2. Use React.forwardRef to allow for passing refs
+  const Step = React.forwardRef<HTMLDivElement, StepProps>(
+    ({ className, stepNumber, title, status, ...props }, ref) => {
+      // 3. Component logic here
+      const isLocked = status === "locked";
+
+      // 4. Return JSX
+      return (
+        <div
+          className={cn(
+            "flex items-center p-4 rounded-lg border",
+            isLocked ? "bg-muted text-muted-foreground" : "bg-card",
+            className
+          )}
+          ref={ref}
+          {...props}
+        >
+          {/* Component content */}
+          <p>{title}</p>
+        </div>
+      );
     }
-    
-    // 2. Use React.forwardRef to allow for passing refs
-    const Step = React.forwardRef<HTMLDivElement, StepProps>(
-      ({ className, stepNumber, title, status, ...props }, ref) => {
-    
-        // 3. Component logic here
-        const isLocked = status === 'locked';
-    
-        // 4. Return JSX
-        return (
-          <div
-            className={cn(
-              'flex items-center p-4 rounded-lg border',
-              isLocked ? 'bg-muted text-muted-foreground' : 'bg-card',
-              className
-            )}
-            ref={ref}
-            {...props}
-          >
-            {/* Component content */}
-            <p>{title}</p>
-          </div>
-        );
-      }
-    );
-    Step.displayName = 'Step';
-    
-    export { Step };
-    ```
-    
+  );
+  Step.displayName = "Step";
+
+  export { Step };
+  ```
 
 ### **State Management Architecture**
 
@@ -746,69 +736,68 @@ Our philosophy is to keep client-side state minimal. We will use a hierarchical 
 1. **URL State:** Use Next.js `useSearchParams` for state that should be bookmarkable (e.g., filters).
 2. **Local Component State:** Use `useState` and `useReducer` for state that is not shared.
 3. **Global State (Zustand):** Use Zustand for complex global state that needs to be shared across many components, such as the user's profile or the active roadmap data.
+
 - **Zustand Store Structure:** Stores will be created in `/lib/stores` and organized by domain.
-    
-    ```tsx
-    // /lib/stores/user-store.ts
-    import { create } from 'zustand';
-    import { User } from '@/lib/types'; // Assuming shared types
-    
-    interface UserState {
-      user: User | null;
-      setUser: (user: User | null) => void;
-      isLoading: boolean;
-    }
-    
-    export const useUserStore = create<UserState>((set) => ({
-      user: null,
-      isLoading: true,
-      setUser: (user) => set({ user, isLoading: false }),
-    }));
-    ```
-    
+  ```tsx
+  // /lib/stores/user-store.ts
+  import { create } from "zustand";
+  import { User } from "@/lib/types"; // Assuming shared types
+
+  interface UserState {
+    user: User | null;
+    setUser: (user: User | null) => void;
+    isLoading: boolean;
+  }
+
+  export const useUserStore = create<UserState>((set) => ({
+    user: null,
+    isLoading: true,
+    setUser: (user) => set({ user, isLoading: false }),
+  }));
+  ```
 
 ### **Routing Architecture**
 
 - **Route Organization:** We will use the Next.js App Router with route groups to organize routes without affecting the URL path.
-    - `/(app)`: Contains all protected routes that are part of the main application experience (e.g., `/`, `/toolkit`).
-    - `/(auth)`: Contains authentication routes like `/login`.
+  - `/(app)`: Contains all protected routes that are part of the main application experience (e.g., `/`, `/toolkit`).
+  - `/(auth)`: Contains authentication routes like `/login`.
 - **Protected Route Pattern:** Route protection will be handled by a single `middleware.ts` file at the root of the project. This middleware will check for a valid Supabase session and redirect unauthenticated users to the login page.
-    
-    ```tsx
-    // /middleware.ts
-    import { createServerClient } from '@supabase/ssr';
-    import { NextResponse, type NextRequest } from 'next/server';
-    
-    export async function middleware(request: NextRequest) {
-      // Logic to refresh session cookies
-      // ... Supabase middleware boilerplate ...
-    
-      const { data: { session } } = await supabase.auth.getSession();
-    
-      // If user is not logged in and is trying to access a protected route
-      if (!session && request.nextUrl.pathname.startsWith('/')) {
-        // Assuming (app) routes are at root, adjust if needed
-        return NextResponse.redirect(new URL('/login', request.url));
-      }
-    
-      return response;
+  ```tsx
+  // /middleware.ts
+  import { createServerClient } from "@supabase/ssr";
+  import { NextResponse, type NextRequest } from "next/server";
+
+  export async function middleware(request: NextRequest) {
+    // Logic to refresh session cookies
+    // ... Supabase middleware boilerplate ...
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    // If user is not logged in and is trying to access a protected route
+    if (!session && request.nextUrl.pathname.startsWith("/")) {
+      // Assuming (app) routes are at root, adjust if needed
+      return NextResponse.redirect(new URL("/login", request.url));
     }
-    
-    export const config = {
-      matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - api (API routes)
-         * - auth (public auth routes)
-         */
-        '/((?!_next/static|_next/image|favicon.ico|api|auth).*)',
-      ],
-    };
-    ```
-    
+
+    return response;
+  }
+
+  export const config = {
+    matcher: [
+      /*
+       * Match all request paths except for the ones starting with:
+       * - _next/static (static files)
+       * - _next/image (image optimization files)
+       * - favicon.ico (favicon file)
+       * - api (API routes)
+       * - auth (public auth routes)
+       */
+      "/((?!_next/static|_next/image|favicon.ico|api|auth).*)",
+    ],
+  };
+  ```
 
 ## **9. Backend Architecture**
 
@@ -817,100 +806,95 @@ This section details the patterns for all server-side logic, which will be imple
 ### **Service Architecture (Serverless)**
 
 - **Function Organization:** We will follow a RESTful, resource-based structure within the `/app/api/` directory. Each resource will have its own folder, and different HTTP methods (GET, POST, PATCH, etc.) will be handled by exported functions within the `route.ts` file for that resource.
-    
-    ```
-    /app
-    └── /api
-        ├── /roadmaps
-        |   └── route.ts  // Handles POST to create, GET to list
-        ├── /logs
-        |   └── route.ts  // Handles POST to create
-        └── /user
-            └── /me
-                └── route.ts // Handles PATCH to update user
-    ```
-    
+  ```
+  /app
+  └── /api
+      ├── /roadmaps
+      |   └── route.ts  // Handles POST to create, GET to list
+      ├── /logs
+      |   └── route.ts  // Handles POST to create
+      └── /user
+          └── /me
+              └── route.ts // Handles PATCH to update user
+  ```
 - **API Route (Function) Template:** All new API routes must adhere to this template to ensure consistency in authentication, error handling, and response formatting.
-    
-    ```tsx
-    // /app/api/roadmaps/route.ts
-    import { type NextRequest, NextResponse } from 'next/server';
-    import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-    import { cookies } from 'next/headers';
-    import { z } from 'zod'; // For input validation
-    
-    // 1. Define input schema for validation
-    const postSchema = z.object({
-      goalDescription: z.string().min(10),
-    });
-    
-    // 2. Handle POST requests
-    export async function POST(request: NextRequest) {
-      const supabase = createRouteHandlerClient({ cookies });
-    
-      try {
-        // 3. Authenticate the user
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          return new NextResponse('Unauthorized', { status: 401 });
-        }
-    
-        // 4. Validate the request body
-        const body = await request.json();
-        const validatedBody = postSchema.parse(body);
-    
-        // 5. Core business logic (e.g., call AI service, save to DB)
-        // const newRoadmap = await createRoadmapForUser(session.user.id, validatedBody.goalDescription);
-    
-        // 6. Return a typed, consistent response
-        return NextResponse.json({ data: newRoadmap }, { status: 201 });
-    
-      } catch (error) {
-        // 7. Use a standardized error handler
-        // is zod error, return 400, otherwise 500
-        return new NextResponse('Internal Server Error', { status: 500 });
+  ```tsx
+  // /app/api/roadmaps/route.ts
+  import { type NextRequest, NextResponse } from "next/server";
+  import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+  import { cookies } from "next/headers";
+  import { z } from "zod"; // For input validation
+
+  // 1. Define input schema for validation
+  const postSchema = z.object({
+    goalDescription: z.string().min(10),
+  });
+
+  // 2. Handle POST requests
+  export async function POST(request: NextRequest) {
+    const supabase = createRouteHandlerClient({ cookies });
+
+    try {
+      // 3. Authenticate the user
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        return new NextResponse("Unauthorized", { status: 401 });
       }
+
+      // 4. Validate the request body
+      const body = await request.json();
+      const validatedBody = postSchema.parse(body);
+
+      // 5. Core business logic (e.g., call AI service, save to DB)
+      // const newRoadmap = await createRoadmapForUser(session.user.id, validatedBody.goalDescription);
+
+      // 6. Return a typed, consistent response
+      return NextResponse.json({ data: newRoadmap }, { status: 201 });
+    } catch (error) {
+      // 7. Use a standardized error handler
+      // is zod error, return 400, otherwise 500
+      return new NextResponse("Internal Server Error", { status: 500 });
     }
-    ```
-    
+  }
+  ```
 
 ### **Database Architecture**
 
 - **Schema Design:** The PostgreSQL schema is defined in Section 7 of this document. All schema changes must be managed via Supabase CLI migrations, which will be stored in the `/supabase/migrations` directory.
 - **Data Access Layer:** API Routes **must not** contain raw database queries. All database interactions will be abstracted into a dedicated data access layer located in `/lib/db/`. This centralizes our data logic, makes it reusable, and simplifies testing.
-    
-    ```tsx
-    // /lib/db/roadmaps.ts
-    import { createServerClient } from '@supabase/ssr'; // Or other server client
-    import { Roadmap } from '@/lib/types';
-    
-    // A function that encapsulates the logic for creating a roadmap
-    export async function createRoadmap(
-        supabase: ReturnType<typeof createServerClient>,
-        userId: string,
-        goal: string
-    ): Promise<Roadmap> {
-        const { data, error } = await supabase
-            .from('roadmaps')
-            .insert({ user_id: userId, goal_description: goal })
-            .select()
-            .single();
-    
-        if (error) {
-            throw new Error('Failed to create roadmap in DB.');
-        }
-    
-        return data;
+  ```tsx
+  // /lib/db/roadmaps.ts
+  import { createServerClient } from "@supabase/ssr"; // Or other server client
+  import { Roadmap } from "@/lib/types";
+
+  // A function that encapsulates the logic for creating a roadmap
+  export async function createRoadmap(
+    supabase: ReturnType<typeof createServerClient>,
+    userId: string,
+    goal: string
+  ): Promise<Roadmap> {
+    const { data, error } = await supabase
+      .from("roadmaps")
+      .insert({ user_id: userId, goal_description: goal })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error("Failed to create roadmap in DB.");
     }
-    ```
-    
+
+    return data;
+  }
+  ```
 
 ### **Authentication and Authorization**
 
 - **Authentication Flow:** As detailed in the Core Workflows, authentication is handled by the Supabase client library and validated server-side in our middleware and API routes.
 - **Authorization:** Authorization is enforced at two levels:
-    1. **API Route Level:** Every API Route will check for a valid session to ensure a user is logged in.
-    2. **Database Level:** PostgreSQL's Row-Level Security (RLS) provides the ultimate layer of protection, ensuring that even if an API bug were to exist, a user could never query or modify data that doesn't belong to them. The full RLS policies are detailed in Section 7.
+  1. **API Route Level:** Every API Route will check for a valid session to ensure a user is logged in.
+  2. **Database Level:** PostgreSQL's Row-Level Security (RLS) provides the ultimate layer of protection, ensuring that even if an API bug were to exist, a user could never query or modify data that doesn't belong to them. The full RLS policies are detailed in Section 7.
 
 ## **10. Unified Project Structure**
 
@@ -970,20 +954,20 @@ Our approach to testing is designed to build confidence with every commit, ensur
 ### **Testing Philosophy**
 
 - **Approach: Test-Driven Development (TDD):** All new functionality will be developed following the TDD `Red-Green-Refactor` cycle.
-    1. **Red:** Write a failing test that clearly defines the desired functionality or bug fix.
-    2. **Green:** Write the simplest possible application code to make the test pass.
-    3. **Refactor:** Clean up and optimize the application code, ensuring all tests continue to pass.
-- **Guiding Principle (Kent C. Dodds):** We will follow the principle: *"Write tests. Not too many. Mostly integration."* This means we will prioritize tests that simulate real user interactions and provide high confidence, while using unit tests more sparingly for complex, isolated business logic.
+  1. **Red:** Write a failing test that clearly defines the desired functionality or bug fix.
+  2. **Green:** Write the simplest possible application code to make the test pass.
+  3. **Refactor:** Clean up and optimize the application code, ensuring all tests continue to pass.
+- **Guiding Principle (Kent C. Dodds):** We will follow the principle: _"Write tests. Not too many. Mostly integration."_ This means we will prioritize tests that simulate real user interactions and provide high confidence, while using unit tests more sparingly for complex, isolated business logic.
 
 ### **Test Types and Organization**
 
 - **Integration Tests (`/tests/integration/`):** This is the foundation of our test suite. These tests will verify that different parts of our application work together as intended. We will use **Vitest** and **React Testing Library**.
-    - **Frontend:** We will test component interactions. For example, simulating a user filling out the "Reflect" form and clicking "Submit," then asserting that the correct API call was made.
-    - **Backend:** We will test our API Routes by sending mock HTTP requests and asserting that they return the correct response and that the database was changed appropriately.
+  - **Frontend:** We will test component interactions. For example, simulating a user filling out the "Reflect" form and clicking "Submit," then asserting that the correct API call was made.
+  - **Backend:** We will test our API Routes by sending mock HTTP requests and asserting that they return the correct response and that the database was changed appropriately.
 - **Unit Tests (`/tests/unit/`):** These will be used for pure, complex business logic that can be tested in isolation, such as a utility function for analyzing text or a complex state management hook.
 - **End-to-End (E2E) Tests (`/tests/e2e/`):** These are our highest-level tests. Using **Playwright**, we will automate a real browser to verify critical user flows from start to finish. For V1, we will have E2E tests for:
-    1. The complete User Registration & First Roadmap Creation flow.
-    2. The full "Learn, Plan, Act, Reflect" loop for a single roadmap step.
+  1. The complete User Registration & First Roadmap Creation flow.
+  2. The full "Learn, Plan, Act, Reflect" loop for a single roadmap step.
 
 ### **Sandboxed Test Environment**
 
@@ -998,32 +982,29 @@ To meet the requirement of running tests securely without sensitive data, we wil
 It is a strict requirement that tests are written for both successful and failure scenarios. Every feature must include tests that verify correct behavior when things go wrong.
 
 - **Test Case Structure:** Test files will be structured to clearly separate these paths.
-    
-    ```tsx
-    // Example for a test file in /tests/integration/api/roadmaps.test.ts
-    
-    describe('POST /api/roadmaps', () => {
-    
-      // --- Happy Path ---
-      it('should create a roadmap and return 201 for an authenticated user with a valid goal', () => {
-        // Test logic here
-      });
-    
-      // --- Unhappy Paths ---
-      it('should return 401 Unauthorized if no user is logged in', () => {
-        // Test logic here
-      });
-    
-      it('should return 400 Bad Request if the goalDescription is missing or too short', () => {
-        // Test logic here
-      });
-    
-      it('should return 500 Internal Server Error if the database fails', () => {
-        // Test logic here
-      });
+  ```tsx
+  // Example for a test file in /tests/integration/api/roadmaps.test.ts
+
+  describe("POST /api/roadmaps", () => {
+    // --- Happy Path ---
+    it("should create a roadmap and return 201 for an authenticated user with a valid goal", () => {
+      // Test logic here
     });
-    ```
-    
+
+    // --- Unhappy Paths ---
+    it("should return 401 Unauthorized if no user is logged in", () => {
+      // Test logic here
+    });
+
+    it("should return 400 Bad Request if the goalDescription is missing or too short", () => {
+      // Test logic here
+    });
+
+    it("should return 500 Internal Server Error if the database fails", () => {
+      // Test logic here
+    });
+  });
+  ```
 
 ## **12. Coding Standards**
 
@@ -1034,33 +1015,31 @@ This section outlines the mandatory coding standards for the LattixIQ project. T
 As you requested, we will adhere to a functional programming style to minimize bugs and improve code clarity.
 
 - **Immutability:** Data structures must not be mutated directly. Always create new objects or arrays instead of changing existing ones.
-    
-    ```tsx
-    // BAD: Mutates the original object (side effect)
-    function addUserRole(user, role) {
-      user.role = role; 
-      return user;
-    }
-    
-    // GOOD: Returns a new object, leaving the original unchanged (pure)
-    function addUserRole(user, role) {
-      return { ...user, role: role };
-    }
-    ```
-    
+  ```tsx
+  // BAD: Mutates the original object (side effect)
+  function addUserRole(user, role) {
+    user.role = role;
+    return user;
+  }
+
+  // GOOD: Returns a new object, leaving the original unchanged (pure)
+  function addUserRole(user, role) {
+    return { ...user, role: role };
+  }
+  ```
 - **Pure Functions / No Side Effects:** Functions should be deterministic. Given the same input, a function must always return the same output and have no observable effects on the outside world (like modifying a global variable or writing to a database). Database and API calls will be isolated in our Data Access Layer and API Routes, respectively.
 
 ### **Naming Conventions**
 
-| Element Type | Convention | Example |
-| --- | --- | --- |
-| Components | `PascalCase` | `RoadmapCard.tsx` |
-| Hooks | `useCamelCase` | `useActiveRoadmap.ts` |
-| Functions / Variables | `camelCase` | `const userRoadmaps = ...` |
-| Types / Interfaces | `PascalCase` | `interface RoadmapStep { ... }` |
-| Database Tables/Columns | `snake_case` | `application_logs`, `user_id` |
-| API Route Folders | `kebab-case` | `/app/api/roadmap-steps/` |
-| Test Files | `*.test.ts` | `roadmaps.test.ts` |
+| Element Type            | Convention     | Example                         |
+| ----------------------- | -------------- | ------------------------------- |
+| Components              | `PascalCase`   | `RoadmapCard.tsx`               |
+| Hooks                   | `useCamelCase` | `useActiveRoadmap.ts`           |
+| Functions / Variables   | `camelCase`    | `const userRoadmaps = ...`      |
+| Types / Interfaces      | `PascalCase`   | `interface RoadmapStep { ... }` |
+| Database Tables/Columns | `snake_case`   | `application_logs`, `user_id`   |
+| API Route Folders       | `kebab-case`   | `/app/api/roadmap-steps/`       |
+| Test Files              | `*.test.ts`    | `roadmaps.test.ts`              |
 
 ### **Tooling for Enforcement**
 
@@ -1083,17 +1062,17 @@ sequenceDiagram
     participant Frontend
     participant APIRoutes as Next.js API
     participant DB as Supabase DB
-    
+
     Frontend->>APIRoutes: Makes API Request
     APIRoutes->>DB: Executes Query
     DB-->>APIRoutes: Returns a DB Error (e.g., constraint violation)
-    
+
     Note over APIRoutes: Enters catch block, logs full error internally
-    
+
     APIRoutes-->>Frontend: Returns Standardized Error JSON (e.g., status 400)
-    
+
     Note over Frontend: Enters catch block in API client
-    
+
     Frontend->>Frontend: Displays user-friendly toast notification
 ```
 
@@ -1116,44 +1095,42 @@ interface ApiError {
 We will use a centralized helper function in the backend to ensure all errors are processed consistently.
 
 - **Custom Error Class:** To better control HTTP status codes.
-    
-    ```tsx
-    // /lib/errors.ts
-    export class AppError extends Error {
-      public readonly statusCode: number;
-    
-      constructor(message: string, statusCode: number = 500) {
-        super(message);
-        this.statusCode = statusCode;
-      }
+  ```tsx
+  // /lib/errors.ts
+  export class AppError extends Error {
+    public readonly statusCode: number;
+
+    constructor(message: string, statusCode: number = 500) {
+      super(message);
+      this.statusCode = statusCode;
     }
-    ```
-    
+  }
+  ```
 - **Error Handling Logic:** API routes will use a `try/catch` block. The `catch` block will log the real error for debugging and return the standardized error format to the client.
-    
-    ```tsx
-    // In an API Route file (/app/api/...)
-    // ... inside the POST, GET, etc. function
-    try {
-      // ... business logic that might throw an error
-    } catch (error) {
-      console.error(error); // Full error is logged on the server
-    
-      if (error instanceof AppError) {
-        return new NextResponse(
-          JSON.stringify({ error: { message: error.message, errorCode: 'app_error' } }),
-          { status: error.statusCode }
-        );
-      }
-    
-      // Generic server error
+  ```tsx
+  // In an API Route file (/app/api/...)
+  // ... inside the POST, GET, etc. function
+  try {
+    // ... business logic that might throw an error
+  } catch (error) {
+    console.error(error); // Full error is logged on the server
+
+    if (error instanceof AppError) {
       return new NextResponse(
-        JSON.stringify({ error: { message: 'An unexpected error occurred.', errorCode: 'internal_server_error' } }),
-        { status: 500 }
+        JSON.stringify({ error: { message: error.message, errorCode: "app_error" } }),
+        { status: error.statusCode }
       );
     }
-    ```
-    
+
+    // Generic server error
+    return new NextResponse(
+      JSON.stringify({
+        error: { message: "An unexpected error occurred.", errorCode: "internal_server_error" },
+      }),
+      { status: 500 }
+    );
+  }
+  ```
 
 ### **Frontend Error Handling**
 
@@ -1161,29 +1138,28 @@ The frontend will use the `errorCode` from the API response to display appropria
 
 ```tsx
 // /lib/api-client.ts
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 export async function createRoadmap(goal: string) {
   try {
-    const response = await fetch('/api/roadmaps', {
-      method: 'POST',
+    const response = await fetch("/api/roadmaps", {
+      method: "POST",
       body: JSON.stringify({ goalDescription: goal }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
 
     if (!response.ok) {
       // If the response is not OK, parse the error and throw it
       const errorPayload = await response.json();
-      throw new Error(errorPayload.error.message || 'Failed to create roadmap.');
+      throw new Error(errorPayload.error.message || "Failed to create roadmap.");
     }
 
     return await response.json();
-
   } catch (error) {
     // Catch the error and display a user-friendly toast notification
-    toast.error(error.message || 'Something went wrong. Please try again.');
+    toast.error(error.message || "Something went wrong. Please try again.");
     // Return null or re-throw to be handled by the calling component
-    return null; 
+    return null;
   }
 }
 ```
@@ -1195,13 +1171,13 @@ export async function createRoadmap(goal: string) {
 We will use a Git-based, continuous deployment model powered by Vercel and GitHub.
 
 - **Vercel for Frontend & API Routes:**
-    1. The `main` branch in our GitHub repository will represent the production application.
-    2. When a developer opens a Pull Request (PR), Vercel will automatically build and deploy a unique **Preview Environment**. This allows us to review and test every change in a live, isolated setting before it reaches production.
-    3. When a PR is approved and merged into `main`, Vercel will automatically trigger a **Production Deployment**, pushing the changes live.
+  1. The `main` branch in our GitHub repository will represent the production application.
+  2. When a developer opens a Pull Request (PR), Vercel will automatically build and deploy a unique **Preview Environment**. This allows us to review and test every change in a live, isolated setting before it reaches production.
+  3. When a PR is approved and merged into `main`, Vercel will automatically trigger a **Production Deployment**, pushing the changes live.
 - **Supabase for Database Migrations:**
-    - Database schema changes are **not** deployed automatically with the application code.
-    - Developers will create migration files locally using the Supabase CLI. These files will be committed to the `/supabase/migrations/` directory in our repository.
-    - Applying migrations to our Staging and Production databases will be a controlled step within our GitHub Actions pipeline, requiring manual approval for production releases to prevent accidental data loss.
+  - Database schema changes are **not** deployed automatically with the application code.
+  - Developers will create migration files locally using the Supabase CLI. These files will be committed to the `/supabase/migrations/` directory in our repository.
+  - Applying migrations to our Staging and Production databases will be a controlled step within our GitHub Actions pipeline, requiring manual approval for production releases to prevent accidental data loss.
 
 ### **CI/CD Pipeline (GitHub Actions)**
 
@@ -1209,11 +1185,11 @@ A `ci.yaml` workflow file will be created in `.github/workflows/`. This pipeline
 
 ```yaml
 ## .github/workflows/ci.yaml
-name: 'Continuous Integration'
+name: "Continuous Integration"
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   ci-checks:
@@ -1225,8 +1201,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Matches our tech stack
-          cache: 'npm'
+          node-version: "20" # Matches our tech stack
+          cache: "npm"
 
       - name: Install Dependencies
         run: npm ci
@@ -1248,11 +1224,11 @@ jobs:
 
 We will maintain three distinct environments to ensure a stable and secure development lifecycle.
 
-| Environment | Purpose | Infrastructure | URL Example |
-| --- | --- | --- | --- |
-| **Development** | Local development and testing. | Developer's machine | `http://localhost:3000` |
-| **Preview** | Reviewing Pull Requests, E2E testing. | Vercel Preview Deployments, Staging Supabase Project | `lattixiq-feature-xyz.vercel.app` |
-| **Production** | The live application for all users. | Vercel Production, Production Supabase Project | `lattixiq.com` |
+| Environment     | Purpose                               | Infrastructure                                       | URL Example                       |
+| --------------- | ------------------------------------- | ---------------------------------------------------- | --------------------------------- |
+| **Development** | Local development and testing.        | Developer's machine                                  | `http://localhost:3000`           |
+| **Preview**     | Reviewing Pull Requests, E2E testing. | Vercel Preview Deployments, Staging Supabase Project | `lattixiq-feature-xyz.vercel.app` |
+| **Production**  | The live application for all users.   | Vercel Production, Production Supabase Project       | `lattixiq.com`                    |
 
 ## **15. Monitoring and Observability**
 
@@ -1267,10 +1243,10 @@ This section outlines our strategy for observing the health and performance of L
 ### **Key Metrics to Monitor**
 
 - **Frontend Metrics:**
-    - **Core Web Vitals:** We will track LCP, INP, and CLS via Vercel Analytics to ensure a fast user experience.
-    - **JavaScript Error Rate:** We will monitor the percentage of user sessions that are error-free via Sentry.
-    - **API Call Health:** We will track the latency and error rates of API calls as observed from the client-side.
+  - **Core Web Vitals:** We will track LCP, INP, and CLS via Vercel Analytics to ensure a fast user experience.
+  - **JavaScript Error Rate:** We will monitor the percentage of user sessions that are error-free via Sentry.
+  - **API Call Health:** We will track the latency and error rates of API calls as observed from the client-side.
 - **Backend Metrics:**
-    - **API Route Performance:** We will monitor the invocation count, duration, and error rate (5xx status codes) of our serverless functions in the Vercel dashboard.
-    - **Database Performance:** We will use the Supabase dashboard to monitor query performance, index hit rates, and overall database health.
-    - **Authentication Rates:** We will monitor successful vs. failed login attempts via the Supabase Auth dashboard.
+  - **API Route Performance:** We will monitor the invocation count, duration, and error rate (5xx status codes) of our serverless functions in the Vercel dashboard.
+  - **Database Performance:** We will use the Supabase dashboard to monitor query performance, index hit rates, and overall database health.
+  - **Authentication Rates:** We will monitor successful vs. failed login attempts via the Supabase Auth dashboard.

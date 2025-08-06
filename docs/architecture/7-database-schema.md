@@ -27,7 +27,7 @@ CREATE TYPE knowledge_content_type AS ENUM ('mental-model', 'cognitive-bias', 'f
 -- Enable the pgvector extension
 CREATE EXTENSION IF NOT EXISTS vector;
 -- Stores public user profile information, extending Supabase's auth.users
-CREATE TABLE "public"."users" ( "id" uuid PRIMARY KEY NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, "email" text, "created_at" timestamptz DEFAULT now(), "stripe_customer_id" text, "subscription_status" subscription_status DEFAULT 'free'::subscription_status, "testimonial_state" testimonial_state DEFAULT 'not_asked'::testimonial_state, "notification_prefs" jsonb
+CREATE TABLE "public"."users" ( "id" uuid PRIMARY KEY NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, "email" text, "created_at" timestamptz DEFAULT now(), "stripe_customer_id" text, "subscription_status" subscription_status DEFAULT 'free'::subscription_status, "testimonial_state" testimonial_state DEFAULT 'not_asked'::testimonial_state, "reminder_enabled" boolean DEFAULT false, "reminder_time" time DEFAULT '09:00'::time, "reminder_timezone" text DEFAULT 'UTC', "reminder_last_sent" timestamptz
 );
 -- Stores the structured content for each mental model, bias, etc.
 CREATE TABLE "public"."knowledge_content" ( "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(), "title" text NOT NULL, "category" text, "type" knowledge_content_type NOT NULL, "summary" text, "description" text, "application" text, "keywords" text[], "embedding" vector(1536) -- For OpenAI's text-embedding-ada-002 model
@@ -197,4 +197,3 @@ CREATE POLICY "Authenticated users can read goal examples"
 ON public.goal_examples FOR SELECT
 USING (auth.role() = 'authenticated');
 ```
-

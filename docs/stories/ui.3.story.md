@@ -115,7 +115,7 @@ From frontend-spec.md:
 
 From architecture/3-data-models.md:
 
-- User model includes `notification_prefs` JSONB field
+- User model includes individual reminder fields (reminder_enabled, reminder_time, reminder_timezone, reminder_last_sent)
 - Testimonial state tracked in `testimonial_state` enum field
 - Roadmap status can be 'active' or 'completed'
 

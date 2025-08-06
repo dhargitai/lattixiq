@@ -51,7 +51,6 @@ vi.mock("@/lib/db/users", () => ({
     reminder_enabled: true,
     reminder_time: "09:00",
     created_at: "2024-01-01",
-    notification_prefs: null,
     reminder_last_sent: null,
     reminder_timezone: null,
     stripe_customer_id: null,
@@ -114,7 +113,6 @@ describe("Settings Page", () => {
       reminder_enabled: true,
       reminder_time: "09:00",
       created_at: "2024-01-01",
-      notification_prefs: null,
       reminder_last_sent: null,
       reminder_timezone: null,
       stripe_customer_id: "cus_123",
@@ -127,18 +125,6 @@ describe("Settings Page", () => {
     const premiumBadge = screen.getByText("Premium");
     expect(premiumBadge).toBeInTheDocument();
     expect(premiumBadge).toHaveClass("bg-gradient-to-r");
-  });
-
-  it("displays notifications section placeholder", async () => {
-    const Page = await SettingsPage();
-    render(await Page());
-
-    // Check for Notifications section header
-    const notificationsHeader = screen.getByText("NOTIFICATIONS");
-    expect(notificationsHeader).toBeInTheDocument();
-
-    // Check for placeholder text
-    expect(screen.getByText("Notification settings coming soon")).toBeInTheDocument();
   });
 
   it("displays logout button", async () => {

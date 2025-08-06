@@ -12,10 +12,6 @@ export const testUsers = {
     id: "test-user-001",
     email: "test@example.com",
     created_at: "2025-01-01T00:00:00Z",
-    notification_prefs: {
-      email_enabled: true,
-      push_enabled: false,
-    },
     reminder_enabled: true,
     reminder_time: "09:00",
     reminder_timezone: "America/New_York",
@@ -29,10 +25,6 @@ export const testUsers = {
     id: "test-user-002",
     email: "test2@example.com",
     created_at: "2025-01-02T00:00:00Z",
-    notification_prefs: {
-      email_enabled: false,
-      push_enabled: false,
-    },
     reminder_enabled: false,
     reminder_time: null,
     reminder_timezone: "Europe/London",

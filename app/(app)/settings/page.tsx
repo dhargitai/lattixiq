@@ -23,16 +23,14 @@ export default async function SettingsPage() {
   // Fetch notification preferences
   const { data: userData } = await supabase
     .from("users")
-    .select("notification_prefs, reminder_enabled, reminder_time")
+    .select("reminder_enabled, reminder_time")
     .eq("id", user.id)
     .single();
 
-  const initialPreferences = userData?.notification_prefs
-    ? userData.notification_prefs
-    : {
-        enabled: userData?.reminder_enabled ?? true,
-        dailyReminderTime: userData?.reminder_time ?? "09:00",
-      };
+  const initialPreferences = {
+    enabled: userData?.reminder_enabled ?? true,
+    dailyReminderTime: userData?.reminder_time ?? "09:00",
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">

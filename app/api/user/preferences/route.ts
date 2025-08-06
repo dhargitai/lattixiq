@@ -31,7 +31,6 @@ export async function PATCH(request: NextRequest) {
     const { data, error } = await supabase
       .from("users")
       .update({
-        notification_prefs: notifications,
         reminder_enabled: prefs.enabled,
         reminder_time: prefs.dailyReminderTime,
       })
@@ -44,9 +43,10 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 });
     }
 
-    const preferences: NotificationPreferences = data.notification_prefs
-      ? (data.notification_prefs as unknown as NotificationPreferences)
-      : { enabled: true, dailyReminderTime: "09:00" };
+    const preferences: NotificationPreferences = {
+      enabled: data.reminder_enabled ?? true,
+      dailyReminderTime: data.reminder_time ?? "09:00",
+    };
 
     return NextResponse.json({
       success: true,
@@ -72,25 +72,14 @@ export async function GET() {
 
     const { data: userData } = await supabase
       .from("users")
-      .select("notification_prefs, reminder_enabled, reminder_time")
+      .select("reminder_enabled, reminder_time")
       .eq("id", user.id)
       .single();
 
-    const defaultPreferences: NotificationPreferences = {
-      enabled: true,
-      dailyReminderTime: "09:00",
+    const preferences: NotificationPreferences = {
+      enabled: userData?.reminder_enabled ?? true,
+      dailyReminderTime: userData?.reminder_time ?? "09:00",
     };
-
-    let preferences: NotificationPreferences = defaultPreferences;
-
-    if (userData?.notification_prefs) {
-      preferences = userData.notification_prefs as unknown as NotificationPreferences;
-    } else if (userData) {
-      preferences = {
-        enabled: userData.reminder_enabled ?? true,
-        dailyReminderTime: userData.reminder_time ?? "09:00",
-      };
-    }
 
     return NextResponse.json({
       preferences,

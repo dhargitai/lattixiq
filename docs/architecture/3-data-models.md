@@ -54,7 +54,10 @@ import type {
   - `subscription_status` (SubscriptionStatus | null): Enum: `'free' | 'premium'`
   - `testimonial_state` (TestimonialState | null): Enum tracking testimonial flow:
     - `'not_asked' | 'asked_first' | 'dismissed_first' | 'submitted' | 'asked_second' | 'dismissed_second'`
-  - `notification_prefs` (Json | null): JSONB storing user preferences
+  - `reminder_enabled` (boolean | null): Whether daily reminders are enabled
+  - `reminder_time` (string | null): Time of day for reminders (HH:MM format)
+  - `reminder_timezone` (string | null): User's timezone for reminders
+  - `reminder_last_sent` (string | null): Timestamp of last reminder sent
 - **Actual Database Structure:**
   ```typescript
   type User = {
@@ -71,7 +74,10 @@ import type {
       | "asked_second"
       | "dismissed_second"
       | null;
-    notification_prefs: Json | null;
+    reminder_enabled: boolean | null;
+    reminder_time: string | null;
+    reminder_timezone: string | null;
+    reminder_last_sent: string | null;
   };
   ```
 - **Relationships:** A User `has many` Roadmaps, `has many` ApplicationLogs
