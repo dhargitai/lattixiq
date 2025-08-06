@@ -10,7 +10,10 @@ import { ActiveRoadmapCardSkeleton } from "@/components/features/toolkit/ActiveR
 import { QuickActions } from "@/components/features/toolkit/QuickActions";
 import { ToolkitClient } from "@/components/features/toolkit/ToolkitClient";
 import { EmptyState } from "@/components/features/toolkit/EmptyState";
+import { TestimonialPromptWrapper } from "@/components/features/toolkit/TestimonialPromptWrapper";
 import { getToolkitData } from "@/lib/db/toolkit";
+import { getUserInfo } from "@/lib/db/users";
+import { getTestimonialMilestone } from "@/lib/utils/testimonial-milestones";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -27,12 +30,21 @@ export default async function ToolkitPage() {
     redirect("/login");
   }
 
-  const toolkitData = await getToolkitData(user.id);
+  const [toolkitData, userInfo] = await Promise.all([
+    getToolkitData(user.id),
+    getUserInfo(user.id),
+  ]);
 
   const hasAnyActivity =
     toolkitData.activeRoadmap ||
     toolkitData.completedRoadmapsCount > 0 ||
     toolkitData.learnedModelsCount > 0;
+
+  // Determine if we should show testimonial prompt using utility function
+  const testimonialMilestone = getTestimonialMilestone(
+    userInfo?.testimonial_state || null,
+    toolkitData.completedRoadmapsCount
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
@@ -45,6 +57,14 @@ export default async function ToolkitPage() {
 
       <main className="flex-1 px-5 py-6 max-w-xl mx-auto w-full space-y-8">
         <HeaderGreeting userName="Achiever" />
+
+        {/* Testimonial prompt appears at the top if conditions are met */}
+        {testimonialMilestone.shouldShow && userInfo && testimonialMilestone.type && (
+          <TestimonialPromptWrapper
+            initialTestimonialState={userInfo.testimonial_state!}
+            triggerType={testimonialMilestone.type}
+          />
+        )}
 
         {hasAnyActivity ? (
           <>

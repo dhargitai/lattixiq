@@ -304,6 +304,7 @@ export type Database = {
           stripe_customer_id: string | null;
           subscription_status: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
+          testimonial_url: string | null;
         };
         Insert: {
           created_at?: string | null;
@@ -316,6 +317,7 @@ export type Database = {
           stripe_customer_id?: string | null;
           subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
+          testimonial_url?: string | null;
         };
         Update: {
           created_at?: string | null;
@@ -328,6 +330,7 @@ export type Database = {
           stripe_customer_id?: string | null;
           subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
+          testimonial_url?: string | null;
         };
         Relationships: [];
       };

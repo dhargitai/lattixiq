@@ -63,6 +63,7 @@ vi.mock("@/lib/db/users", () => ({
     reminder_timezone: null,
     stripe_customer_id: null,
     testimonial_state: null,
+    testimonial_url: null,
   })),
 }));
 
@@ -125,6 +126,7 @@ describe("Settings Page", () => {
       reminder_timezone: null,
       stripe_customer_id: "cus_123",
       testimonial_state: null,
+      testimonial_url: null,
     });
 
     const Page = await SettingsPage();
