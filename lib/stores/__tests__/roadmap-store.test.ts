@@ -558,11 +558,12 @@ describe("roadmap-store - step unlocking bug", () => {
 
     const newState = useRoadmapStore.getState();
 
-    // Step 1 should be completed
-    const updatedStep1 = newState.activeRoadmap?.steps.find((s) => s.id === "step-1");
-    expect(updatedStep1?.status).toBe("completed");
-
-    // Roadmap should be marked as completed
-    expect(newState.activeRoadmap?.status).toBe("completed");
+    // When roadmap is completed, the entire state should be cleared
+    expect(newState.activeRoadmap).toBeNull();
+    expect(newState.currentStepIndex).toBe(0);
+    expect(newState.currentStep).toBeNull();
+    expect(newState.knowledgeContent).toBeNull();
+    expect(newState.cacheMetadata.lastFetched).toBeNull();
+    expect(newState.cacheMetadata.userId).toBeNull();
   });
 });

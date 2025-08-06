@@ -24,7 +24,7 @@ export function QuickActions({
         <Button
           size="lg"
           className="w-full max-w-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all"
-          onClick={() => router.push("/onboarding")}
+          onClick={() => router.push("/new-roadmap")}
         >
           <Plus className="mr-2 h-5 w-5" />
           Start Your First Roadmap
@@ -50,7 +50,7 @@ export function QuickActions({
         <Button
           variant="outline"
           className="w-full justify-start hover:bg-gray-50"
-          onClick={() => router.push("/onboarding")}
+          onClick={() => router.push("/new-roadmap")}
         >
           <Plus className="mr-3 h-5 w-5 text-blue-600" />
           <span className="text-gray-700">Start New Roadmap</span>

@@ -5,18 +5,23 @@ export interface ActiveRoadmapData {
   id: string;
   goal_description: string | null;
   currentStep: {
+    id: string;
     title: string;
     order: number;
+    status: string | null;
+    planCreatedAt: string | null;
+    hasReflection: boolean;
   } | null;
   totalSteps: number;
   completedSteps: number;
   lastActivityDate: string | null;
+  isNearCompletion: boolean;
+  isPaused: boolean;
 }
 
 export interface ToolkitStats {
   streak: number;
   totalLearned: number;
-  completionRate: number;
 }
 
 export interface ToolkitData {
@@ -85,7 +90,7 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
 
   if (activeRoadmap && "steps" in activeRoadmap) {
     const steps = activeRoadmap.steps || [];
-    const completedSteps = steps.filter((s: RoadmapStep) => s.status === "completed").length;
+    const completedStepsCount = steps.filter((s: RoadmapStep) => s.status === "completed").length;
     const currentStep = steps.find((s: RoadmapStep) => s.status === "unlocked");
 
     if (currentStep) {
@@ -101,29 +106,47 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
       steps.some((s: RoadmapStep) => s.id === log.roadmap_step_id)
     );
 
+    // Check if roadmap is near completion (on last step)
+    const isNearCompletion = currentStep ? currentStep.order === steps.length : false;
+
+    // Check if roadmap is paused (no activity for more than 7 days)
+    let isPaused = false;
+    if (lastActivity?.created_at) {
+      const daysSinceActivity = Math.floor(
+        (new Date().getTime() - new Date(lastActivity.created_at).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      isPaused = daysSinceActivity > 7;
+    }
+
+    // Check if current step has a reflection
+    const hasReflection = currentStep
+      ? applicationLogs.some((log: ApplicationLog) => log.roadmap_step_id === currentStep.id)
+      : false;
+
     activeRoadmapData = {
       id: activeRoadmap.id,
       goal_description: activeRoadmap.goal_description,
       currentStep:
         currentStep && "knowledge_content" in currentStep
           ? {
+              id: currentStep.id,
               title: currentStep.knowledge_content.title,
               order: currentStep.order,
+              status: currentStep.status,
+              planCreatedAt: currentStep.plan_created_at,
+              hasReflection,
             }
           : null,
       totalSteps: steps.length,
-      completedSteps,
+      completedSteps: completedStepsCount,
       lastActivityDate: lastActivity?.created_at || null,
+      isNearCompletion,
+      isPaused,
     };
   }
 
   const streak = calculateStreak(applicationLogs);
   const totalLearned = learnedSteps.length;
-  const totalSteps =
-    activeRoadmap && "steps" in activeRoadmap
-      ? (activeRoadmap.steps?.length || 0) + learnedSteps.length
-      : learnedSteps.length;
-  const completionRate = totalSteps > 0 ? (totalLearned / totalSteps) * 100 : 0;
 
   const [recentLog] = applicationLogs;
   const recentLogEntry = recentLog
@@ -138,7 +161,6 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
     stats: {
       streak,
       totalLearned,
-      completionRate: Math.round(completionRate),
     },
     learnedModelsCount: totalLearned,
     completedRoadmapsCount: completedRoadmaps.length,

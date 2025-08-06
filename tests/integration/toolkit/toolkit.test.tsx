@@ -33,7 +33,6 @@ describe("Toolkit Components", () => {
       const stats: ToolkitStats = {
         streak: 5,
         totalLearned: 10,
-        completionRate: 75,
       };
 
       render(<QuickStats stats={stats} />);
@@ -42,8 +41,6 @@ describe("Toolkit Components", () => {
       expect(screen.getByText("Day Streak")).toBeInTheDocument();
       expect(screen.getByText("10")).toBeInTheDocument();
       expect(screen.getByText("Models Learned")).toBeInTheDocument();
-      expect(screen.getByText("75%")).toBeInTheDocument();
-      expect(screen.getByText("Completion")).toBeInTheDocument();
     });
   });
 
@@ -53,12 +50,18 @@ describe("Toolkit Components", () => {
         id: "test-id",
         goal_description: "Stop Procrastinating",
         currentStep: {
+          id: "step-1",
           title: "First Principles Thinking",
           order: 2,
+          status: "unlocked",
+          planCreatedAt: null,
+          hasReflection: false,
         },
         totalSteps: 7,
         completedSteps: 3,
         lastActivityDate: new Date().toISOString(),
+        isNearCompletion: false,
+        isPaused: false,
       };
 
       render(<ActiveRoadmapCard roadmap={roadmap} />);
@@ -66,7 +69,7 @@ describe("Toolkit Components", () => {
       expect(screen.getByText("ACTIVE ROADMAP")).toBeInTheDocument();
       expect(screen.getByText("Stop Procrastinating")).toBeInTheDocument();
       expect(screen.getByText(/First Principles Thinking/)).toBeInTheDocument();
-      expect(screen.getByText("3/7 steps")).toBeInTheDocument();
+      expect(screen.getByText("Step 4 of 7")).toBeInTheDocument();
     });
 
     it("should navigate to roadmap page on arrow click", async () => {
@@ -77,6 +80,8 @@ describe("Toolkit Components", () => {
         totalSteps: 5,
         completedSteps: 0,
         lastActivityDate: null,
+        isNearCompletion: false,
+        isPaused: false,
       };
 
       render(<ActiveRoadmapCard roadmap={roadmap} />);
@@ -98,6 +103,8 @@ describe("Toolkit Components", () => {
         totalSteps: 5,
         completedSteps: 0,
         lastActivityDate: yesterday.toISOString(),
+        isNearCompletion: false,
+        isPaused: false,
       };
 
       render(<ActiveRoadmapCard roadmap={roadmap} />);
@@ -114,7 +121,7 @@ describe("Toolkit Components", () => {
       expect(button).toBeInTheDocument();
 
       await userEvent.click(button);
-      expect(mockPush).toHaveBeenCalledWith("/onboarding");
+      expect(mockPush).toHaveBeenCalledWith("/new-roadmap");
     });
 
     it("should show reflection button when active plan exists", () => {
@@ -220,7 +227,7 @@ describe("Toolkit Components", () => {
       const button = screen.getByText("Start Your First Roadmap");
       await userEvent.click(button);
 
-      expect(mockPush).toHaveBeenCalledWith("/onboarding");
+      expect(mockPush).toHaveBeenCalledWith("/new-roadmap");
     });
 
     it("should display discovery badges", () => {

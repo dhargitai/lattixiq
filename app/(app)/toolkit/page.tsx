@@ -6,10 +6,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { HeaderGreeting } from "@/components/features/toolkit/HeaderGreeting";
 import { QuickStats } from "@/components/features/toolkit/QuickStats";
 import { ActiveRoadmapCard } from "@/components/features/toolkit/ActiveRoadmapCard";
+import { ActiveRoadmapCardSkeleton } from "@/components/features/toolkit/ActiveRoadmapCardSkeleton";
 import { QuickActions } from "@/components/features/toolkit/QuickActions";
 import { NavigationCards } from "@/components/features/toolkit/NavigationCards";
 import { EmptyState } from "@/components/features/toolkit/EmptyState";
 import { getToolkitData } from "@/lib/db/toolkit";
+
+// Force dynamic rendering to ensure fresh data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function ToolkitPage() {
   const supabase = await createClient();
@@ -48,7 +53,7 @@ export default async function ToolkitPage() {
             </Suspense>
 
             {toolkitData.activeRoadmap && (
-              <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+              <Suspense fallback={<ActiveRoadmapCardSkeleton />}>
                 <ActiveRoadmapCard roadmap={toolkitData.activeRoadmap} />
               </Suspense>
             )}

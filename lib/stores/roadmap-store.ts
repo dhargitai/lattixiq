@@ -84,7 +84,23 @@ export const useRoadmapStore = create<RoadmapViewState>()(
       },
 
       fetchActiveRoadmap: async (userId: string, forceRefresh = false) => {
-        const { isCacheValid } = get();
+        const { isCacheValid, activeRoadmap } = get();
+
+        // Clear completed roadmap from persisted state if it exists
+        if (activeRoadmap && activeRoadmap.status === "completed") {
+          console.log("[fetchActiveRoadmap] Clearing completed roadmap from persisted state");
+          set({
+            activeRoadmap: null,
+            currentStepIndex: 0,
+            currentStep: null,
+            knowledgeContent: null,
+            cacheMetadata: {
+              lastFetched: null,
+              ttl: DEFAULT_CACHE_TTL,
+              userId: null,
+            },
+          });
+        }
 
         // Use cached data if valid and not forcing refresh
         if (!forceRefresh && isCacheValid(userId)) {
@@ -231,22 +247,39 @@ export const useRoadmapStore = create<RoadmapViewState>()(
             roadmapStatus
           );
 
-          // Only update local state after all database operations succeed
-          set((state) => ({
-            activeRoadmap: {
-              ...activeRoadmap,
-              steps: updatedSteps,
-              status: roadmapStatus as "active" | "completed",
-              ...(data.roadmap_completed && { completed_at: new Date().toISOString() }),
-            },
-            currentStepIndex: completedStepIndex + 1,
-            isLoading: false,
-            // Update cache timestamp since we modified data
-            cacheMetadata: {
-              ...state.cacheMetadata,
-              lastFetched: Date.now(),
-            },
-          }));
+          // If roadmap is completed, clear the persisted state
+          if (data.roadmap_completed) {
+            console.log("[markStepCompleted] Roadmap completed - clearing persisted state");
+            set({
+              activeRoadmap: null,
+              currentStepIndex: 0,
+              isLoading: false,
+              error: null,
+              currentStep: null,
+              knowledgeContent: null,
+              cacheMetadata: {
+                lastFetched: null,
+                ttl: DEFAULT_CACHE_TTL,
+                userId: null,
+              },
+            });
+          } else {
+            // Only update local state after all database operations succeed
+            set((state) => ({
+              activeRoadmap: {
+                ...activeRoadmap,
+                steps: updatedSteps,
+                status: roadmapStatus as "active" | "completed",
+              },
+              currentStepIndex: completedStepIndex + 1,
+              isLoading: false,
+              // Update cache timestamp since we modified data
+              cacheMetadata: {
+                ...state.cacheMetadata,
+                lastFetched: Date.now(),
+              },
+            }));
+          }
 
           console.log("[markStepCompleted] Operation completed successfully");
         } catch (error) {

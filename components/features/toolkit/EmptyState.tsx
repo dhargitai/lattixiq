@@ -32,7 +32,7 @@ export function EmptyState() {
       <Button
         size="lg"
         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"
-        onClick={() => router.push("/onboarding")}
+        onClick={() => router.push("/new-roadmap")}
       >
         Start Your First Roadmap
         <ArrowRight className="ml-2 h-5 w-5" />
