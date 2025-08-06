@@ -279,9 +279,8 @@ Create the "My Toolkit" screen as the central hub for returning users. This beco
 
 **Acceptance Criteria:**
 
-- [ ] Bottom navigation on mobile (except for Learn/Plan/Reflect screens)
+- [ ] Bottom navigation (except for Learn/Plan/Reflect screens)
 - [ ] Clear active states
-- [ ] Logical grouping of features
 - [ ] Settings access
 - [ ] Consistent across all screens
 
@@ -289,14 +288,9 @@ Create the "My Toolkit" screen as the central hub for returning users. This beco
 
 1. Create `/components/shared/Navigation.tsx`
 2. Implement responsive navigation:
-   - Mobile: bottom tabs
-   - Desktop: sidebar
-   - Tablet: collapsible sidebar
+   - Mobile, Tablet, and Desktop: bottom tabs
 3. Define navigation structure:
-   - Toolkit (home)
-   - Current Roadmap
-   - Library
-   - Journal
+   - My Toolkit
    - Settings
 4. Add active state indicators
 5. Implement route persistence
