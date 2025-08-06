@@ -1,8 +1,10 @@
 import { Card } from "@/components/ui/card";
 import BottomNav from "@/components/features/shared/BottomNav";
+import NotificationSettings from "@/components/settings/NotificationSettings";
 import { getUserInfo } from "@/lib/db/users";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -17,6 +19,20 @@ export default async function SettingsPage() {
 
   const userInfo = await getUserInfo(user.id);
   const provider = user.app_metadata?.provider || "email";
+
+  // Fetch notification preferences
+  const { data: userData } = await supabase
+    .from("users")
+    .select("notification_prefs, reminder_enabled, reminder_time")
+    .eq("id", user.id)
+    .single();
+
+  const initialPreferences = userData?.notification_prefs
+    ? userData.notification_prefs
+    : {
+        enabled: userData?.reminder_enabled ?? true,
+        dailyReminderTime: userData?.reminder_time ?? "09:00",
+      };
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
@@ -75,17 +91,10 @@ export default async function SettingsPage() {
         </section>
 
         {/* Notifications Section */}
-        <section className="mb-9 animate-fadeIn animation-delay-200">
-          <h2 className="text-[13px] font-semibold text-[#718096] uppercase tracking-[0.8px] mb-4 pl-1">
-            NOTIFICATIONS
-          </h2>
-
-          <Card className="bg-white border border-[#E2E8F0] rounded-xl overflow-hidden">
-            <div className="px-5">
-              <p className="text-sm text-[#718096] italic">Notification settings coming soon</p>
-            </div>
-          </Card>
-        </section>
+        <NotificationSettings
+          userId={user.id}
+          initialPreferences={initialPreferences as { enabled: boolean; dailyReminderTime: string }}
+        />
 
         {/* Logout Button */}
         <div className="mt-12 mb-8 flex justify-center animate-fadeIn animation-delay-300">
@@ -102,6 +111,9 @@ export default async function SettingsPage() {
 
       {/* Bottom Navigation */}
       <BottomNav />
+
+      {/* Toast Notifications */}
+      <Toaster position="bottom-center" />
     </div>
   );
 }
