@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { ChevronDown, ArrowLeft, Lightbulb, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
+import { ReminderSettings } from "@/components/shared/ReminderSettings";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -221,71 +221,12 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                   </div>
 
                   {/* Reminder Section */}
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                        REMINDER
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        These settings apply to all your active plans
-                      </p>
-                    </div>
-                    <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-5 space-y-4">
-                      {/* Reminder Toggle */}
-                      <div className="flex items-center justify-between">
-                        <label
-                          htmlFor="reminder-toggle"
-                          className="text-base font-medium text-gray-700 cursor-pointer"
-                        >
-                          Daily Reminder
-                        </label>
-                        <Switch
-                          id="reminder-toggle"
-                          checked={reminderEnabled}
-                          onCheckedChange={setReminderEnabled}
-                          className="data-[state=checked]:bg-green-500"
-                        />
-                      </div>
-
-                      {/* Time Selection */}
-                      <div
-                        className={cn(
-                          "flex items-center gap-3 transition-all duration-200",
-                          !reminderEnabled && "opacity-50"
-                        )}
-                      >
-                        <label
-                          htmlFor="reminder-time"
-                          className="text-base font-medium text-gray-700"
-                        >
-                          Remind me at:
-                        </label>
-                        <select
-                          id="reminder-time"
-                          value={reminderTime}
-                          onChange={(e) => setReminderTime(e.target.value)}
-                          disabled={!reminderEnabled}
-                          className="px-3 py-2 text-base border-2 border-gray-200 rounded-lg bg-white text-gray-700 cursor-pointer transition-all duration-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 disabled:cursor-not-allowed"
-                        >
-                          <option value="06:00:00">6:00 AM</option>
-                          <option value="07:00:00">7:00 AM</option>
-                          <option value="08:00:00">8:00 AM</option>
-                          <option value="09:00:00">9:00 AM</option>
-                          <option value="10:00:00">10:00 AM</option>
-                          <option value="11:00:00">11:00 AM</option>
-                          <option value="12:00:00">12:00 PM</option>
-                          <option value="13:00:00">1:00 PM</option>
-                          <option value="14:00:00">2:00 PM</option>
-                          <option value="15:00:00">3:00 PM</option>
-                          <option value="16:00:00">4:00 PM</option>
-                          <option value="17:00:00">5:00 PM</option>
-                          <option value="18:00:00">6:00 PM</option>
-                          <option value="19:00:00">7:00 PM</option>
-                          <option value="20:00:00">8:00 PM</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+                  <ReminderSettings
+                    enabled={reminderEnabled}
+                    time={reminderTime}
+                    onEnabledChange={setReminderEnabled}
+                    onTimeChange={setReminderTime}
+                  />
 
                   {/* Error Message */}
                   {error && (

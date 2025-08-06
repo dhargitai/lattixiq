@@ -48,6 +48,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [
         {
@@ -110,6 +111,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [],
     } as Roadmap;
@@ -161,6 +163,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [],
     } as Roadmap;
@@ -193,6 +196,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [
         {
@@ -246,6 +250,7 @@ describe("roadmap-store - step unlocking bug", () => {
         status: "active" as const,
         completed_at: null,
         created_at: "2025-01-01T00:00:00Z",
+        updated_at: new Date().toISOString(),
         goal_description: "Test goal",
         steps: [],
       } as Roadmap,
@@ -290,6 +295,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [
         {
@@ -399,6 +405,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [
         {
@@ -503,6 +510,7 @@ describe("roadmap-store - step unlocking bug", () => {
       status: "active" as const,
       completed_at: null,
       created_at: "2025-01-01T00:00:00Z",
+      updated_at: new Date().toISOString(),
       goal_description: "Test goal description",
       steps: [
         {

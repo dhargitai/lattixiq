@@ -38,6 +38,8 @@ describe("Plan Screen", () => {
     plan_trigger: null,
     plan_action: null,
     plan_created_at: null,
+    completed_at: null,
+    updated_at: null,
   };
 
   const mockKnowledgeContent = {

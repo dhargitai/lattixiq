@@ -83,6 +83,7 @@ export const testRoadmaps = {
     goal_description: "I want to stop procrastinating on important projects",
     created_at: "2025-01-05T00:00:00Z",
     completed_at: null,
+    updated_at: "2025-01-05T00:00:00Z",
   } as Roadmap,
 
   completed: {
@@ -92,6 +93,7 @@ export const testRoadmaps = {
     goal_description: "I want to make better financial decisions",
     created_at: "2025-01-01T00:00:00Z",
     completed_at: "2025-01-04T00:00:00Z",
+    updated_at: "2025-01-04T00:00:00Z",
   } as Roadmap,
 };
 
@@ -107,6 +109,8 @@ export const testRoadmapSteps = {
     plan_situation: "It's 9 AM and I need to start my report",
     plan_trigger: null,
     plan_action: "Open the doc and write for just 5 minutes",
+    completed_at: "2025-01-05T11:00:00Z",
+    updated_at: "2025-01-05T11:00:00Z",
   } as RoadmapStep,
 
   inversionStep: {
@@ -119,6 +123,8 @@ export const testRoadmapSteps = {
     plan_situation: null,
     plan_trigger: null,
     plan_action: null,
+    completed_at: null,
+    updated_at: null,
   } as RoadmapStep,
 
   doubtAvoidanceStep: {
@@ -131,6 +137,8 @@ export const testRoadmapSteps = {
     plan_situation: null,
     plan_trigger: null,
     plan_action: null,
+    completed_at: null,
+    updated_at: null,
   } as RoadmapStep,
 };
 
@@ -170,6 +178,7 @@ export function createTestRoadmap(options?: {
     goal_description: goalDescription,
     created_at: new Date().toISOString(),
     completed_at: null,
+    updated_at: new Date().toISOString(),
   };
 
   const steps: RoadmapStep[] = [];
@@ -197,6 +206,8 @@ export function createTestRoadmap(options?: {
       plan_situation: status === "completed" ? "Test situation" : null,
       plan_trigger: null,
       plan_action: status === "completed" ? "Test action" : null,
+      completed_at: status === "completed" ? new Date().toISOString() : null,
+      updated_at: status === "completed" ? new Date().toISOString() : null,
     });
   }
 

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 interface NotificationPreferences {
   enabled: boolean;
   dailyReminderTime: string;
+  timezone?: string;
 }
 
 export async function PATCH(request: NextRequest) {
@@ -28,12 +29,20 @@ export async function PATCH(request: NextRequest) {
 
     const prefs = notifications as NotificationPreferences;
 
+    // Build the update object
+    const updateData: Record<string, boolean | string> = {
+      reminder_enabled: prefs.enabled,
+      reminder_time: prefs.dailyReminderTime,
+    };
+
+    // Include timezone if provided
+    if (prefs.timezone) {
+      updateData.reminder_timezone = prefs.timezone;
+    }
+
     const { data, error } = await supabase
       .from("users")
-      .update({
-        reminder_enabled: prefs.enabled,
-        reminder_time: prefs.dailyReminderTime,
-      })
+      .update(updateData)
       .eq("id", user.id)
       .select()
       .single();
@@ -46,6 +55,7 @@ export async function PATCH(request: NextRequest) {
     const preferences: NotificationPreferences = {
       enabled: data.reminder_enabled ?? true,
       dailyReminderTime: data.reminder_time ?? "09:00",
+      timezone: data.reminder_timezone ?? "UTC",
     };
 
     return NextResponse.json({

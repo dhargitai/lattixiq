@@ -77,6 +77,8 @@ const mockRoadmap = {
         keywords: ["bias", "confirmation"],
         embedding: null,
       },
+      completed_at: null,
+      updated_at: null,
     },
     {
       id: "step-2",
@@ -99,6 +101,8 @@ const mockRoadmap = {
         keywords: ["thinking", "principles"],
         embedding: null,
       },
+      completed_at: null,
+      updated_at: null,
     },
     {
       id: "step-3",
@@ -121,6 +125,8 @@ const mockRoadmap = {
         keywords: ["fallacy", "sunk cost"],
         embedding: null,
       },
+      completed_at: null,
+      updated_at: null,
     },
   ],
 };

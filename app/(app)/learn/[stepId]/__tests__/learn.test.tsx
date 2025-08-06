@@ -60,6 +60,8 @@ const mockStepWithContent = {
   plan_created_at: null,
   plan_situation: null,
   plan_trigger: null,
+  completed_at: null,
+  updated_at: null,
   knowledge_content: {
     id: "content-1",
     title: "Confirmation Bias",

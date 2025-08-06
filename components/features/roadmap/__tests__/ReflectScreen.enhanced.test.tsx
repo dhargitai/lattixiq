@@ -54,6 +54,8 @@ describe("ReflectScreen Enhanced Features", () => {
     plan_trigger: "at work",
     plan_action: "Take 5 deep breaths",
     plan_created_at: "2025-01-01T10:00:00Z",
+    completed_at: null,
+    updated_at: null,
   };
 
   const mockKnowledgeContent = {
@@ -76,6 +78,7 @@ describe("ReflectScreen Enhanced Features", () => {
     completed_at: null,
     created_at: "2025-01-01T00:00:00Z",
     status: "active" as const,
+    updated_at: "2025-01-01T00:00:00Z",
   };
 
   beforeEach(() => {

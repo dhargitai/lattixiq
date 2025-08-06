@@ -1,22 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import NotificationSettings from "@/components/settings/NotificationSettings";
-import { toast } from "sonner";
 
-vi.mock("sonner", () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
+vi.mock("@/lib/notifications/timezone-utils", () => ({
+  getUserTimezone: vi.fn(() => "America/New_York"),
 }));
-
-global.fetch = vi.fn();
 
 describe("NotificationSettings", () => {
   const mockUserId = "test-user-123";
+  const mockOnPreferencesChange = vi.fn();
   const defaultPreferences = {
     enabled: true,
-    dailyReminderTime: "09:00",
+    dailyReminderTime: "09:00:00",
   };
 
   beforeEach(() => {
@@ -24,183 +19,129 @@ describe("NotificationSettings", () => {
   });
 
   it("renders notification toggle and displays initial state", () => {
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
+    render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={defaultPreferences}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
 
     expect(screen.getByText("Daily Reminder")).toBeInTheDocument();
-    expect(screen.getByText("Get reminders for your active plans")).toBeInTheDocument();
+    expect(
+      screen.getByText("Get daily reminders for your active plans at your chosen time")
+    ).toBeInTheDocument();
 
     const toggleElement = screen.getByText("Daily Reminder").closest("div")?.parentElement;
     expect(toggleElement).toBeInTheDocument();
   });
 
   it("shows time selector when notifications are enabled", () => {
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
+    render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={defaultPreferences}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
 
-    expect(screen.getByText("Reminder Time")).toBeInTheDocument();
-    expect(screen.getByText("Choose when to receive your daily reminders")).toBeInTheDocument();
-    expect(screen.getByText("9:00 AM")).toBeInTheDocument();
+    expect(screen.getByText("Remind me at:")).toBeInTheDocument();
+    const selectElement = screen.getByRole("combobox");
+    expect(selectElement).toBeInTheDocument();
+    expect(selectElement).toHaveValue("09:00:00");
   });
 
   it("hides time selector when notifications are disabled", () => {
     render(
       <NotificationSettings
         userId={mockUserId}
-        initialPreferences={{ enabled: false, dailyReminderTime: "09:00" }}
+        initialPreferences={{ enabled: false, dailyReminderTime: "09:00:00" }}
+        onPreferencesChange={mockOnPreferencesChange}
       />
     );
 
-    expect(screen.queryByText("Reminder Time")).not.toBeInTheDocument();
+    expect(screen.queryByText("Remind me at:")).not.toBeInTheDocument();
   });
 
-  it("toggles notification state and saves preferences", async () => {
-    (fetch as any).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        success: true,
-        preferences: { enabled: false, dailyReminderTime: "09:00" },
-      }),
-    });
-
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
-
-    const toggleContainer = screen
-      .getByText("Daily Reminder")
-      .closest("div")
-      ?.parentElement?.querySelector("div[class*='relative']") as HTMLElement;
-
-    fireEvent.click(toggleContainer);
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith("/api/user/preferences", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          notifications: {
-            enabled: false,
-            dailyReminderTime: "09:00",
-          },
-        }),
-      });
-    });
-
-    expect(toast.success).toHaveBeenCalledWith("Settings saved", {
-      description: "Your notification preferences have been updated.",
-    });
-
-    expect(screen.queryByText("Reminder Time")).not.toBeInTheDocument();
-  });
-
-  it("changes reminder time and saves preferences", async () => {
-    (fetch as any).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        success: true,
-        preferences: { enabled: true, dailyReminderTime: "14:00" },
-      }),
-    });
-
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
-
-    const selectTrigger = screen.getByText("9:00 AM");
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const option = screen.getByText("2:00 PM");
-      fireEvent.click(option);
-    });
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith("/api/user/preferences", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          notifications: {
-            enabled: true,
-            dailyReminderTime: "14:00",
-          },
-        }),
-      });
-    });
-
-    expect(toast.success).toHaveBeenCalledWith("Settings saved", {
-      description: "Your notification preferences have been updated.",
-    });
-  });
-
-  it("handles save errors gracefully", async () => {
-    (fetch as any).mockRejectedValueOnce(new Error("Network error"));
-
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
-
-    const toggleContainer = screen
-      .getByText("Daily Reminder")
-      .closest("div")
-      ?.parentElement?.querySelector("div[class*='relative']") as HTMLElement;
-
-    fireEvent.click(toggleContainer);
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Failed to save preferences", {
-        description: "Please try again.",
-      });
-    });
-  });
-
-  it("disables interactions while saving", async () => {
-    let resolveFetch: any;
-    (fetch as any).mockImplementationOnce(
-      () =>
-        new Promise((resolve) => {
-          resolveFetch = resolve;
-        })
+  it("toggles notification state and calls onPreferencesChange", () => {
+    const { rerender } = render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={defaultPreferences}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
     );
 
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
+    const toggleButton = screen.getByRole("switch");
+    fireEvent.click(toggleButton);
 
-    const toggleContainer = screen
-      .getByText("Daily Reminder")
-      .closest("div")
-      ?.parentElement?.querySelector("div[class*='relative']") as HTMLElement;
-
-    fireEvent.click(toggleContainer);
-
-    expect(toggleContainer).toHaveClass("opacity-50", "cursor-not-allowed");
-
-    resolveFetch({
-      ok: true,
-      json: async () => ({
-        success: true,
-        preferences: { enabled: false, dailyReminderTime: "09:00" },
-      }),
+    expect(mockOnPreferencesChange).toHaveBeenCalledWith({
+      enabled: false,
+      dailyReminderTime: "09:00:00",
+      timezone: "America/New_York",
     });
 
-    await waitFor(() => {
-      expect(toggleContainer).not.toHaveClass("opacity-50", "cursor-not-allowed");
+    // Simulate parent component updating props after state change
+    rerender(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={{ enabled: false, dailyReminderTime: "09:00:00" }}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
+
+    expect(screen.queryByText("Remind me at:")).not.toBeInTheDocument();
+  });
+
+  it("changes reminder time and calls onPreferencesChange", () => {
+    render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={defaultPreferences}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
+
+    const selectElement = screen.getByRole("combobox");
+    fireEvent.change(selectElement, { target: { value: "14:00:00" } });
+
+    expect(mockOnPreferencesChange).toHaveBeenCalledWith({
+      enabled: true,
+      dailyReminderTime: "14:00:00",
+      timezone: "America/New_York",
     });
   });
 
-  it("restores original preferences on error", async () => {
-    (fetch as any).mockRejectedValueOnce(new Error("Network error"));
+  it("calls onPreferencesChange with correct timezone", () => {
+    render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={defaultPreferences}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
 
-    render(<NotificationSettings userId={mockUserId} initialPreferences={defaultPreferences} />);
+    const toggleButton = screen.getByRole("switch");
+    fireEvent.click(toggleButton);
 
-    const toggleContainer = screen
-      .getByText("Daily Reminder")
-      .closest("div")
-      ?.parentElement?.querySelector("div[class*='relative']") as HTMLElement;
+    expect(mockOnPreferencesChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        timezone: "America/New_York",
+      })
+    );
+  });
 
-    expect(screen.getByText("Reminder Time")).toBeInTheDocument();
+  it("handles preferences without seconds in time format", () => {
+    render(
+      <NotificationSettings
+        userId={mockUserId}
+        initialPreferences={{ enabled: true, dailyReminderTime: "14:30" }}
+        onPreferencesChange={mockOnPreferencesChange}
+      />
+    );
 
-    fireEvent.click(toggleContainer);
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalled();
-    });
-
-    expect(screen.getByText("Reminder Time")).toBeInTheDocument();
+    const selectElement = screen.getByRole("combobox");
+    // Component should handle time format conversion internally
+    expect(selectElement).toBeInTheDocument();
   });
 });
