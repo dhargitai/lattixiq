@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import BillingSection from "@/components/settings/BillingSection";
+import LogoutButton from "@/components/settings/LogoutButton";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import BottomNav from "@/components/features/shared/BottomNav";
@@ -137,14 +138,7 @@ export default function SettingsPageContent({
 
           {/* Logout Button */}
           <div className="flex justify-center">
-            <form action="/api/auth/logout" method="POST">
-              <Button
-                type="submit"
-                className="bg-white text-[#E53E3E] border-2 border-[#E53E3E] px-8 py-3.5 text-base font-semibold rounded-[10px] transition-all duration-300 hover:bg-[#E53E3E] hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(229,62,62,0.25)] active:translate-y-0 active:shadow-[0_2px_6px_rgba(229,62,62,0.25)]"
-              >
-                Logout
-              </Button>
-            </form>
+            <LogoutButton />
           </div>
         </div>
       </main>

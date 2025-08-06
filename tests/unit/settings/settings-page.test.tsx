@@ -137,11 +137,10 @@ describe("Settings Page", () => {
 
   it("displays logout button", async () => {
     const Page = await SettingsPage();
-    const { container } = render(await Page());
+    render(await Page());
 
-    const logoutButton = container.querySelector('button[type="submit"]');
+    const logoutButton = screen.getByText("Logout");
     expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveTextContent("Logout");
     expect(logoutButton).toHaveClass("border-[#E53E3E]");
   });
 
