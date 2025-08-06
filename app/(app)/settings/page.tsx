@@ -17,10 +17,10 @@ export default async function SettingsPage() {
   const userInfo = await getUserInfo(user.id);
   const provider = user.app_metadata?.provider || "email";
 
-  // Fetch notification preferences
+  // Fetch user preferences and billing info
   const { data: userData } = await supabase
     .from("users")
-    .select("reminder_enabled, reminder_time")
+    .select("reminder_enabled, reminder_time, stripe_customer_id")
     .eq("id", user.id)
     .single();
 
@@ -35,6 +35,7 @@ export default async function SettingsPage() {
       userEmail={user.email || ""}
       provider={provider}
       subscriptionStatus={userInfo?.subscription_status || undefined}
+      stripeCustomerId={userData?.stripe_customer_id || undefined}
       initialPreferences={initialPreferences}
     />
   );

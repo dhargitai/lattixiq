@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import NotificationSettings from "@/components/settings/NotificationSettings";
+import BillingSection from "@/components/settings/BillingSection";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import BottomNav from "@/components/features/shared/BottomNav";
@@ -13,6 +14,7 @@ interface SettingsPageContentProps {
   userEmail: string;
   provider: string;
   subscriptionStatus?: string;
+  stripeCustomerId?: string;
   initialPreferences: {
     enabled: boolean;
     dailyReminderTime: string;
@@ -24,6 +26,7 @@ export default function SettingsPageContent({
   userEmail,
   provider,
   subscriptionStatus,
+  stripeCustomerId,
   initialPreferences,
 }: SettingsPageContentProps) {
   const [isSaving, setIsSaving] = useState(false);
@@ -105,31 +108,10 @@ export default function SettingsPageContent({
         </section>
 
         {/* Billing Section */}
-        <section className="mb-9 animate-fadeIn animation-delay-100">
-          <h2 className="text-[13px] font-semibold text-[#718096] uppercase tracking-[0.8px] mb-4 pl-1">
-            BILLING
-          </h2>
-
-          <Card className="bg-white border border-[#E2E8F0] rounded-xl overflow-hidden hover:border-[#CBD5E0] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200">
-            <div className="px-5 flex justify-between items-center cursor-pointer hover:bg-[#F7FAFC] transition-colors duration-200">
-              <span className="text-base font-medium text-[#2D3748]">Plan</span>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`px-3 py-1 rounded-2xl text-sm font-semibold ${
-                    subscriptionStatus === "premium"
-                      ? "bg-gradient-to-r from-[#F6E05E] to-[#ECC94B] text-[#744210]"
-                      : "bg-[#F7FAFC] text-[#4A5568]"
-                  }`}
-                >
-                  {subscriptionStatus === "premium" ? "Premium" : "Free Tier"}
-                </span>
-                <span className="text-base text-[#CBD5E0] transition-transform duration-200 group-hover:translate-x-0.5">
-                  ›
-                </span>
-              </div>
-            </div>
-          </Card>
-        </section>
+        <BillingSection
+          subscriptionStatus={subscriptionStatus}
+          stripeCustomerId={stripeCustomerId}
+        />
 
         {/* Notifications Section */}
         <NotificationSettings
