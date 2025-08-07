@@ -1,0 +1,71 @@
+# Gitleaks configuration for detecting secrets
+# Documentation: https://github.com/gitleaks/gitleaks
+
+title = "LattixIQ Secret Scanning Configuration"
+
+# Extend the base configuration
+[extend]
+useDefault = true
+
+# Additional rules for our specific use cases
+[[rules]]
+id = "supabase-service-role-key"
+description = "Supabase Service Role Key"
+regex = '''eyJ[A-Za-z0-9+/]{100,}={0,2}'''
+tags = ["key", "supabase", "service-role"]
+secretGroup = 0
+
+[[rules]]
+id = "supabase-anon-key-hardcoded"
+description = "Hardcoded Supabase Anon Key (should use env var)"
+regex = '''["']eyJ[A-Za-z0-9+/]{50,}={0,2}["']'''
+tags = ["key", "supabase", "anon"]
+secretGroup = 0
+
+[[rules]]
+id = "openai-api-key"
+description = "OpenAI API Key"
+regex = '''sk-[a-zA-Z0-9]{48}'''
+tags = ["key", "openai", "api"]
+secretGroup = 0
+
+[[rules]]
+id = "stripe-secret-key"
+description = "Stripe Secret Key"
+regex = '''sk_(test|live)_[0-9a-zA-Z]{24,}'''
+tags = ["key", "stripe", "payment"]
+secretGroup = 0
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''[aA][pP][iI][_-]?[kK][eE][yY]\s*[:=]\s*["'][a-zA-Z0-9_\-]{20,}["']'''
+tags = ["key", "api", "generic"]
+secretGroup = 0
+
+# Allowlist for false positives
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.test\.local\.example$''',
+  '''docs/.*\.md$''',  # Documentation can mention patterns
+  '''.*\.test\.(ts|tsx|js|jsx)$''',  # Test files may use mock keys
+  '''node_modules/''',
+  '''\.next/''',
+  '''dist/''',
+  '''build/''',
+]
+
+# Allow specific test patterns
+[[allowlist.regexes]]
+description = "Allow mock/test keys in test files"
+regex = '''(mock|test|fake|example|placeholder)'''
+
+[[allowlist.regexes]]
+description = "Allow environment variable references"
+regex = '''process\.env\.[A-Z_]+'''
+
+[[allowlist.regexes]]
+description = "Allow TypeScript type definitions"
+regex = '''(string|String)\s*\|\s*undefined'''

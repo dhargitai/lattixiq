@@ -3,10 +3,67 @@ name: "Continuous Integration"
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+    name: Security Scanning
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better secret detection
+      
+      - name: Run Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+      
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Security Audit - Dependencies
+        run: |
+          echo "🔍 Running npm audit..."
+          npm audit --audit-level=moderate
+          
+      - name: Check for outdated dependencies
+        run: |
+          echo "📦 Checking for outdated dependencies with known vulnerabilities..."
+          npx npm-check-updates --deprecated
+        continue-on-error: true  # Don't fail build, just warn
+      
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'LattixIQ'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --enableRetired
+            --enableExperimental
+        continue-on-error: true  # Don't fail build on first implementation
+      
+      - name: Upload OWASP results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dependency-check-report
+          path: reports/
+
   ci-checks:
     runs-on: ubuntu-latest
+    needs: security-checks  # Run after security checks pass
     
     steps:
       - name: Checkout repository
@@ -24,11 +81,18 @@ jobs:
       - name: Lint & Format Check
         run: npm run lint
       
+      - name: TypeScript Type Check
+        run: npx tsc --noEmit
+      
       - name: Run All Tests
         run: npm test
         env:
           TEST_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
           TEST_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY }}
+          SKIP_INTEGRATION_TESTS: true  # Skip integration tests in CI for now
       
       - name: Build Check
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY }}

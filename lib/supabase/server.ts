@@ -197,8 +197,11 @@ export async function createClient() {
     return new MockSupabaseClient() as unknown as SupabaseServerClient;
   }
 
-  // Return mock client in integration test mode
-  if (process.env.INTEGRATION_TEST === "true" || process.env.NODE_ENV === "test") {
+  // Skip mock client if explicitly using real Supabase for integration tests
+  if (process.env.USE_REAL_SUPABASE === "true") {
+    // Fall through to real client creation
+  } else if (process.env.INTEGRATION_TEST === "true" || process.env.NODE_ENV === "test") {
+    // Return mock client in integration test mode
     console.log("Integration test mode - using mock Supabase client");
     const { createMockSupabaseClient, mockUsers } = await import("@/tests/utils/auth-mocks");
     return createMockSupabaseClient(mockUsers.authenticated) as unknown as SupabaseServerClient;

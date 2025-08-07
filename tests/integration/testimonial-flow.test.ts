@@ -1,18 +1,19 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { createClient } from "@/lib/supabase/server";
+import { createTestClient, cleanupTestUser } from "@/tests/utils/supabase-test-client";
 import type { Database } from "@/lib/supabase/database.types";
 
 type TestimonialState = Database["public"]["Enums"]["testimonial_state"];
 
 // Skip if no database connection available
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === "true";
+const SKIP_INTEGRATION =
+  !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SKIP_INTEGRATION_TESTS === "true";
 
 describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
-  let supabase: any;
+  let supabase: ReturnType<typeof createTestClient>;
   let testUserId: string;
 
   beforeAll(async () => {
-    supabase = await createClient();
+    supabase = createTestClient();
 
     // Create a test user
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -25,12 +26,19 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
     }
 
     testUserId = authData.user.id;
+
+    // Ensure user record exists in public.users table
+    await supabase.from("users").insert({
+      id: testUserId,
+      email: authData.user.email,
+      testimonial_state: "not_asked",
+    });
   });
 
   afterAll(async () => {
-    if (testUserId) {
+    if (testUserId && supabase) {
       // Clean up test user
-      await supabase.from("users").delete().eq("id", testUserId);
+      await cleanupTestUser(supabase, testUserId);
     }
   });
 
@@ -55,7 +63,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("asked_first");
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("asked_first");
     });
 
     it("transitions from not_asked to dismissed_first", async () => {
@@ -67,7 +76,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("dismissed_first");
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("dismissed_first");
     });
 
     it("transitions from not_asked to submitted with URL", async () => {
@@ -84,8 +94,9 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("submitted");
-      expect(updateData.testimonial_url).toBe(testimonialUrl);
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("submitted");
+      expect(updateData?.testimonial_url).toBe(testimonialUrl);
     });
 
     it("transitions from asked_first to asked_second", async () => {
@@ -104,7 +115,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("asked_second");
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("asked_second");
     });
 
     it("transitions from asked_second to dismissed_second", async () => {
@@ -123,7 +135,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("dismissed_second");
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("dismissed_second");
     });
 
     it("can transition from dismissed_second to submitted", async () => {
@@ -145,8 +158,9 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .single();
 
       expect(updateError).toBeNull();
-      expect(updateData.testimonial_state).toBe("submitted");
-      expect(updateData.testimonial_url).toBe("https://senja.io/late-submission");
+      expect(updateData).not.toBeNull();
+      expect(updateData?.testimonial_state).toBe("submitted");
+      expect(updateData?.testimonial_url).toBe("https://senja.io/late-submission");
     });
   });
 
@@ -176,7 +190,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .eq("id", testUserId)
         .single();
 
-      expect(user.testimonial_state).toBe("not_asked");
+      expect(user).not.toBeNull();
+      expect(user?.testimonial_state).toBe("not_asked");
 
       // Clean up
       if (roadmap) {
@@ -249,8 +264,9 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .eq("id", testUserId)
         .single();
 
-      expect(user.testimonial_state).toBe("submitted");
-      expect(user.testimonial_url).toBe(testimonialUrl);
+      expect(user).not.toBeNull();
+      expect(user?.testimonial_state).toBe("submitted");
+      expect(user?.testimonial_url).toBe(testimonialUrl);
     });
 
     it("does not overwrite URL when updating other fields", async () => {
@@ -280,7 +296,8 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         .eq("id", testUserId)
         .single();
 
-      expect(user.testimonial_url).toBe(testimonialUrl);
+      expect(user).not.toBeNull();
+      expect(user?.testimonial_url).toBe(testimonialUrl);
     });
   });
 });

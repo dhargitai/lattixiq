@@ -1,1 +1,40 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run existing pre-commit tasks
 npx lint-staged
+
+# Security: Scan for secrets using gitleaks (if installed)
+if command -v gitleaks &> /dev/null; then
+  echo "🔍 Scanning for secrets..."
+  gitleaks detect --source . --verbose --no-banner
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Secret detected! Commit blocked."
+    echo "📝 Review the files and remove any hardcoded secrets."
+    echo "💡 Use environment variables instead."
+    exit 1
+  fi
+  echo "✅ No secrets detected"
+else
+  echo "⚠️  Gitleaks not installed. Install with: brew install gitleaks"
+  echo "   Or visit: https://github.com/gitleaks/gitleaks#installation"
+fi
+
+# Security: Check for common security patterns
+echo "🔍 Checking for security anti-patterns..."
+
+# Check for hardcoded JWT patterns (excluding documentation)
+if git diff --cached --name-only | grep -v "\.md$" | xargs grep -E "eyJ[A-Za-z0-9+/]{20,}={0,2}" 2>/dev/null; then
+  echo "❌ Potential hardcoded JWT/token detected!"
+  echo "   Use environment variables for all tokens and keys."
+  exit 1
+fi
+
+# Check for console.log with potential sensitive data
+if git diff --cached --name-only --diff-filter=ACM | grep -E "\.(ts|tsx|js|jsx)$" | xargs grep -E "console\.(log|error|warn|info).*\b(password|token|secret|key|credential)" 2>/dev/null; then
+  echo "⚠️  Warning: console.log with potentially sensitive variable names detected"
+  echo "   Make sure you're not logging sensitive information"
+fi
+
+echo "✅ Security checks passed"

@@ -20,7 +20,11 @@
     "typecheck": "tsc --noEmit",
     "fix:types": "eslint . --ext .ts,.tsx --fix",
     "prepare": "husky",
-    "embeddings:generate": "tsx scripts/generate-embeddings.ts"
+    "embeddings:generate": "tsx scripts/generate-embeddings.ts",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:audit:fix": "npm audit fix",
+    "security:check": "npm audit --audit-level=moderate && echo '✅ No security vulnerabilities found'",
+    "security:scan": "gitleaks detect --source . --verbose --no-banner || echo '⚠️ Install gitleaks: brew install gitleaks'"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"

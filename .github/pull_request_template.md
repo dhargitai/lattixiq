@@ -81,10 +81,50 @@ Closes #
 
 ### Security
 
-- [ ] I have not exposed any sensitive information
-- [ ] I have not committed any secrets or API keys
-- [ ] I have validated all user inputs
-- [ ] I have considered and addressed any security implications
+**⚠️ CRITICAL: All security items MUST be checked before merging**
+
+#### Secrets & Credentials
+
+- [ ] No hardcoded secrets, API keys, tokens, or passwords in the code
+- [ ] All sensitive configuration uses environment variables
+- [ ] No secrets in comments, console.logs, or error messages
+- [ ] `.env` files are NOT included in this commit
+- [ ] Service role keys are ONLY used server-side (never in client code)
+
+#### Authentication & Authorization
+
+- [ ] Authorization checks are in place for all protected endpoints
+- [ ] Using appropriate auth keys (anon for client, service role for server only)
+- [ ] Row-Level Security (RLS) policies maintained/updated for DB changes
+- [ ] JWT tokens have appropriate expiration times
+
+#### Input Validation & Sanitization
+
+- [ ] All user inputs are validated and sanitized
+- [ ] API endpoints validate request body/params using Zod schemas
+- [ ] File uploads are restricted by type and size
+- [ ] SQL queries use parameterized statements (no string concatenation)
+
+#### Error Handling & Information Disclosure
+
+- [ ] Error messages do not expose sensitive system information
+- [ ] Stack traces are not sent to the client
+- [ ] Database queries and internal logic are not exposed in errors
+- [ ] Generic error messages returned to users
+
+#### Data Protection
+
+- [ ] No sensitive data stored in localStorage or sessionStorage
+- [ ] Sensitive cookies are httpOnly, secure, and have sameSite set
+- [ ] PII is properly handled according to privacy requirements
+- [ ] Passwords are hashed (handled by Supabase Auth)
+
+#### Security Testing
+
+- [ ] Security-focused tests added for auth flows
+- [ ] Tested for injection vulnerabilities
+- [ ] Tested for XSS vulnerabilities
+- [ ] Rate limiting tested on public endpoints
 
 ### Performance
 
