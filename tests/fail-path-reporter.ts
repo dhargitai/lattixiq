@@ -1,8 +1,33 @@
 // fail-files-reporter.ts
-// @ts-nocheck
+
+interface TestResult {
+  state: "fail" | "failed" | "pass" | "passed";
+  errors?: Error[];
+}
+
+interface Task {
+  type: "test" | "suite" | "describe";
+  name?: string;
+  title?: string;
+  result?: TestResult;
+  tasks?: Task[];
+}
+
+interface TestFile {
+  name?: string;
+  filepath?: string;
+  id?: string;
+  result?: TestResult;
+  tasks?: Task[];
+}
+
+interface FailedTest {
+  description: string;
+}
+
 export default class FailFilesReporter {
-  onFinished(files = []) {
-    const failedFiles = new Map();
+  onFinished(files: TestFile[] = []): void {
+    const failedFiles = new Map<string, FailedTest[]>();
 
     for (const file of files) {
       const hasFailed =
@@ -11,7 +36,7 @@ export default class FailFilesReporter {
         (file.result?.errors && file.result.errors.length > 0);
 
       if (hasFailed) {
-        const filePath = file.name || file.filepath || file.id;
+        const filePath = file.name || file.filepath || file.id || "unknown";
         const failedTests = this.extractFailedTests(file);
 
         if (failedTests.length > 0) {
@@ -29,8 +54,8 @@ export default class FailFilesReporter {
     }
   }
 
-  extractFailedTests(file) {
-    const failedTests = [];
+  extractFailedTests(file: TestFile): FailedTest[] {
+    const failedTests: FailedTest[] = [];
 
     const tasks = file.tasks || [];
 
@@ -51,8 +76,8 @@ export default class FailFilesReporter {
     return failedTests;
   }
 
-  extractFailedTestsFromSuite(suite) {
-    const failedTests = [];
+  extractFailedTestsFromSuite(suite: Task): FailedTest[] {
+    const failedTests: FailedTest[] = [];
     const suiteTasks = suite.tasks || [];
 
     for (const task of suiteTasks) {

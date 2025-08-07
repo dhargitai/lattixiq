@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 test.describe("Step Completion Flow", () => {
   // Helper to create a test roadmap
-  async function createTestRoadmap(page: any) {
+  async function createTestRoadmap(page: Page) {
     await page.goto("/new-roadmap");
 
     // Fill in the goal

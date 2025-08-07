@@ -8,7 +8,11 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 describe("POST /api/auth/logout", () => {
-  let mockSupabase: any;
+  let mockSupabase: {
+    auth: {
+      signOut: ReturnType<typeof vi.fn>;
+    };
+  };
 
   beforeEach(() => {
     mockSupabase = {
@@ -16,7 +20,7 @@ describe("POST /api/auth/logout", () => {
         signOut: vi.fn(),
       },
     };
-    (createClient as any).mockResolvedValue(mockSupabase);
+    (createClient as ReturnType<typeof vi.fn>).mockResolvedValue(mockSupabase);
   });
 
   it("should successfully logout user", async () => {

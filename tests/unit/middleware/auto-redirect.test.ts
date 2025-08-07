@@ -21,13 +21,24 @@ vi.mock("next/server", async () => {
   };
 });
 
-const mockNextResponse = NextResponse as any;
-const mockCreateServerClient = createServerClient as any;
+const mockNextResponse = NextResponse as unknown as {
+  next: ReturnType<typeof vi.fn>;
+  redirect: ReturnType<typeof vi.fn>;
+};
+const mockCreateServerClient = createServerClient as ReturnType<typeof vi.fn>;
 
 describe("Auto-redirect middleware", () => {
   let mockRequest: Partial<NextRequest>;
-  let mockSupabase: any;
-  let mockCookies: any;
+  let mockSupabase: {
+    auth: {
+      getUser: ReturnType<typeof vi.fn>;
+    };
+    from: ReturnType<typeof vi.fn>;
+  };
+  let mockCookies: {
+    getAll: ReturnType<typeof vi.fn>;
+    set: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -44,8 +55,8 @@ describe("Auto-redirect middleware", () => {
     };
 
     mockRequest = {
-      nextUrl: mockNextUrl as any,
-      cookies: mockCookies,
+      nextUrl: mockNextUrl as unknown as NextRequest["nextUrl"],
+      cookies: mockCookies as unknown as NextRequest["cookies"],
     };
 
     mockSupabase = {
@@ -86,7 +97,9 @@ describe("Auto-redirect middleware", () => {
       });
 
       const redirectUrl = { pathname: "/new-roadmap" };
-      (mockRequest.nextUrl as any).clone = vi.fn(() => redirectUrl);
+      (mockRequest.nextUrl as unknown as { clone: ReturnType<typeof vi.fn> }).clone = vi.fn(
+        () => redirectUrl
+      );
 
       // Act
       await middleware(mockRequest as NextRequest);
@@ -201,7 +214,9 @@ describe("Auto-redirect middleware", () => {
       mockRequest.nextUrl!.pathname = "/(app)/toolkit";
 
       const redirectUrl = { pathname: "/login" };
-      (mockRequest.nextUrl as any).clone = vi.fn(() => redirectUrl);
+      (mockRequest.nextUrl as unknown as { clone: ReturnType<typeof vi.fn> }).clone = vi.fn(
+        () => redirectUrl
+      );
 
       // Act
       await middleware(mockRequest as NextRequest);
@@ -217,7 +232,9 @@ describe("Auto-redirect middleware", () => {
       mockRequest.nextUrl!.pathname = "/(auth)/login";
 
       const redirectUrl = { pathname: "/" };
-      (mockRequest.nextUrl as any).clone = vi.fn(() => redirectUrl);
+      (mockRequest.nextUrl as unknown as { clone: ReturnType<typeof vi.fn> }).clone = vi.fn(
+        () => redirectUrl
+      );
 
       // Act
       await middleware(mockRequest as NextRequest);
@@ -240,7 +257,9 @@ describe("Auto-redirect middleware", () => {
 
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       const redirectUrl = { pathname: "/new-roadmap" };
-      (mockRequest.nextUrl as any).clone = vi.fn(() => redirectUrl);
+      (mockRequest.nextUrl as unknown as { clone: ReturnType<typeof vi.fn> }).clone = vi.fn(
+        () => redirectUrl
+      );
 
       // Act
       await middleware(mockRequest as NextRequest);

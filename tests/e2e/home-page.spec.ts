@@ -56,7 +56,7 @@ test.describe.skip("Authentication Flow (Placeholder)", () => {
     // Check redirect to dashboard
   });
 
-  test("should complete full roadmap creation flow", async ({ page }) => {
+  test("should complete full roadmap creation flow", async ({ page: _page }) => {
     // TODO: Implement once core features are complete
     // This test should cover the complete user journey:
     // 1. User registration

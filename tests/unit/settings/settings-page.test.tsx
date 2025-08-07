@@ -89,7 +89,7 @@ describe("Settings Page", () => {
 
   it("displays account section with email", async () => {
     const Page = await SettingsPage();
-    const { container } = render(await Page());
+    render(await Page());
 
     // Check for Account section header
     const accountHeader = screen.getByText("ACCOUNT");
@@ -148,7 +148,7 @@ describe("Settings Page", () => {
 
   it("displays Google indicator for Google users", async () => {
     const { createClient } = await import("@/lib/supabase/server");
-    vi.mocked(createClient).mockResolvedValueOnce({
+    vi.mocked(createClient).mockReturnValueOnce({
       auth: {
         getUser: vi.fn(() => ({
           data: {
@@ -174,7 +174,7 @@ describe("Settings Page", () => {
           })),
         })),
       })),
-    } as any);
+    } as unknown as ReturnType<typeof createClient>);
 
     const Page = await SettingsPage();
     render(await Page());

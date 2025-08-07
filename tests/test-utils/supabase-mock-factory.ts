@@ -5,11 +5,11 @@ import { vi } from "vitest";
  */
 interface MockDataStore {
   [table: string]: {
-    data: any[];
+    data: unknown[];
     operations: Array<{
       type: "select" | "update" | "insert" | "delete";
-      filters: Record<string, any>;
-      data?: any;
+      filters: Record<string, unknown>;
+      data?: unknown;
     }>;
   };
 }
@@ -23,9 +23,9 @@ export function createSupabaseMock() {
   // Track operation chains
   let currentTable: string | null = null;
   let currentOperation: "select" | "update" | "insert" | "delete" | null = null;
-  let currentFilters: Record<string, any> = {};
-  let currentData: any = null;
-  let currentOptions: any = {};
+  let currentFilters: Record<string, unknown> = {};
+  let currentData: unknown = null;
+  let currentOptions: Record<string, unknown> = {};
 
   // Helper to reset current operation state
   const resetOperation = () => {
@@ -45,13 +45,13 @@ export function createSupabaseMock() {
         return builder;
       }),
 
-      update: vi.fn((data: any) => {
+      update: vi.fn((data: unknown) => {
         currentOperation = "update";
         currentData = data;
         return builder;
       }),
 
-      insert: vi.fn((data: any) => {
+      insert: vi.fn((data: unknown) => {
         currentOperation = "insert";
         currentData = data;
         return builder;
@@ -62,32 +62,32 @@ export function createSupabaseMock() {
         return builder;
       }),
 
-      eq: vi.fn((column: string, value: any) => {
+      eq: vi.fn((column: string, value: unknown) => {
         currentFilters[column] = value;
         return builder;
       }),
 
-      neq: vi.fn((column: string, value: any) => {
+      neq: vi.fn((column: string, value: unknown) => {
         currentFilters[`${column}_neq`] = value;
         return builder;
       }),
 
-      gt: vi.fn((column: string, value: any) => {
+      gt: vi.fn((column: string, value: unknown) => {
         currentFilters[`${column}_gt`] = value;
         return builder;
       }),
 
-      gte: vi.fn((column: string, value: any) => {
+      gte: vi.fn((column: string, value: unknown) => {
         currentFilters[`${column}_gte`] = value;
         return builder;
       }),
 
-      lt: vi.fn((column: string, value: any) => {
+      lt: vi.fn((column: string, value: unknown) => {
         currentFilters[`${column}_lt`] = value;
         return builder;
       }),
 
-      lte: vi.fn((column: string, value: any) => {
+      lte: vi.fn((column: string, value: unknown) => {
         currentFilters[`${column}_lte`] = value;
         return builder;
       }),
@@ -108,7 +108,7 @@ export function createSupabaseMock() {
       }),
 
       // Terminal methods that return promises
-      then: vi.fn((resolve: Function, reject?: Function) => {
+      then: vi.fn((resolve: (value: unknown) => void, reject?: (error: unknown) => void) => {
         const result = executeOperation();
         resetOperation();
 
@@ -183,7 +183,7 @@ export function createSupabaseMock() {
       return createQueryBuilder();
     }),
 
-    rpc: vi.fn((functionName: string, params?: any) => {
+    rpc: vi.fn((functionName: string, params?: Record<string, unknown>) => {
       // Handle the complete_step_and_unlock_next RPC function
       if (functionName === "complete_step_and_unlock_next") {
         return Promise.resolve({
@@ -201,13 +201,13 @@ export function createSupabaseMock() {
 
     // Helper methods for testing
     __getOperations: (table: string) => dataStore[table]?.operations || [],
-    __setMockData: (table: string, data: any[]) => {
+    __setMockData: (table: string, data: unknown[]) => {
       if (!dataStore[table]) {
         dataStore[table] = { data: [], operations: [] };
       }
       dataStore[table].data = data;
     },
-    __setMockError: (table: string, operation: string, error: any) => {
+    __setMockError: (_table: string, _operation: string, _error: unknown) => {
       // This can be extended to return specific errors for specific operations
     },
     __reset: () => {
@@ -222,7 +222,7 @@ export function createSupabaseMock() {
 /**
  * Create a mock that returns specific data for queries
  */
-export function createSupabaseMockWithData(mockData: Record<string, any>) {
+export function createSupabaseMockWithData(mockData: Record<string, unknown>) {
   const mock = createSupabaseMock();
 
   // Override the from method to return specific data
@@ -232,8 +232,8 @@ export function createSupabaseMockWithData(mockData: Record<string, any>) {
 
     // Override the then method to return mock data
     const originalThen = builder.then;
-    builder.then = vi.fn((resolve: Function, reject?: Function) => {
-      const mockResponse = mockData[table];
+    builder.then = vi.fn((resolve: (value: unknown) => void, reject?: (error: unknown) => void) => {
+      const mockResponse = mockData[table] as { data?: { steps?: unknown[] } };
       if (mockResponse) {
         // Ensure roadmaps always have steps property for Roadmap type compatibility
         if (table === "roadmaps" && mockResponse.data && !mockResponse.data.steps) {
@@ -241,7 +241,7 @@ export function createSupabaseMockWithData(mockData: Record<string, any>) {
         }
         return resolve(mockResponse);
       }
-      return originalThen(resolve, reject);
+      return originalThen(resolve as (value: unknown) => void, reject);
     });
 
     return builder;
@@ -277,7 +277,7 @@ export function createSupabaseMockScenario(scenario: "success" | "error" | "race
           order: vi.fn(() => builder),
           limit: vi.fn(() => builder),
           single: vi.fn(() => builder),
-          then: vi.fn((resolve: Function) => {
+          then: vi.fn((resolve: (value: unknown) => void) => {
             resolve({ data: null, error: new Error("Database error") });
           }),
           [Symbol.toStringTag]: "Promise" as const,
@@ -293,12 +293,14 @@ export function createSupabaseMockScenario(scenario: "success" | "error" | "race
       mock.from = vi.fn((table: string) => {
         const builder = originalFrom(table);
         const originalThen = builder.then;
-        builder.then = vi.fn((resolve: Function, reject?: Function) => {
-          callCount++;
-          // First call (mark complete) is fast, second call (unlock) is slow
-          const delay = callCount === 1 ? 10 : 100;
-          setTimeout(() => originalThen(resolve, reject), delay);
-        });
+        builder.then = vi.fn(
+          (resolve: (value: unknown) => void, reject?: (error: unknown) => void) => {
+            callCount++;
+            // First call (mark complete) is fast, second call (unlock) is slow
+            const delay = callCount === 1 ? 10 : 100;
+            setTimeout(() => originalThen(resolve as (value: unknown) => void, reject), delay);
+          }
+        );
         return builder;
       });
       break;

@@ -37,7 +37,7 @@ async function testSemanticSearch() {
     }
 
     console.log("Results:");
-    data?.forEach((item: any, index: number) => {
+    data?.forEach((item: { title: string; type: string; similarity: number }, index: number) => {
       console.log(
         `${index + 1}. ${item.title} (${item.type}) - Similarity: ${item.similarity.toFixed(3)}`
       );

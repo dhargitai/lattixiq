@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LogoutButton from "@/components/settings/LogoutButton";
-import { vi, describe, it, beforeEach, expect } from "vitest";
+import { vi, describe, it, beforeEach, expect, type MockedFunction } from "vitest";
 
 // Simple mock setup
-global.fetch = vi.fn();
+global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 
 // Mock window APIs
 Object.defineProperty(window, "localStorage", {
@@ -49,11 +49,11 @@ vi.mock("sonner", () => ({
 describe("LogoutButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (global.fetch as any).mockClear();
-    (window.localStorage.clear as any).mockClear();
-    (window.sessionStorage.clear as any).mockClear();
-    (window.caches.keys as any).mockClear();
-    (window.caches.delete as any).mockClear();
+    (global.fetch as MockedFunction<typeof fetch>).mockClear();
+    (window.localStorage.clear as MockedFunction<typeof window.localStorage.clear>).mockClear();
+    (window.sessionStorage.clear as MockedFunction<typeof window.sessionStorage.clear>).mockClear();
+    (window.caches.keys as MockedFunction<typeof window.caches.keys>).mockClear();
+    (window.caches.delete as MockedFunction<typeof window.caches.delete>).mockClear();
   });
 
   it("should render logout button with correct styling", () => {

@@ -9,7 +9,12 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 describe("PATCH /api/users/testimonial", () => {
-  let mockSupabase: any;
+  let mockSupabase: {
+    auth: {
+      getUser: ReturnType<typeof vi.fn>;
+    };
+    from: ReturnType<typeof vi.fn>;
+  };
   const mockedCreateClient = vi.mocked(createClient);
 
   beforeEach(() => {
@@ -22,7 +27,7 @@ describe("PATCH /api/users/testimonial", () => {
       from: vi.fn(),
     };
 
-    mockedCreateClient.mockResolvedValue(mockSupabase as any);
+    mockedCreateClient.mockResolvedValue(mockSupabase as never);
   });
 
   it("returns 401 if user is not authenticated", async () => {

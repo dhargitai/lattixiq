@@ -89,7 +89,7 @@ function parseBuildErrors(output: string): BuildError[] {
     // Check if this is a file path
     const fileMatch = line.match(filePattern);
     if (fileMatch) {
-      currentFile = fileMatch[1];
+      [, currentFile] = fileMatch;
       continue;
     }
 
@@ -189,7 +189,7 @@ function fixUnusedVars(lines: string[], error: BuildError): string[] {
     const match = varMatch || varMatch2;
 
     if (match) {
-      const varName = match[1];
+      const [, varName] = match;
 
       // Skip if already prefixed with underscore
       if (varName.startsWith("_")) {
@@ -248,7 +248,7 @@ function fixDisplayName(lines: string[], error: BuildError): string[] {
     // Extract component name
     const componentMatch = lines[componentLine].match(/const\s+(\w+)\s*=/);
     if (componentMatch) {
-      const componentName = componentMatch[1];
+      const [, componentName] = componentMatch;
 
       // Add displayName after the component definition
       let insertLine = lineIndex + 1;

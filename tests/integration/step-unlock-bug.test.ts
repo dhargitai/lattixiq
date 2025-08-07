@@ -7,7 +7,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 describe("Step Unlocking Bug - Integration Test", () => {
-  let mockSupabase: any;
+  let mockSupabase: ReturnType<typeof createClient>;
 
   beforeEach(() => {
     mockSupabase = {
@@ -18,34 +18,13 @@ describe("Step Unlocking Bug - Integration Test", () => {
         }),
       },
       from: vi.fn(),
-    };
+      rpc: vi.fn(),
+    } as unknown as ReturnType<typeof createClient>;
 
     vi.mocked(createClient).mockReturnValue(mockSupabase);
   });
 
   it("should unlock next step when marking current step as completed", async () => {
-    // Mock roadmap data
-    const mockSteps = [
-      {
-        id: "step-1",
-        roadmap_id: "roadmap-1",
-        order: 0,
-        status: "unlocked",
-        plan_situation: "Test situation",
-        plan_trigger: "Test trigger",
-        plan_action: "Test action",
-      },
-      {
-        id: "step-2",
-        roadmap_id: "roadmap-1",
-        order: 1,
-        status: "locked",
-        plan_situation: null,
-        plan_trigger: null,
-        plan_action: null,
-      },
-    ];
-
     // Mock RPC function for atomic step completion
     const mockRpc = vi.fn().mockResolvedValue({
       data: {
@@ -94,8 +73,12 @@ describe("Step Unlocking Bug - Integration Test", () => {
       const supabase = createClient();
 
       // This should fail atomically - the bug is now properly handled
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase.rpc as any)("complete_step_and_unlock_next", {
+      const { error } = await (
+        supabase.rpc as (
+          name: string,
+          params: Record<string, unknown>
+        ) => Promise<{ data: unknown; error: { message: string } | null }>
+      )("complete_step_and_unlock_next", {
         p_step_id: "step-1",
         p_roadmap_id: "roadmap-1",
       });

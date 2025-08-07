@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type MockedFunction } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import BillingSection from "@/components/settings/BillingSection";
 import { useRouter } from "next/navigation";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -13,9 +14,14 @@ describe("BillingSection", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as any).mockReturnValue({
+    (useRouter as MockedFunction<typeof useRouter>).mockReturnValue({
       push: mockPush,
-    });
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    } as AppRouterInstance);
   });
 
   describe("Plan Display", () => {
@@ -159,9 +165,14 @@ describe("BillingSection", () => {
   describe("Error Handling", () => {
     it("should handle navigation errors gracefully", async () => {
       const mockPushWithError = vi.fn().mockRejectedValue(new Error("Navigation failed"));
-      (useRouter as any).mockReturnValue({
+      (useRouter as MockedFunction<typeof useRouter>).mockReturnValue({
         push: mockPushWithError,
-      });
+        back: vi.fn(),
+        forward: vi.fn(),
+        refresh: vi.fn(),
+        replace: vi.fn(),
+        prefetch: vi.fn(),
+      } as AppRouterInstance);
 
       render(<BillingSection subscriptionStatus="free" />);
 

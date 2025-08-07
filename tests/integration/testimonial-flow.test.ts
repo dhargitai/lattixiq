@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { createTestClient, cleanupTestUser } from "@/tests/utils/supabase-test-client";
-import type { Database } from "@/lib/supabase/database.types";
-
-type TestimonialState = Database["public"]["Enums"]["testimonial_state"];
 
 // Skip if no database connection available
 const SKIP_INTEGRATION =

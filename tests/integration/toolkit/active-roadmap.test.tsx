@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ActiveRoadmapCard } from "@/components/features/toolkit/ActiveRoadmapCard";
 import { ActiveRoadmapCardSkeleton } from "@/components/features/toolkit/ActiveRoadmapCardSkeleton";
@@ -145,7 +145,7 @@ describe("ActiveRoadmapCard Integration Tests", () => {
 
       // Find the arrow button (icon button in top right)
       const buttons = screen.getAllByRole("button");
-      const arrowButton = buttons[0]; // First button is the arrow icon button
+      const [arrowButton] = buttons; // First button is the arrow icon button
       await userEvent.click(arrowButton);
 
       expect(mockPush).toHaveBeenCalledWith("/roadmap");

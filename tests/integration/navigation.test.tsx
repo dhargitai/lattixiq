@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import AppLayout from "@/app/(app)/layout";
 
 // Mock next/navigation
@@ -116,7 +115,6 @@ describe("Navigation Integration", () => {
 
   it("navigation links are clickable", async () => {
     mockPathname.mockReturnValue("/toolkit");
-    const user = userEvent.setup();
 
     render(
       <AppLayout>

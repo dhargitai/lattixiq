@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create a simple SVG icon
 const createSvgIcon = (
@@ -11,25 +15,6 @@ const createSvgIcon = (
   <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${size * 0.3}px" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">LQ</text>
 </svg>`;
 
-// Convert SVG to PNG using canvas (placeholder - in production use proper tools)
-const createPngPlaceholder = (size) =>
-  // For now, we'll create a simple HTML file that can be opened to save as PNG
-  `<!DOCTYPE html>
-<html>
-<head>
-  <title>Icon ${size}x${size}</title>
-  <style>
-    body { margin: 0; padding: 20px; background: #f0f0f0; }
-    .icon { display: inline-block; margin: 10px; }
-  </style>
-</head>
-<body>
-  <div class="icon">
-    ${createSvgIcon(size)}
-  </div>
-  <p>Right-click and save as icon-${size}x${size}.png</p>
-</body>
-</html>`;
 // Icon sizes needed for PWA
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 

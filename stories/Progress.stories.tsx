@@ -1,65 +1,67 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { Progress } from '@/components/ui/progress'
-import { useState, useEffect } from 'react'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Progress } from "@/components/ui/progress";
+import { useState, useEffect } from "react";
 
 const meta = {
-  title: 'UI/Progress',
+  title: "UI/Progress",
   component: Progress,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     value: {
-      control: { type: 'range', min: 0, max: 100 },
+      control: { type: "range", min: 0, max: 100 },
     },
   },
-} satisfies Meta<typeof Progress>
+} satisfies Meta<typeof Progress>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
     value: 60,
   },
-}
+};
 
 export const Empty: Story = {
   args: {
     value: 0,
   },
-}
+};
 
 export const Full: Story = {
   args: {
     value: 100,
   },
-}
+};
+
+const AnimatedWrapper = () => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) return 0;
+        return prev + 2;
+      });
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="w-[300px] space-y-2">
+      <Progress value={progress} />
+      <p className="text-sm text-muted-foreground text-center">{progress}%</p>
+    </div>
+  );
+};
 
 export const Animated: Story = {
-  render: () => {
-    const [progress, setProgress] = useState(0)
-    
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) return 0
-          return prev + 2
-        })
-      }, 100)
-      
-      return () => clearInterval(timer)
-    }, [])
-    
-    return (
-      <div className="w-[300px] space-y-2">
-        <Progress value={progress} />
-        <p className="text-sm text-muted-foreground text-center">{progress}%</p>
-      </div>
-    )
-  },
-}
+  render: () => <AnimatedWrapper />,
+};
 
 export const Sizes: Story = {
   render: () => (
@@ -82,7 +84,7 @@ export const Sizes: Story = {
       </div>
     </div>
   ),
-}
+};
 
 export const RoadmapProgress: Story = {
   render: () => (
@@ -110,17 +112,17 @@ export const RoadmapProgress: Story = {
       </div>
     </div>
   ),
-}
+};
 
 export const WithLabel: Story = {
   render: () => {
     const milestones = [
-      { label: 'Learn', value: 100 },
-      { label: 'Plan', value: 100 },
-      { label: 'Apply', value: 60 },
-      { label: 'Reflect', value: 0 },
-    ]
-    
+      { label: "Learn", value: 100 },
+      { label: "Plan", value: 100 },
+      { label: "Apply", value: 60 },
+      { label: "Reflect", value: 0 },
+    ];
+
     return (
       <div className="w-[400px] space-y-1">
         <div className="flex justify-between text-xs text-muted-foreground mb-2">
@@ -132,18 +134,18 @@ export const WithLabel: Story = {
         </div>
         <Progress value={65} />
         <div className="flex justify-between">
-          {milestones.map((milestone, index) => (
+          {milestones.map((milestone) => (
             <div
               key={milestone.label}
               className={`flex-1 text-center pt-2 ${
-                milestone.value > 0 ? 'text-primary' : 'text-muted-foreground'
+                milestone.value > 0 ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              {milestone.value > 0 ? '✓' : '○'}
+              {milestone.value > 0 ? "✓" : "○"}
             </div>
           ))}
         </div>
       </div>
-    )
+    );
   },
-}
+};

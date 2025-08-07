@@ -57,7 +57,7 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
         error: user ? null : new Error("Not authenticated"),
       }),
     },
-    rpc: async (functionName: string, params?: any) => {
+    rpc: async (functionName: string, _params?: Record<string, unknown>) => {
       // Mock for match_knowledge_content RPC
       if (functionName === "match_knowledge_content") {
         return {
@@ -125,12 +125,38 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
       return { data: null, error: null };
     },
     from: (table: string) => {
-      const queryBuilder: any = {
-        select: (query?: string) => queryBuilder,
-        eq: (column: string, value: any) => queryBuilder,
-        neq: (column: string, value: any) => queryBuilder,
-        in: (column: string, values: any[]) => queryBuilder,
-        order: (column: string, options?: any) => queryBuilder,
+      const queryBuilder: {
+        select: (_query?: string) => typeof queryBuilder;
+        eq: (_column: string, _value: unknown) => typeof queryBuilder;
+        neq: (_column: string, _value: unknown) => typeof queryBuilder;
+        in: (_column: string, _values: unknown[]) => typeof queryBuilder;
+        order: (_column: string, _options?: unknown) => typeof queryBuilder;
+        single: () => Promise<{ data: unknown; error: unknown }>;
+        then: (resolve: (value: { data: unknown; error: unknown }) => void) => void;
+        insert: (data: unknown) => {
+          select: () => {
+            single: () => Promise<{ data: { id: string }; error: unknown }>;
+          };
+        };
+        update: (data: unknown) => {
+          eq: (
+            _column: string,
+            _value: unknown
+          ) => {
+            select: () => {
+              single: () => Promise<{ data: Record<string, unknown>; error: unknown }>;
+            };
+          };
+        };
+        delete: () => {
+          eq: (_column: string, _value: unknown) => { data: null; error: null };
+        };
+      } = {
+        select: (_query?: string) => queryBuilder,
+        eq: (_column: string, _value: unknown) => queryBuilder,
+        neq: (_column: string, _value: unknown) => queryBuilder,
+        in: (_column: string, _values: unknown[]) => queryBuilder,
+        order: (_column: string, _options?: unknown) => queryBuilder,
         single: async () => {
           // Mock for checking existing active roadmap
           if (table === "roadmaps") {
@@ -157,7 +183,7 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
           }
           return { data: null, error: null };
         },
-        then: async (resolve: any) => {
+        then: async (resolve: (value: { data: unknown; error: unknown }) => void) => {
           // Mock for getUserLearningHistory and other multi-row queries
           if (table === "application_logs") {
             resolve({ data: [], error: null });
@@ -256,7 +282,7 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
             resolve({ data: null, error: null });
           }
         },
-        insert: (data: any) => ({
+        insert: (_data: unknown) => ({
           select: () => ({
             single: async () => {
               if (table === "roadmaps") {
@@ -269,15 +295,15 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
             },
           }),
         }),
-        update: (data: any) => ({
-          eq: (column: string, value: any) => ({
+        update: (_data: unknown) => ({
+          eq: (_column: string, _value: unknown) => ({
             select: () => ({
               single: async () => ({ data: {}, error: null }),
             }),
           }),
         }),
         delete: () => ({
-          eq: (column: string, value: any) => ({ data: null, error: null }),
+          eq: (_column: string, _value: unknown) => ({ data: null, error: null }),
         }),
       };
       return queryBuilder;

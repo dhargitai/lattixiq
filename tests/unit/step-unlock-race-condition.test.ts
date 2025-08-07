@@ -2,8 +2,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Test to reproduce the step unlocking race condition bug
 describe("Step Unlocking Race Condition Bug", () => {
-  let mockSupabase: any;
-  let mockRouter: any;
+  let mockSupabase: {
+    auth: {
+      getUser: ReturnType<typeof vi.fn>;
+    };
+    from: ReturnType<typeof vi.fn>;
+    rpc: ReturnType<typeof vi.fn>;
+  };
+  let mockRouter: {
+    push: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     mockSupabase = {
@@ -14,6 +22,7 @@ describe("Step Unlocking Race Condition Bug", () => {
         }),
       },
       from: vi.fn(),
+      rpc: vi.fn(),
     };
 
     mockRouter = {
@@ -34,7 +43,7 @@ describe("Step Unlocking Race Condition Bug", () => {
 
     // Mock RPC function that handles atomic operations
     const mockRpc = vi.fn().mockImplementation(
-      (functionName: string, params: any) =>
+      (functionName: string, params: Record<string, unknown>) =>
         new Promise((resolve) => {
           // Simulate database latency
           setTimeout(() => {

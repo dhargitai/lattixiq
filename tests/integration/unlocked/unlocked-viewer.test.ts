@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { redirect, notFound } from "next/navigation";
 import React from "react";
 import UnlockedViewer from "@/app/(app)/unlocked/[slug]/UnlockedViewer";
