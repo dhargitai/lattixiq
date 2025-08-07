@@ -48,7 +48,10 @@ export async function logReminderCleanup(stepId: string, userId: string) {
 
     // Filter to only steps that actually have plans
     const plansWithContent =
-      activePlans?.filter((plan) => plan.plan_situation || plan.plan_action) || [];
+      activePlans?.filter(
+        (plan: { plan_situation: string | null; plan_action: string | null }) =>
+          plan.plan_situation || plan.plan_action
+      ) || [];
 
     if (plansWithContent.length === 0) {
       // Log that user has no active plans

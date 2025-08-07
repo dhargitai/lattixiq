@@ -9,6 +9,17 @@ export interface UnlockedKnowledge {
   completed_at: string;
 }
 
+interface StepWithContent {
+  id: string;
+  plan_created_at: string | null;
+  knowledge_content: {
+    id: string;
+    title: string;
+    type: Database["public"]["Enums"]["knowledge_content_type"];
+    category: string | null;
+  };
+}
+
 export async function getUnlockedKnowledge(): Promise<UnlockedKnowledge[]> {
   const supabase = createClient();
 
@@ -27,7 +38,7 @@ export async function getUnlockedKnowledge(): Promise<UnlockedKnowledge[]> {
     return [];
   }
 
-  const roadmapIds = roadmaps.map((r) => r.id);
+  const roadmapIds = roadmaps.map((r: { id: string }) => r.id);
 
   // Then get completed steps for those roadmaps
   const { data, error } = await supabase
@@ -60,7 +71,7 @@ export async function getUnlockedKnowledge(): Promise<UnlockedKnowledge[]> {
   // Transform and deduplicate the data
   const knowledgeMap = new Map<string, UnlockedKnowledge>();
 
-  data.forEach((step) => {
+  data.forEach((step: StepWithContent) => {
     const content = step.knowledge_content;
     if (content && !knowledgeMap.has(content.id)) {
       knowledgeMap.set(content.id, {
