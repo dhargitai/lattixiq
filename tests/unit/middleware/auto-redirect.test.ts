@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { middleware } from "@/middleware";
@@ -43,6 +43,10 @@ describe("Auto-redirect middleware", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    // Set environment variables for middleware to work
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+
     // Setup default mocks
     mockCookies = {
       getAll: vi.fn(() => []),
@@ -83,6 +87,12 @@ describe("Auto-redirect middleware", () => {
     mockNextResponse.next.mockReturnValue(mockResponse);
     mockNextResponse.redirect.mockReturnValue(mockResponse);
     mockCreateServerClient.mockReturnValue(mockSupabase);
+  });
+
+  afterEach(() => {
+    // Clean up environment variables
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   });
 
   describe("New user redirect behavior", () => {
