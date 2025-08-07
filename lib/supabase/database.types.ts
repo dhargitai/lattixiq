@@ -302,7 +302,9 @@ export type Database = {
           reminder_time: string | null;
           reminder_timezone: string | null;
           stripe_customer_id: string | null;
-          subscription_status: Database["public"]["Enums"]["subscription_status"] | null;
+          stripe_subscription_id: string | null;
+          subscription_current_period_end: string | null;
+          subscription_status: string | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url: string | null;
         };
@@ -315,7 +317,9 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           stripe_customer_id?: string | null;
-          subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
+          stripe_subscription_id?: string | null;
+          subscription_current_period_end?: string | null;
+          subscription_status?: string | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
         };
@@ -328,7 +332,9 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           stripe_customer_id?: string | null;
-          subscription_status?: Database["public"]["Enums"]["subscription_status"] | null;
+          stripe_subscription_id?: string | null;
+          subscription_current_period_end?: string | null;
+          subscription_status?: string | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
         };

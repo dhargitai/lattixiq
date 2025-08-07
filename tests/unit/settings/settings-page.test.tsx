@@ -118,13 +118,15 @@ describe("Settings Page", () => {
     vi.mocked(getUserInfo).mockResolvedValueOnce({
       id: "test-user-id",
       email: "test@example.com",
-      subscription_status: "premium",
+      subscription_status: "active",
       reminder_enabled: true,
       reminder_time: "09:00",
       created_at: "2024-01-01",
       reminder_last_sent: null,
       reminder_timezone: null,
       stripe_customer_id: "cus_123",
+      stripe_subscription_id: "sub_123",
+      subscription_current_period_end: "2024-02-01",
       testimonial_state: null,
       testimonial_url: null,
     });
