@@ -10,7 +10,7 @@ const skipRealDatabaseTests =
   process.env.INTEGRATION_TEST === "true";
 
 describe("Real Database Bug Reproduction", () => {
-  const supabase = createClient();
+  let supabase: ReturnType<typeof createClient>;
 
   it("should unlock next step when current step is completed", async () => {
     if (skipRealDatabaseTests) {
@@ -19,6 +19,8 @@ describe("Real Database Bug Reproduction", () => {
       );
       return;
     }
+
+    supabase = createClient();
 
     // Find the completed step (order 2) and the locked step (order 3)
     const { data: completedStep } = await supabase
@@ -81,6 +83,8 @@ describe("Real Database Bug Reproduction", () => {
       );
       return;
     }
+
+    supabase = createClient();
 
     // Get the test user and roadmap data
     const { data: user } = await supabase.auth.getUser();
