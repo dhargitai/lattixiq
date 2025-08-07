@@ -1,46 +1,38 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-// Helper function to get user roadmap count efficiently
-async function getUserRoadmapCount(supabase: SupabaseClient, userId: string): Promise<number> {
-  try {
-    const { count } = await supabase
-      .from("roadmaps")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId);
-    return count || 0;
-  } catch (error) {
-    console.error("Error counting user roadmaps:", error);
-    return 0; // Return 0 on error to prevent redirect failures
-  }
-}
 
 export async function middleware(request: NextRequest) {
+  // Skip middleware if Supabase is not configured (e.g., during build)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    // During build or when Supabase is not configured, allow all requests
+    return NextResponse.next();
+  }
+
+  // Dynamically import Supabase SSR to avoid Edge Runtime issues
+  const { createServerClient } = await import("@supabase/ssr");
+
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -76,13 +68,23 @@ export async function middleware(request: NextRequest) {
     const isApiRoute = currentPath.startsWith("/api");
 
     if (!isNewRoadmapRoute && !isAuthRoute && !isApiRoute) {
-      const roadmapCount = await getUserRoadmapCount(supabase, user.id);
+      try {
+        const { count } = await supabase
+          .from("roadmaps")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
 
-      // Redirect users with 0 roadmaps to /new-roadmap
-      if (roadmapCount === 0) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/new-roadmap";
-        return NextResponse.redirect(url);
+        const roadmapCount = count || 0;
+
+        // Redirect users with 0 roadmaps to /new-roadmap
+        if (roadmapCount === 0) {
+          const url = request.nextUrl.clone();
+          url.pathname = "/new-roadmap";
+          return NextResponse.redirect(url);
+        }
+      } catch (error) {
+        console.error("Error counting user roadmaps:", error);
+        // Continue without redirect on error
       }
     }
   }

@@ -30,8 +30,18 @@ export function createClient() {
   }
 
   // Production/development mode - use real client
-  return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // If environment variables are not set (e.g., during build), return a mock client
+  if (!url || !key) {
+    console.warn("Supabase environment variables not set, using mock client");
+    const mockClient = createMockClient();
+    if (mockClient) return mockClient;
+
+    // Fallback: create with placeholder values to prevent build errors
+    return createBrowserClient<Database>("https://placeholder.supabase.co", "placeholder-key");
+  }
+
+  return createBrowserClient<Database>(url, key);
 }
