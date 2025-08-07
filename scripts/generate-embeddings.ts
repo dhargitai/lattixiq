@@ -6,6 +6,7 @@ import { createLogger, format, transports } from "winston";
 import type { EmbeddingInput, EmbeddingResult } from "../lib/ai/embeddings-service";
 import { generateEmbeddings, prepareTextForEmbedding } from "../lib/ai/embeddings-service";
 import type { Database } from "../lib/supabase/database.types";
+import type { KnowledgeContent } from "../lib/types/ai";
 
 // Load environment variables
 config({ path: ".env.local" });
@@ -110,9 +111,9 @@ async function generateEmbeddingsWithRetry(
       }
 
       return results;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(`Embedding generation attempt ${attempt} failed`, {
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         attempt,
         maxRetries,
       });
@@ -202,7 +203,7 @@ async function generateAndStoreEmbeddings() {
 
     // 3. Prepare items for embedding
     const itemsToProcess = knowledgeContent.filter(
-      (item: any) => !allProcessedTitles.has(item.title)
+      (item: { title: string }) => !allProcessedTitles.has(item.title)
     );
 
     if (itemsToProcess.length === 0) {
@@ -234,10 +235,22 @@ async function generateAndStoreEmbeddings() {
 
       try {
         // Prepare texts for embedding
-        const embeddingInputs: EmbeddingInput[] = batch.map((item: any) => ({
-          id: item.id,
-          text: prepareTextForEmbedding(item),
-        }));
+        const embeddingInputs: EmbeddingInput[] = batch.map(
+          (item: {
+            id: string;
+            title: string;
+            category: string;
+            summary: string;
+            description: string;
+            application: string;
+            keywords: string[];
+            type: string;
+            [key: string]: unknown;
+          }) => ({
+            id: item.id,
+            text: prepareTextForEmbedding(item as KnowledgeContent),
+          })
+        );
 
         // Estimate tokens for cost tracking
         const batchTokens = embeddingInputs.reduce(
@@ -251,7 +264,7 @@ async function generateAndStoreEmbeddings() {
 
         // Store in database
         for (const { id, embedding } of embeddings) {
-          const item = batch.find((b: any) => b.id === id);
+          const item = batch.find((b: { id: string; [key: string]: unknown }) => b.id === id);
 
           try {
             // First, check if this knowledge content already exists by title

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 // Create a 1x1 pixel PNG as placeholder
 const createPlaceholderPng = () => {
@@ -77,7 +77,7 @@ const createPlaceholderPng = () => {
   return buffer;
 };
 
-const publicDir = path.join(__dirname, "..", "public");
+const publicDir = path.join(process.cwd(), "public");
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 
 // Create placeholder PNG files

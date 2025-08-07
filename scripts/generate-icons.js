@@ -4,17 +4,17 @@ const fs = require("fs");
 const path = require("path");
 
 // Create a simple SVG icon
-const createSvgIcon = (size) => {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+const createSvgIcon = (
+  size
+) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <rect width="${size}" height="${size}" fill="#6366f1" rx="${size * 0.1}"/>
   <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${size * 0.3}px" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">LQ</text>
 </svg>`;
-};
 
 // Convert SVG to PNG using canvas (placeholder - in production use proper tools)
-const createPngPlaceholder = (size) => {
+const createPngPlaceholder = (size) =>
   // For now, we'll create a simple HTML file that can be opened to save as PNG
-  return `<!DOCTYPE html>
+  `<!DOCTYPE html>
 <html>
 <head>
   <title>Icon ${size}x${size}</title>
@@ -30,8 +30,6 @@ const createPngPlaceholder = (size) => {
   <p>Right-click and save as icon-${size}x${size}.png</p>
 </body>
 </html>`;
-};
-
 // Icon sizes needed for PWA
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 

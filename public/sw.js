@@ -1,4 +1,4 @@
-const REMINDER_CACHE = "lattixiq-reminders-v1";
+// const REMINDER_CACHE = "lattixiq-reminders-v1";
 
 self.addEventListener("push", (event) => {
   const showNotification = async () => {

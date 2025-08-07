@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Helper function to get user roadmap count efficiently
-async function getUserRoadmapCount(supabase: any, userId: string): Promise<number> {
+async function getUserRoadmapCount(supabase: SupabaseClient, userId: string): Promise<number> {
   try {
     const { count } = await supabase
       .from("roadmaps")

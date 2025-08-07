@@ -33,22 +33,23 @@ describe("Step Unlocking Race Condition Bug", () => {
     };
 
     // Mock RPC function that handles atomic operations
-    const mockRpc = vi.fn().mockImplementation((functionName: string, params: any) => {
-      return new Promise((resolve) => {
-        // Simulate database latency
-        setTimeout(() => {
-          resolve({
-            data: {
-              completed_step_id: params.p_step_id,
-              unlocked_step_id: "step-2",
-              all_steps_completed: false,
-              roadmap_completed: false,
-            },
-            error: null,
-          });
-        }, 100);
-      });
-    });
+    const mockRpc = vi.fn().mockImplementation(
+      (functionName: string, params: any) =>
+        new Promise((resolve) => {
+          // Simulate database latency
+          setTimeout(() => {
+            resolve({
+              data: {
+                completed_step_id: params.p_step_id,
+                unlocked_step_id: "step-2",
+                all_steps_completed: false,
+                roadmap_completed: false,
+              },
+              error: null,
+            });
+          }, 100);
+        })
+    );
 
     mockSupabase.rpc = mockRpc;
 

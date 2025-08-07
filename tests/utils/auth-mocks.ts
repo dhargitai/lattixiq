@@ -260,10 +260,10 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
           select: () => ({
             single: async () => {
               if (table === "roadmaps") {
-                return { data: { id: "test-roadmap-" + Date.now() }, error: null };
+                return { data: { id: `test-roadmap-${Date.now()}` }, error: null };
               }
               if (table === "roadmap_steps") {
-                return { data: { id: "test-step-" + Date.now() }, error: null };
+                return { data: { id: `test-step-${Date.now()}` }, error: null };
               }
               return { data: { id: "mock-id" }, error: null };
             },
