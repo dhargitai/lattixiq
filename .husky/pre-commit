@@ -24,10 +24,13 @@ fi
 echo "🔍 Checking for security anti-patterns..."
 
 # Check for hardcoded JWT patterns (excluding documentation)
-if git diff --cached --name-only | grep -v "\.md$" | xargs grep -E "eyJ[A-Za-z0-9+/]{20,}={0,2}" 2>/dev/null; then
-  echo "❌ Potential hardcoded JWT/token detected!"
-  echo "   Use environment variables for all tokens and keys."
-  exit 1
+if problematic_files=$(git diff --cached --name-only | grep -v "\.md$" | xargs grep -l
+  -E "eyJ[A-Za-z0-9+/]{20,}={0,2}" 2>/dev/null); then
+    echo "❌ Potential hardcoded JWT/token detected!"
+    echo "   Use environment variables for all tokens and keys."
+    echo "   Found in files:"
+    echo "$problematic_files" | sed 's/^/   - /'
+    exit 1
 fi
 
 # Check for console.log with potential sensitive data

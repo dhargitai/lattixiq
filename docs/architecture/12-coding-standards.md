@@ -158,7 +158,7 @@ Security is paramount in our application. The following standards are **mandator
 ```tsx
 // SECURITY VIOLATION - NEVER DO THIS
 const API_KEY = "sk-1234567890abcdef"; // NEVER hardcode secrets
-const SERVICE_ROLE = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // CRITICAL VIOLATION
+const SERVICE_ROLE = "XYzhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // CRITICAL VIOLATION
 
 // CORRECT: Use environment variables
 const API_KEY = process.env.OPENAI_API_KEY;
