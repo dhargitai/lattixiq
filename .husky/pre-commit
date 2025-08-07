@@ -24,8 +24,7 @@ fi
 echo "🔍 Checking for security anti-patterns..."
 
 # Check for hardcoded JWT patterns (excluding documentation)
-if problematic_files=$(git diff --cached --name-only | grep -v "\.md$" | xargs grep -l
-  -E "eyJ[A-Za-z0-9+/]{20,}={0,2}" 2>/dev/null); then
+if problematic_files=$(git diff --cached --name-only | grep -v "\.md$" | xargs grep -l -E "eyJ[A-Za-z0-9+/]{20,}={0,2}" 2>/dev/null); then
     echo "❌ Potential hardcoded JWT/token detected!"
     echo "   Use environment variables for all tokens and keys."
     echo "   Found in files:"
@@ -34,9 +33,10 @@ if problematic_files=$(git diff --cached --name-only | grep -v "\.md$" | xargs g
 fi
 
 # Check for console.log with potential sensitive data
-if git diff --cached --name-only --diff-filter=ACM | grep -E "\.(ts|tsx|js|jsx)$" | xargs grep -E "console\.(log|error|warn|info).*\b(password|token|secret|key|credential)" 2>/dev/null; then
-  echo "⚠️  Warning: console.log with potentially sensitive variable names detected"
-  echo "   Make sure you're not logging sensitive information"
+if problematic_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(ts|tsx|js|jsx)$" | xargs grep -l -E "console\.(log|error|warn|info).*\b(password|token|secret|key|credential)" 2>/dev/null) && [ -n "$problematic_files" ]; then
+    echo "⚠️  Warning: console.log with potentially sensitive variable names detected"
+    echo "   Make sure you're not logging sensitive information"
+    echo "$problematic_files" | sed 's/^/   - /'
 fi
 
 echo "✅ Security checks passed"
