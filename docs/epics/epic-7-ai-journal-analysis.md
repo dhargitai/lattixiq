@@ -1,62 +1,35 @@
-# Epic 4: AI-Powered Journal Analysis & Personalization (Premium)
+# Epic 7: AI-Powered Journal Analysis & Advanced Premium Features
 
 ## Epic Overview
-**Title:** AI Journal Analysis and Premium Features
-**Priority:** Low - Post-MVP premium functionality
-**Estimated Duration:** 2 sprints (4 weeks)
-**Dependencies:** Epics 1-3 must be complete (need journal entries to analyze)
+
+**Title:** AI Journal Analysis and Advanced Personalization
+**Priority:** Low - Post-MVP premium functionality  
+**Estimated Duration:** 3 sprints (6 weeks)
+**Dependencies:** Epic 4 (Premium Gating) must be complete
 
 ## Epic Description
-Implement premium features that provide AI-powered insights from journal entries, identify patterns in user reflections, and offer personalized recommendations. This epic also includes the payment infrastructure for premium subscriptions.
+
+Implement advanced premium features that provide AI-powered insights from journal entries, identify patterns in user reflections, and offer personalized recommendations. This epic focuses on delivering deep value to premium subscribers through intelligent analysis and personalization.
 
 ## Acceptance Criteria
+
 - [ ] AI analyzes journal entries for sentiment and themes
 - [ ] Pattern detection across multiple reflections
 - [ ] Personalized roadmap recommendations based on patterns
-- [ ] Premium subscription payment flow works
-- [ ] Premium features are gated appropriately
 - [ ] Insights dashboard shows meaningful analysis
-- [ ] Free users see premium feature previews
+- [ ] Weekly insights delivered via email
+- [ ] Advanced analytics tracking for optimization
 
 ## User Stories
 
-### Story 4.1: Implement Stripe Payment Integration
-**As a** user  
-**I want** to upgrade to premium  
-**So that** I can access advanced insights
+### Story 7.1: Build AI Journal Analysis Pipeline
 
-**Acceptance Criteria:**
-- [ ] Stripe checkout integrated
-- [ ] Subscription plans configured
-- [ ] Payment success/failure handling
-- [ ] Subscription status tracked in database
-- [ ] Billing portal accessible
-- [ ] Free trial option available
-
-**Technical Tasks:**
-1. Set up Stripe account and API keys
-2. Install Stripe SDK: `npm install stripe @stripe/stripe-js`
-3. Create subscription products in Stripe:
-   - Monthly plan ($9.99/month)
-   - Annual plan ($79.99/year)
-4. Implement `/app/api/subscription/route.ts`:
-   - Create checkout session
-   - Handle webhooks
-   - Update user subscription status
-5. Create `/app/(app)/settings/billing/page.tsx`
-6. Add subscription status to user profile
-7. Implement free trial logic (14 days)
-
-**Story Points:** 13
-
----
-
-### Story 4.2: Build AI Journal Analysis Pipeline
 **As a** premium user  
 **I want** my journal entries analyzed  
 **So that** I can understand my patterns
 
 **Acceptance Criteria:**
+
 - [ ] Each reflection analyzed on submission
 - [ ] Sentiment extracted (positive/negative/neutral)
 - [ ] Topics and themes identified
@@ -65,6 +38,7 @@ Implement premium features that provide AI-powered insights from journal entries
 - [ ] Works retroactively on existing entries
 
 **Technical Tasks:**
+
 1. Create analysis schema in database:
    ```sql
    journal_analysis table:
@@ -82,18 +56,20 @@ Implement premium features that provide AI-powered insights from journal entries
    - Extract sentiment, topics, concepts
 4. Create background job for processing
 5. Add analysis to reflection submission flow
-6. Build retroactive analysis script
+6. Build retroactive analysis script for existing entries
 
 **Story Points:** 13
 
 ---
 
-### Story 4.3: Create Insights Dashboard
+### Story 7.2: Create Insights Dashboard
+
 **As a** premium user  
 **I want** to see patterns in my reflections  
 **So that** I can understand my growth areas
 
 **Acceptance Criteria:**
+
 - [ ] Dashboard shows sentiment trends over time
 - [ ] Common themes highlighted
 - [ ] Most/least effective models shown
@@ -102,6 +78,7 @@ Implement premium features that provide AI-powered insights from journal entries
 - [ ] Time period filtering
 
 **Technical Tasks:**
+
 1. Create `/app/(app)/insights/page.tsx`
 2. Build visualization components:
    - Sentiment trend line chart
@@ -118,18 +95,20 @@ Implement premium features that provide AI-powered insights from journal entries
    - Last 90 days
    - All time
 5. Create insight cards with interpretations
-6. Add export functionality
+6. Add export functionality for data
 
 **Story Points:** 13
 
 ---
 
-### Story 4.4: Implement Pattern Detection
+### Story 7.3: Implement Pattern Detection
+
 **As a** premium user  
 **I want** the app to detect my patterns  
 **So that** I can address recurring challenges
 
 **Acceptance Criteria:**
+
 - [ ] Detects recurring negative themes
 - [ ] Identifies improvement areas
 - [ ] Finds successful strategies
@@ -138,6 +117,7 @@ Implement premium features that provide AI-powered insights from journal entries
 - [ ] Provides actionable insights
 
 **Technical Tasks:**
+
 1. Create pattern detection algorithm:
    - Analyze topic frequency
    - Detect sentiment patterns
@@ -158,12 +138,14 @@ Implement premium features that provide AI-powered insights from journal entries
 
 ---
 
-### Story 4.5: Build Personalized Recommendations
+### Story 7.4: Build Personalized Recommendations
+
 **As a** premium user  
 **I want** personalized roadmap suggestions  
 **So that** I can continue growing effectively
 
 **Acceptance Criteria:**
+
 - [ ] Recommends next roadmap based on patterns
 - [ ] Suggests specific models to revisit
 - [ ] Provides custom learning paths
@@ -172,6 +154,7 @@ Implement premium features that provide AI-powered insights from journal entries
 - [ ] Updates based on user progress
 
 **Technical Tasks:**
+
 1. Create recommendation engine:
    - Analyze completed roadmaps
    - Consider journal patterns
@@ -191,45 +174,14 @@ Implement premium features that provide AI-powered insights from journal entries
 
 ---
 
-### Story 4.6: Create Premium Feature Gates
-**As a** product owner  
-**I want** premium features properly gated  
-**So that** we can monetize effectively
+### Story 7.5: Implement Weekly Insights Email
 
-**Acceptance Criteria:**
-- [ ] Free users see preview of insights
-- [ ] Upgrade prompts at key moments
-- [ ] Clear value proposition shown
-- [ ] Smooth upgrade flow
-- [ ] Feature comparison table
-- [ ] Graceful degradation for free users
-
-**Technical Tasks:**
-1. Create `/components/shared/PremiumGate.tsx`
-2. Implement feature checking:
-   ```typescript
-   - Check subscription status
-   - Show preview or full content
-   - Display upgrade CTA
-   ```
-3. Add upgrade prompts:
-   - After 5 reflections
-   - When viewing insights
-   - In recommendation areas
-4. Create `/app/(app)/pricing/page.tsx`
-5. Build feature comparison table
-6. Add "Upgrade" buttons throughout app
-
-**Story Points:** 8
-
----
-
-### Story 4.7: Implement Weekly Insights Email
 **As a** premium user  
 **I want** weekly insight summaries  
 **So that** I stay engaged with my growth
 
 **Acceptance Criteria:**
+
 - [ ] Weekly email with key insights
 - [ ] Sentiment summary for the week
 - [ ] Progress highlights
@@ -238,6 +190,7 @@ Implement premium features that provide AI-powered insights from journal entries
 - [ ] Unsubscribe option
 
 **Technical Tasks:**
+
 1. Set up email service (SendGrid/Resend)
 2. Create email templates:
    - Weekly insights design
@@ -247,66 +200,86 @@ Implement premium features that provide AI-powered insights from journal entries
 4. Implement `/app/api/emails/weekly-insights/route.ts`
 5. Create cron job for weekly sending
 6. Add email preferences to settings
-7. Track email engagement
+7. Track email engagement metrics
 
 **Story Points:** 8
 
 ---
 
-### Story 4.8: Add Advanced Analytics Tracking
+### Story 7.6: Add Advanced Analytics Tracking
+
 **As a** product team  
 **I want** to track premium feature usage  
 **So that** we can optimize the premium experience
 
 **Acceptance Criteria:**
+
 - [ ] Track insights dashboard usage
 - [ ] Monitor recommendation acceptance
 - [ ] Measure premium retention
 - [ ] Track feature engagement
-- [ ] Identify upgrade triggers
+- [ ] Identify churn predictors
 - [ ] Calculate premium LTV
 
 **Technical Tasks:**
+
 1. Add premium analytics events:
    - insights_viewed
    - pattern_detected
    - recommendation_accepted
    - premium_feature_used
-   - subscription_started
-   - subscription_cancelled
+   - email_opened
+   - feature_explored
 2. Create premium funnel analysis
 3. Build retention cohorts
-4. Set up revenue tracking
+4. Set up churn prediction model
 5. Create premium analytics dashboard
+6. Implement A/B testing framework
 
-**Story Points:** 3
+**Story Points:** 5
 
 ---
 
 ## Epic Summary
-**Total Story Points:** 71
-**Critical Path:** Payment integration (4.1) blocks all other features
+
+**Total Story Points:** 60
+**Critical Path:** AI Analysis (7.1) → Pattern Detection (7.3) → Recommendations (7.4)
 **Risk Areas:**
+
 - AI analysis costs at scale
 - Pattern detection accuracy
-- Payment integration complexity
 - Email deliverability
+- Processing time for large datasets
 
 **Success Metrics:**
-- 20% free-to-paid conversion
-- 90% premium user retention (monthly)
-- 80% insight accuracy rating
+
+- 80% insight accuracy rating from users
 - 50% recommendation acceptance rate
+- 70% weekly email open rate
+- 85% premium user retention (monthly)
+- 40% of premium users engage weekly with insights
 
 **Testing Requirements:**
-- Payment flow testing (including failures)
+
 - AI analysis accuracy validation
 - Pattern detection algorithm testing
 - Email rendering across clients
-- Premium gate functionality
+- Performance testing for large datasets
+- Recommendation quality assessment
 
-**Post-MVP Considerations:**
+**Technical Considerations:**
+
+- Implement caching for expensive AI operations
+- Use queue system for background processing
+- Consider rate limiting for AI API calls
+- Implement data retention policies
+- Ensure GDPR compliance for data analysis
+
+**Future Enhancements:**
+
 - Team insights for organizations
 - Coach marketplace integration
 - Advanced AI customization
 - API access for developers
+- Export insights to external tools
+- Integration with other productivity apps
