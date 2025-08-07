@@ -1,6 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// Helper function to get user roadmap count efficiently
+async function getUserRoadmapCount(supabase: any, userId: string): Promise<number> {
+  try {
+    const { count } = await supabase
+      .from("roadmaps")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+    return count || 0;
+  } catch (error) {
+    console.error("Error counting user roadmaps:", error);
+    return 0; // Return 0 on error to prevent redirect failures
+  }
+}
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -49,6 +63,27 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
+  }
+
+  // Auto-redirect new users (with 0 roadmaps) to /new-roadmap
+  if (user) {
+    const currentPath = request.nextUrl.pathname;
+    // Skip redirect for /new-roadmap and auth routes
+    const isNewRoadmapRoute =
+      currentPath === "/new-roadmap" || currentPath.startsWith("/(app)/new-roadmap");
+    const isAuthRoute = currentPath.startsWith("/(auth)") || currentPath.startsWith("/auth");
+    const isApiRoute = currentPath.startsWith("/api");
+
+    if (!isNewRoadmapRoute && !isAuthRoute && !isApiRoute) {
+      const roadmapCount = await getUserRoadmapCount(supabase, user.id);
+
+      // Redirect users with 0 roadmaps to /new-roadmap
+      if (roadmapCount === 0) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/new-roadmap";
+        return NextResponse.redirect(url);
+      }
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
