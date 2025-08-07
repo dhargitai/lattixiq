@@ -256,18 +256,15 @@ describe("Auto-redirect middleware", () => {
       });
 
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const redirectUrl = { pathname: "/new-roadmap" };
-      (mockRequest.nextUrl as unknown as { clone: ReturnType<typeof vi.fn> }).clone = vi.fn(
-        () => redirectUrl
-      );
 
       // Act
-      await middleware(mockRequest as NextRequest);
+      const response = await middleware(mockRequest as NextRequest);
 
       // Assert
       expect(consoleSpy).toHaveBeenCalledWith("Error counting user roadmaps:", expect.any(Error));
-      // On error, function returns 0, which should trigger redirect to /new-roadmap for safety
-      expect(mockNextResponse.redirect).toHaveBeenCalledWith(redirectUrl);
+      // On error, middleware should continue without redirect
+      expect(mockNextResponse.redirect).not.toHaveBeenCalled();
+      expect(response).toBe(mockNextResponse.next());
 
       consoleSpy.mockRestore();
     });
