@@ -1,0 +1,43 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Redirect all routes to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin", "user"]}
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Edge Functions configuration (if needed)
+[[edge_functions]]
+  path = "/api/*"
+  function = "api"
+
+# Environment variables validation
+[context.production.environment]
+  NEXT_PUBLIC_SUPABASE_URL = "Your production Supabase URL"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "Your production Supabase anon key"
+
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_SUPABASE_URL = "Your preview Supabase URL"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "Your preview Supabase anon key"
