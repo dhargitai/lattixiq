@@ -49,8 +49,11 @@ description = "Global allowlist"
 paths = [
   '''\.env\.example$''',
   '''\.env\.test\.local\.example$''',
-  '''docs/.*\.md$''',  # Documentation can mention patterns
+  '''\.env\.local$''',  # Local development environment file
+  '''\.env\.test$''',   # Test environment file
+  '''docs/.*\.md$''',   # Documentation can mention patterns
   '''.*\.test\.(ts|tsx|js|jsx)$''',  # Test files may use mock keys
+  '''playwright-report/''',  # Playwright test reports
   '''node_modules/''',
   '''\.next/''',
   '''dist/''',
@@ -58,14 +61,8 @@ paths = [
 ]
 
 # Allow specific test patterns
-[[allowlist.regexes]]
-description = "Allow mock/test keys in test files"
-regex = '''(mock|test|fake|example|placeholder)'''
-
-[[allowlist.regexes]]
-description = "Allow environment variable references"
-regex = '''process\.env\.[A-Z_]+'''
-
-[[allowlist.regexes]]
-description = "Allow TypeScript type definitions"
-regex = '''(string|String)\s*\|\s*undefined'''
+regexes = [
+  '''(mock|test|fake|example|placeholder)''',
+  '''process\.env\.[A-Z_]+''',
+  '''(string|String)\s*\|\s*undefined'''
+]
