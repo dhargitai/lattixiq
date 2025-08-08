@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
 import { ReminderSettings } from "@/components/shared/ReminderSettings";
+import { ApplicationGuidanceModal } from "@/components/modals/ApplicationGuidanceModal";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -33,6 +34,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
     const [error, setError] = useState<string | null>(null);
     const [reminderEnabled, setReminderEnabled] = useState(false);
     const [reminderTime, setReminderTime] = useState("09:00");
+    const [showApplicationModal, setShowApplicationModal] = useState(false);
     const [formData, setFormData] = useState({
       situation: "",
       action: "",
@@ -100,8 +102,18 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
           });
         }
 
-        // Navigate back to roadmap
-        router.push("/roadmap");
+        // Check if modal has been shown before
+        const modalShownKey = `plan-modal-shown-${step.id}`;
+        const hasShownModal = localStorage.getItem(modalShownKey);
+
+        if (!hasShownModal) {
+          // Show the application guidance modal
+          setShowApplicationModal(true);
+          localStorage.setItem(modalShownKey, "true");
+        } else {
+          // Navigate directly to roadmap
+          router.push("/roadmap");
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to save plan");
       } finally {
@@ -111,6 +123,11 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
 
     const handleBack = () => {
       router.push(`/learn/${step.id}`);
+    };
+
+    const handleModalClose = () => {
+      setShowApplicationModal(false);
+      router.push("/roadmap");
     };
 
     const getFormLabels = () => {
@@ -299,6 +316,14 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
         <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-lg shadow-gray-300/50 text-sm text-gray-500 font-medium z-10 transition-transform duration-300">
           Step <span className="text-blue-500 font-semibold">{step.order}</span> • Plan
         </div>
+
+        {/* Application Guidance Modal */}
+        <ApplicationGuidanceModal
+          isOpen={showApplicationModal}
+          onClose={handleModalClose}
+          conceptType={knowledgeContent.type as "mental-model" | "cognitive-bias" | "fallacy"}
+          conceptName={knowledgeContent.title}
+        />
       </div>
     );
   }
