@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, Crown } from "lucide-react";
 import { PremiumBenefitsDialog } from "@/components/features/subscription/PremiumBenefitsDialog";
-import { getUserSubscriptionStatus } from "@/lib/subscription/check-limits";
 import { toast } from "sonner";
 
 interface QuickActionsProps {
@@ -52,8 +51,11 @@ export function QuickActions({
       if (userId && hasCompletedRoadmap && !hasActiveRoadmap) {
         setIsLoading(true);
         try {
-          const status = await getUserSubscriptionStatus(userId);
-          setCanCreateRoadmap(status.canCreateRoadmap);
+          const response = await fetch("/api/user/subscription-status");
+          if (response.ok) {
+            const status = await response.json();
+            setCanCreateRoadmap(status.canCreateRoadmap);
+          }
         } catch (error) {
           console.error("Failed to check subscription status:", error);
         } finally {
