@@ -50,26 +50,6 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-// Mock user db module
-vi.mock("@/lib/db/users", () => ({
-  getUserInfo: vi.fn(() => ({
-    id: "test-user-id",
-    email: "test@example.com",
-    subscription_status: "free",
-    reminder_enabled: true,
-    reminder_time: "09:00",
-    created_at: "2024-01-01",
-    reminder_last_sent: null,
-    reminder_timezone: null,
-    stripe_customer_id: null,
-    testimonial_state: null,
-    testimonial_url: null,
-    free_roadmaps_used: false,
-    roadmap_count: 0,
-    testimonial_bonus_used: false,
-  })),
-}));
-
 // Import the component after mocks
 const SettingsPage = async () => {
   const { default: Page } = await import("@/app/(app)/settings/page");
@@ -117,25 +97,50 @@ describe("Settings Page", () => {
   });
 
   it("displays premium badge for premium users", async () => {
-    const { getUserInfo } = await import("@/lib/db/users");
-    vi.mocked(getUserInfo).mockResolvedValueOnce({
-      id: "test-user-id",
-      email: "test@example.com",
-      subscription_status: "premium",
-      reminder_enabled: true,
-      reminder_time: "09:00",
-      created_at: "2024-01-01",
-      reminder_last_sent: null,
-      reminder_timezone: null,
-      stripe_customer_id: "cus_123",
-      stripe_subscription_id: "sub_123",
-      subscription_current_period_end: "2024-02-01",
-      testimonial_state: null,
-      testimonial_url: null,
-      free_roadmaps_used: false,
-      roadmap_count: 0,
-      testimonial_bonus_used: false,
-    });
+    // Create a custom mock for this test
+    const { createClient } = await import("@/lib/supabase/server");
+
+    vi.mocked(createClient).mockResolvedValue({
+      auth: {
+        getUser: vi.fn(() => ({
+          data: {
+            user: {
+              id: "test-user-id",
+              email: "test@example.com",
+              app_metadata: { provider: "email" },
+            },
+          },
+        })),
+        signOut: vi.fn(() => ({ error: null })),
+      },
+      from: vi.fn((table: string) => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => {
+              if (table === "users") {
+                return {
+                  data: {
+                    reminder_enabled: true,
+                    reminder_time: "09:00",
+                  },
+                  error: null,
+                };
+              } else if (table === "user_subscriptions") {
+                return {
+                  data: {
+                    subscription_status: "active",
+                    stripe_customer_id: "cus_123",
+                    subscription_current_period_end: "2024-02-01",
+                  },
+                  error: null,
+                };
+              }
+              return { data: null, error: null };
+            }),
+          })),
+        })),
+      })),
+    } as unknown as Awaited<ReturnType<typeof createClient>>);
 
     const Page = await SettingsPage();
     render(await Page());

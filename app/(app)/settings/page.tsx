@@ -1,5 +1,4 @@
 import SettingsPageContent from "@/components/settings/SettingsPageContent";
-import { getUserInfo } from "@/lib/db/users";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -14,14 +13,20 @@ export default async function SettingsPage() {
     redirect("/login");
   }
 
-  const userInfo = await getUserInfo(user.id);
   const provider = user.app_metadata?.provider || "email";
 
-  // Fetch user preferences and billing info
+  // Fetch user preferences
   const { data: userData } = await supabase
     .from("users")
-    .select("reminder_enabled, reminder_time, stripe_customer_id")
+    .select("reminder_enabled, reminder_time")
     .eq("id", user.id)
+    .single();
+
+  // Fetch subscription info from user_subscriptions table
+  const { data: subscriptionData } = await supabase
+    .from("user_subscriptions")
+    .select("subscription_status, stripe_customer_id, subscription_current_period_end")
+    .eq("user_id", user.id)
     .single();
 
   const initialPreferences = {
@@ -34,8 +39,9 @@ export default async function SettingsPage() {
       userId={user.id}
       userEmail={user.email || ""}
       provider={provider}
-      subscriptionStatus={userInfo?.subscription_status || undefined}
-      stripeCustomerId={userData?.stripe_customer_id || undefined}
+      subscriptionStatus={subscriptionData?.subscription_status || undefined}
+      stripeCustomerId={subscriptionData?.stripe_customer_id || undefined}
+      subscriptionPeriodEnd={subscriptionData?.subscription_current_period_end || undefined}
       initialPreferences={initialPreferences}
     />
   );

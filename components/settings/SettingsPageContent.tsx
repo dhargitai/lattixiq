@@ -16,6 +16,7 @@ interface SettingsPageContentProps {
   provider: string;
   subscriptionStatus?: string;
   stripeCustomerId?: string;
+  subscriptionPeriodEnd?: string;
   initialPreferences: {
     enabled: boolean;
     dailyReminderTime: string;
@@ -28,6 +29,7 @@ export default function SettingsPageContent({
   provider,
   subscriptionStatus,
   stripeCustomerId,
+  subscriptionPeriodEnd,
   initialPreferences,
 }: SettingsPageContentProps) {
   const [isSaving, setIsSaving] = useState(false);
@@ -112,6 +114,7 @@ export default function SettingsPageContent({
         <BillingSection
           subscriptionStatus={subscriptionStatus}
           stripeCustomerId={stripeCustomerId}
+          subscriptionPeriodEnd={subscriptionPeriodEnd}
         />
 
         {/* Notifications Section */}
