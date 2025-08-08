@@ -1,17 +1,53 @@
 import { createClient } from "@/lib/supabase/server";
 
 export async function checkCanCreateRoadmap(userId: string): Promise<boolean> {
-  // Check if user has active subscription
-  const hasSubscription = await hasActiveSubscription(userId);
-  if (hasSubscription) {
+  const supabase = await createClient();
+
+  // 1. Check user_subscriptions table for active subscription
+  // Using type assertion until types are regenerated
+  const { data: subscription } = await (supabase as any)
+    .from("user_subscriptions")
+    .select("subscription_status, subscription_current_period_end")
+    .eq("user_id", userId)
+    .single();
+
+  if (
+    subscription?.subscription_status === "active" ||
+    subscription?.subscription_status === "trialing"
+  ) {
+    // Check if subscription is not expired
+    if (subscription.subscription_current_period_end) {
+      const periodEnd = new Date(subscription.subscription_current_period_end);
+      if (periodEnd > new Date()) {
+        return true;
+      }
+    } else {
+      return true; // No expiry set means active
+    }
+  }
+
+  // 2. Check users table for free/testimonial limits
+  const { data: user } = await supabase
+    .from("users")
+    .select("roadmap_count, free_roadmaps_used, testimonial_bonus_used, testimonial_url")
+    .eq("id", userId)
+    .single();
+
+  if (!user) {
+    return false;
+  }
+
+  // Allow first free roadmap
+  if (!user.free_roadmaps_used) {
     return true;
   }
 
-  // Check if user has completed their free roadmap
-  const hasCompleted = await hasCompletedFreeRoadmap(userId);
+  // Allow second roadmap if testimonial exists and bonus not used
+  if (user.testimonial_url && !user.testimonial_bonus_used) {
+    return true;
+  }
 
-  // User can create a roadmap if they haven't completed their free one yet
-  return !hasCompleted;
+  return false;
 }
 
 export async function hasCompletedFreeRoadmap(userId: string): Promise<boolean> {
@@ -36,7 +72,30 @@ export async function hasCompletedFreeRoadmap(userId: string): Promise<boolean> 
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
-  // Check user's subscription status
+  // Check user_subscriptions table first
+  const { data: subscription } = await (supabase as any)
+    .from("user_subscriptions")
+    .select("subscription_status, subscription_current_period_end")
+    .eq("user_id", userId)
+    .single();
+
+  if (subscription) {
+    // Check if subscription is active and not expired
+    if (
+      subscription.subscription_status === "active" ||
+      subscription.subscription_status === "trialing"
+    ) {
+      // If there's a period end date, check if it's in the future
+      if (subscription.subscription_current_period_end) {
+        const periodEnd = new Date(subscription.subscription_current_period_end);
+        return periodEnd > new Date();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // Fallback to users table for backward compatibility
   const { data, error } = await supabase
     .from("users")
     .select("subscription_status, subscription_current_period_end")
@@ -99,15 +158,31 @@ export async function getUserSubscriptionStatus(userId: string): Promise<{
   ]);
 
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("users")
+
+  // Check user_subscriptions table first
+  const { data: subscription } = await (supabase as any)
+    .from("user_subscriptions")
     .select("subscription_status")
-    .eq("id", userId)
+    .eq("user_id", userId)
     .single();
+
+  let status = "free";
+
+  if (subscription) {
+    status = subscription.subscription_status || "free";
+  } else {
+    // Fallback to users table
+    const { data } = await supabase
+      .from("users")
+      .select("subscription_status")
+      .eq("id", userId)
+      .single();
+    status = data?.subscription_status || "free";
+  }
 
   return {
     isSubscribed,
-    status: data?.subscription_status || "free",
+    status,
     canCreateRoadmap: canCreate,
     completedFreeRoadmap: completedFree,
     hasTestimonialBonus: testimonialBonus,

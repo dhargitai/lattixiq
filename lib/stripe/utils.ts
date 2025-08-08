@@ -76,18 +76,44 @@ export async function updateUserSubscription(
   subscriptionStatus: string,
   currentPeriodEnd?: Date
 ): Promise<void> {
-  const { error } = await supabase
-    .from("users")
-    .update({
+  // Try to update user_subscriptions table first (service role only)
+  // Using type assertion until types are regenerated after migration
+  const { error: subscriptionError } = await (supabase as any)
+    .from("user_subscriptions")
+    .upsert({
+      user_id: userId,
       stripe_customer_id: stripeCustomerId,
       stripe_subscription_id: stripeSubscriptionId,
       subscription_status: subscriptionStatus,
       subscription_current_period_end: currentPeriodEnd?.toISOString(),
+      updated_at: new Date().toISOString(),
     })
-    .eq("id", userId);
+    .eq("user_id", userId);
 
-  if (error) {
-    throw new Error(`Failed to update user subscription: ${error.message}`);
+  if (subscriptionError) {
+    // If user_subscriptions doesn't exist yet, fall back to users table
+    if (
+      subscriptionError.code === "42P01" ||
+      subscriptionError.message?.includes("user_subscriptions")
+    ) {
+      console.log("user_subscriptions table not available, updating users table");
+      // Fallback to users table for backward compatibility
+      const { error: userError } = await supabase
+        .from("users")
+        .update({
+          stripe_customer_id: stripeCustomerId,
+          stripe_subscription_id: stripeSubscriptionId,
+          subscription_status: subscriptionStatus,
+          subscription_current_period_end: currentPeriodEnd?.toISOString(),
+        })
+        .eq("id", userId);
+
+      if (userError) {
+        throw new Error(`Failed to update user subscription: ${userError.message}`);
+      }
+    } else {
+      throw new Error(`Failed to update user subscription: ${subscriptionError.message}`);
+    }
   }
 }
 

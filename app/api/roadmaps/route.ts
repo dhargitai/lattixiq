@@ -79,6 +79,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Check if user can create a roadmap (subscription or free limit)
+    const { checkCanCreateRoadmap } = await import("@/lib/subscription/check-limits");
+    const canCreate = await checkCanCreateRoadmap(user.id);
+    if (!canCreate) {
+      return NextResponse.json(
+        {
+          error:
+            "You've reached your free roadmap limit. Please upgrade to premium to create unlimited roadmaps.",
+        },
+        { status: 403 }
+      );
+    }
+
     // Validate goal description
     const validation = RoadmapValidator.validateGoalDescription(goalDescription);
     if (!validation.isValid) {
@@ -148,15 +161,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save roadmap to database
-    const roadmapId = await supabaseService.saveRoadmap(
-      user.id,
-      processedGoal,
-      generatedRoadmap.steps.map((step) => ({
-        knowledgeContentId: step.knowledgeContentId,
-        order: step.order,
-      }))
+    // Save roadmap to database using the new tracking function
+    // This will handle roadmap creation and user counter updates atomically
+    // Using type assertion until types are regenerated after migration
+    const { data: roadmapData, error: saveError } = await (supabase as any).rpc(
+      "create_roadmap_with_tracking",
+      {
+        p_user_id: user.id,
+        p_goal_description: processedGoal,
+        p_steps: generatedRoadmap.steps.map((step) => ({
+          knowledge_content_id: step.knowledgeContentId,
+          order: step.order,
+        })),
+      }
     );
+
+    let roadmapId: string;
+
+    if (saveError) {
+      console.error("Failed to save roadmap with tracking:", saveError);
+      // Fallback to old method if function doesn't exist yet
+      if (saveError.message?.includes("function") || saveError.code === "42883") {
+        console.log("Falling back to traditional save method");
+        roadmapId = await supabaseService.saveRoadmap(
+          user.id,
+          processedGoal,
+          generatedRoadmap.steps.map((step) => ({
+            knowledgeContentId: step.knowledgeContentId,
+            order: step.order,
+          }))
+        );
+      } else {
+        throw new Error("Failed to save roadmap");
+      }
+    } else {
+      roadmapId = roadmapData as string;
+    }
 
     // Return the generated roadmap with database ID
     return NextResponse.json(

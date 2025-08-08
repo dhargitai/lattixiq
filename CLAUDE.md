@@ -2,6 +2,32 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Security Patterns
+
+### Database Functions for Secure Operations
+
+When creating or modifying roadmaps, use the following database functions via RPC:
+
+1. **create_roadmap_with_tracking** - Creates roadmap with automatic user counter updates
+   - Updates: roadmap_count, free_roadmaps_used, testimonial_bonus_used
+   - Usage: `supabase.rpc('create_roadmap_with_tracking', { p_user_id, p_goal_description, p_steps })`
+
+2. **sync_user_data** - Synchronizes user data if counts get out of sync
+   - Usage: `supabase.rpc('sync_user_data', { p_user_id })` or omit p_user_id to sync all
+
+### Subscription Security
+
+- Subscription data is stored in the `user_subscriptions` table (read-only for users)
+- Only service role (webhooks) can write to this table
+- Check subscription status using `checkCanCreateRoadmap()` from lib/subscription/check-limits.ts
+- Users cannot delete roadmaps (no DELETE RLS policies) to prevent bypassing free limits
+
+### Important Security Notes
+
+- NEVER allow users to delete roadmaps or roadmap_steps
+- Always use the tracking functions for roadmap operations
+- Subscription status updates must only come from Stripe webhooks
+
 ## Development Commands
 
 ### Core Commands

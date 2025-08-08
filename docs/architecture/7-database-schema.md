@@ -79,6 +79,42 @@ Here is the proposed repeatable structure:
 - **`goalExamples`:** This is the key to personalization. It allows the AI to pull specific, highly relevant examples when constructing the "Plan Screen" for a user with a matching goal.
 - **`keywords`:** This allows for a hybrid search approach, combining keyword filtering with semantic search for more precise results.
 
+## **Security Tables**
+
+### user_subscriptions Table
+
+A separate table for storing subscription data with restricted write access:
+
+```sql
+CREATE TABLE user_subscriptions (
+  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  subscription_status TEXT DEFAULT 'free',
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  subscription_current_period_end TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+This table can only be written to by the service role (webhooks), preventing users from modifying their own subscription status.
+
+## **Database Functions**
+
+### Security-Critical Functions
+
+```sql
+-- create_roadmap_with_tracking: Atomically creates roadmap and updates user counters
+-- Parameters: p_user_id UUID, p_goal_description TEXT, p_steps JSONB
+-- Returns: UUID (roadmap_id)
+-- Updates: roadmap_count, free_roadmaps_used, testimonial_bonus_used
+
+-- sync_user_data: Synchronizes user roadmap counts and testimonial status
+-- Parameters: p_user_id UUID (optional, null syncs all users)
+-- Returns: Table of user statistics
+-- Use: Manual recovery if data gets out of sync
+```
+
 ## **Row-Level Security (RLS) Policies**
 
 The following policies are the complete set required to secure our database. They ensure that users can only ever access and modify their own data, which is a critical security requirement.
@@ -102,7 +138,7 @@ USING (auth.uid() = id);
 
 ### 2. Table: roadmaps
 
-Users have full control over their own roadmaps.
+Users can view, create, and update their own roadmaps, but CANNOT delete them (to maintain free limit integrity).
 
 ```sql
 -- Enable RLS on the roadmaps table
@@ -119,10 +155,7 @@ WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update their own roadmaps"
 ON public.roadmaps FOR UPDATE
 USING (auth.uid() = user_id);
--- Policy: Users can delete their own roadmaps.
-CREATE POLICY "Users can delete their own roadmaps"
-ON public.roadmaps FOR DELETE
-USING (auth.uid() = user_id);
+-- Note: No DELETE policy - users cannot delete roadmaps to prevent bypassing free limit
 ```
 
 ### 3. Table: roadmap_steps
@@ -147,11 +180,7 @@ CREATE POLICY "Users can update steps for their own roadmaps"
 ON public.roadmap_steps FOR UPDATE
 USING ( EXISTS ( SELECT 1 FROM roadmaps WHERE roadmaps.id = roadmap_steps.roadmap_id AND roadmaps.user_id = auth.uid() )
 );
--- Policy: Users can delete steps from their own roadmaps.
-CREATE POLICY "Users can delete steps from their own roadmaps"
-ON public.roadmap_steps FOR DELETE
-USING ( EXISTS ( SELECT 1 FROM roadmaps WHERE roadmaps.id = roadmap_steps.roadmap_id AND roadmaps.user_id = auth.uid() )
-);
+-- Note: No DELETE policy - users cannot delete roadmap steps to maintain data integrity
 ```
 
 ### 4. Table: application_logs
