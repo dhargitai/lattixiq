@@ -5,7 +5,7 @@ export async function checkCanCreateRoadmap(userId: string): Promise<boolean> {
 
   // 1. Check user_subscriptions table for active subscription
   // Using type assertion until types are regenerated
-  const { data: subscription } = await (supabase as any)
+  const { data: subscription } = await supabase
     .from("user_subscriptions")
     .select("subscription_status, subscription_current_period_end")
     .eq("user_id", userId)
@@ -73,7 +73,7 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
   // Check user_subscriptions table first
-  const { data: subscription } = await (supabase as any)
+  const { data: subscription } = await supabase
     .from("user_subscriptions")
     .select("subscription_status, subscription_current_period_end")
     .eq("user_id", userId)
@@ -160,7 +160,7 @@ export async function getUserSubscriptionStatus(userId: string): Promise<{
   const supabase = await createClient();
 
   // Check user_subscriptions table first
-  const { data: subscription } = await (supabase as any)
+  const { data: subscription } = await supabase
     .from("user_subscriptions")
     .select("subscription_status")
     .eq("user_id", userId)

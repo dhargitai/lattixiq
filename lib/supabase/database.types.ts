@@ -322,6 +322,44 @@ export type Database = {
           },
         ];
       };
+      user_subscriptions: {
+        Row: {
+          created_at: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
+          subscription_current_period_end: string | null;
+          subscription_status: string | null;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          subscription_current_period_end?: string | null;
+          subscription_status?: string | null;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+          subscription_current_period_end?: string | null;
+          subscription_status?: string | null;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       users: {
         Row: {
           created_at: string | null;
@@ -392,6 +430,10 @@ export type Database = {
         Args: { p_roadmap_id: string; p_step_id: string };
         Returns: Json;
       };
+      create_roadmap_with_tracking: {
+        Args: { p_goal_description: string; p_steps: Json; p_user_id: string };
+        Returns: string;
+      };
       halfvec_avg: {
         Args: { "": number[] };
         Returns: unknown;
@@ -451,12 +493,12 @@ export type Database = {
           query_embedding: string;
         };
         Returns: {
-          summary: string;
           similarity: number;
-          type: Database["public"]["Enums"]["knowledge_content_type"];
           id: string;
           title: string;
           category: string;
+          type: Database["public"]["Enums"]["knowledge_content_type"];
+          summary: string;
         }[];
       };
       sparsevec_out: {
@@ -470,6 +512,16 @@ export type Database = {
       sparsevec_typmod_in: {
         Args: { "": unknown[] };
         Returns: number;
+      };
+      sync_user_data: {
+        Args: { p_user_id?: string };
+        Returns: {
+          user_id: string;
+          roadmap_count: number;
+          free_roadmaps_used: boolean;
+          testimonial_bonus_used: boolean;
+          has_testimonial: boolean;
+        }[];
       };
       vector_avg: {
         Args: { "": number[] };

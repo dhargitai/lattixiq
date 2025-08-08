@@ -8,8 +8,15 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(),
 }));
 
+interface MockSupabaseClient {
+  from: ReturnType<typeof vi.fn>;
+  select: ReturnType<typeof vi.fn>;
+  eq: ReturnType<typeof vi.fn>;
+  single: ReturnType<typeof vi.fn>;
+}
+
 describe("Content Blocks API", () => {
-  let mockSupabase: any;
+  let mockSupabase: MockSupabaseClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,7 +28,7 @@ describe("Content Blocks API", () => {
       single: vi.fn().mockReturnThis(),
     };
 
-    (createClient as any).mockResolvedValue(mockSupabase);
+    (createClient as ReturnType<typeof vi.fn>).mockResolvedValue(mockSupabase);
   });
 
   it("should return content for valid content_id", async () => {

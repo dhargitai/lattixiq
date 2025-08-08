@@ -24,12 +24,13 @@ vi.mock("@/lib/stripe/env-validation", () => ({
 }));
 
 // Mock global fetch
-global.fetch = vi.fn();
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 describe("PremiumBenefitsDialog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (global.fetch as any).mockReset();
+    mockFetch.mockReset();
   });
 
   it("should render when open", () => {
@@ -52,7 +53,7 @@ describe("PremiumBenefitsDialog", () => {
       content: "## Premium Benefits\n\nTest content here",
     };
 
-    (global.fetch as any).mockResolvedValueOnce({
+    mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => mockContent,
     });
@@ -70,7 +71,7 @@ describe("PremiumBenefitsDialog", () => {
   });
 
   it("should show default content if fetch fails", async () => {
-    (global.fetch as any).mockRejectedValueOnce(new Error("Network error"));
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
     render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
 
@@ -81,7 +82,7 @@ describe("PremiumBenefitsDialog", () => {
   });
 
   it("should show loading state while fetching", async () => {
-    (global.fetch as any).mockImplementation(
+    mockFetch.mockImplementation(
       () =>
         new Promise((resolve) =>
           setTimeout(
@@ -103,7 +104,7 @@ describe("PremiumBenefitsDialog", () => {
   it("should handle checkout button click", async () => {
     const mockCheckoutUrl = "https://checkout.stripe.com/test";
 
-    (global.fetch as any)
+    mockFetch
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ content: "Test content" }),
@@ -114,8 +115,11 @@ describe("PremiumBenefitsDialog", () => {
       });
 
     // Mock window.location
-    delete (window as any).location;
-    window.location = { href: "" } as any;
+    const mockLocation = { href: "" };
+    Object.defineProperty(window, "location", {
+      value: mockLocation,
+      writable: true,
+    });
 
     render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
 
@@ -144,7 +148,7 @@ describe("PremiumBenefitsDialog", () => {
   });
 
   it("should show processing state during checkout", async () => {
-    (global.fetch as any)
+    mockFetch
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ content: "Test content" }),
@@ -179,7 +183,7 @@ describe("PremiumBenefitsDialog", () => {
   it("should handle checkout errors gracefully", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    (global.fetch as any)
+    mockFetch
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ content: "Test content" }),

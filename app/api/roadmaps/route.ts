@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     // Save roadmap to database using the new tracking function
     // This will handle roadmap creation and user counter updates atomically
     // Using type assertion until types are regenerated after migration
-    const { data: roadmapData, error: saveError } = await (supabase as any).rpc(
+    const { data: roadmapData, error: saveError } = await supabase.rpc(
       "create_roadmap_with_tracking",
       {
         p_user_id: user.id,

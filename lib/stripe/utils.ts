@@ -78,7 +78,7 @@ export async function updateUserSubscription(
 ): Promise<void> {
   // Try to update user_subscriptions table first (service role only)
   // Using type assertion until types are regenerated after migration
-  const { error: subscriptionError } = await (supabase as any)
+  const { error: subscriptionError } = await supabase
     .from("user_subscriptions")
     .upsert({
       user_id: userId,
