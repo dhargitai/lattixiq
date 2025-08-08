@@ -4,6 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+// Mock canvas-confetti first
+vi.mock("canvas-confetti", () => ({
+  default: vi.fn(),
+}));
+
 // Mock dependencies
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),

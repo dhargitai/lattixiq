@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useRoadmapStore } from "@/lib/stores/roadmap-store";
 import { logReminderCleanup } from "@/lib/notifications/reminder-cleanup";
+import confetti from "canvas-confetti";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
     const [error, setError] = useState<string | null>(null);
     const [hoveredStar, setHoveredStar] = useState(0);
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [isRoadmapCompleted, setIsRoadmapCompleted] = useState(false);
     const reflectionTextAreaRef = useRef<HTMLTextAreaElement>(null);
     const learningTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -73,6 +75,44 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
       resizeTextarea(reflectionTextAreaRef.current);
       resizeTextarea(learningTextAreaRef.current);
     }, [reflectionText, learningText]);
+
+    // Trigger confetti when roadmap is completed
+    useEffect(() => {
+      if (showSuccessDialog && isRoadmapCompleted) {
+        // Trigger confetti celebration
+        const duration = 3 * 1000; // 3 seconds
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9998 };
+
+        function randomInRange(min: number, max: number) {
+          return Math.random() * (max - min) + min;
+        }
+
+        const interval: NodeJS.Timeout = setInterval(function () {
+          const timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+
+          const particleCount = 50 * (timeLeft / duration);
+          // since particles fall down, start a bit higher than random
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          });
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          });
+        }, 250);
+
+        // Cleanup on unmount
+        return () => clearInterval(interval);
+      }
+    }, [showSuccessDialog, isRoadmapCompleted]);
 
     const minTextLength = 50;
     const isValid = reflectionText.length >= minTextLength && rating > 0;
@@ -145,6 +185,10 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
         }
 
         console.log("[ReflectScreen] RPC function succeeded:", rpcResult);
+
+        // Check if this was the final step
+        const isCompleted = rpcResult?.all_steps_completed || rpcResult?.roadmap_completed;
+        setIsRoadmapCompleted(isCompleted);
 
         // Refresh store state regardless of whether it was initially loaded
         try {
@@ -380,13 +424,16 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             showCloseButton={false}
           >
             <DialogHeader>
-              <div className="mx-auto mb-6 text-7xl animate-bounce">🎉</div>
+              <div className="mx-auto mb-6 text-7xl animate-bounce">
+                {isRoadmapCompleted ? "🏆" : "🎉"}
+              </div>
               <DialogTitle className="text-2xl font-bold text-[#1A202C] mb-3">
-                Excellent Work!
+                {isRoadmapCompleted ? "Congratulations!" : "Excellent Work!"}
               </DialogTitle>
               <DialogDescription className="text-base text-gray-600 leading-relaxed">
-                You&apos;ve successfully completed this step. The next mental model in your roadmap
-                is now unlocked!
+                {isRoadmapCompleted
+                  ? "You've completed your entire roadmap! This is a huge achievement. Take a moment to celebrate your growth journey!"
+                  : "You've successfully completed this step. The next mental model in your roadmap is now unlocked!"}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-8">
@@ -395,7 +442,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                 className="w-full sm:w-auto mx-auto bg-[#48BB78] hover:bg-[#38A169] text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200"
                 size="lg"
               >
-                Continue to Roadmap
+                {isRoadmapCompleted ? "View Completed Roadmap" : "Continue to Roadmap"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -4,6 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import ReflectScreen from "../ReflectScreen";
 
+// Mock canvas-confetti first
+vi.mock("canvas-confetti", () => ({
+  default: vi.fn(),
+}));
+
 // Mock dependencies
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
@@ -235,14 +240,14 @@ describe("ReflectScreen Step Unlock Bug", () => {
       });
     });
 
-    // Should show success dialog
+    // Should show success dialog with completion message since all_steps_completed is true
     await waitFor(() => {
-      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+      expect(screen.getByText("Congratulations!")).toBeInTheDocument();
     });
 
-    // Click continue to navigate
+    // Click continue to navigate (shows "View Completed Roadmap" for final step)
     const user2 = userEvent.setup();
-    await user2.click(screen.getByText("Continue to Roadmap"));
+    await user2.click(screen.getByText("View Completed Roadmap"));
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");

@@ -2,7 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
+import confetti from "canvas-confetti";
 import ReflectScreen from "../ReflectScreen";
+
+// Mock canvas-confetti first (before other imports that might use it)
+vi.mock("canvas-confetti", () => ({
+  default: vi.fn(),
+}));
 
 // Mock dependencies
 vi.mock("next/navigation", () => ({
@@ -85,6 +91,8 @@ describe("ReflectScreen Enhanced Features", () => {
     vi.clearAllMocks();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (useRouter as any).mockReturnValue(mockRouter);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (confetti as any).mockClear();
     mockSupabase.auth.getUser.mockResolvedValue({ data: { user: mockUser } });
     mockMarkStepCompleted.mockResolvedValue(undefined);
     mockSupabase.rpc.mockResolvedValue({
@@ -388,5 +396,85 @@ describe("ReflectScreen Enhanced Features", () => {
     await waitFor(() => {
       expect(screen.getByText("70 characters")).toBeInTheDocument();
     });
+  });
+
+  it("should trigger confetti when completing the final step of a roadmap", async () => {
+    // Mock RPC to return roadmap_completed: true
+    mockSupabase.rpc.mockResolvedValue({
+      data: {
+        completed_step_id: "step-1",
+        unlocked_step_id: null,
+        all_steps_completed: true,
+        roadmap_completed: true,
+      },
+      error: null,
+    });
+
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Fill out form
+    await user.type(
+      screen.getByTestId("reflection-text"),
+      "This is my final step reflection - completing my roadmap!"
+    );
+    await user.click(screen.getByTestId("star-5"));
+    await user.click(screen.getByTestId("submit-button"));
+
+    // Wait for success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Congratulations!")).toBeInTheDocument();
+      expect(screen.getByText(/You've completed your entire roadmap!/)).toBeInTheDocument();
+    });
+
+    // Verify confetti was triggered
+    await waitFor(() => {
+      expect(confetti).toHaveBeenCalled();
+    });
+
+    // Verify button text for completed roadmap
+    expect(screen.getByText("View Completed Roadmap")).toBeInTheDocument();
+  });
+
+  it("should NOT trigger confetti when completing a non-final step", async () => {
+    // Mock RPC to return roadmap_completed: false (default in beforeEach)
+    render(
+      <ReflectScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        roadmap={mockRoadmap}
+      />
+    );
+
+    const user = userEvent.setup();
+
+    // Fill out form
+    await user.type(
+      screen.getByTestId("reflection-text"),
+      "This is a regular step reflection - not the final one"
+    );
+    await user.click(screen.getByTestId("star-4"));
+    await user.click(screen.getByTestId("submit-button"));
+
+    // Wait for success dialog
+    await waitFor(() => {
+      expect(screen.getByText("Excellent Work!")).toBeInTheDocument();
+      expect(
+        screen.getByText(/The next mental model in your roadmap is now unlocked!/)
+      ).toBeInTheDocument();
+    });
+
+    // Verify confetti was NOT triggered
+    expect(confetti).not.toHaveBeenCalled();
+
+    // Verify button text for non-completed roadmap
+    expect(screen.getByText("Continue to Roadmap")).toBeInTheDocument();
   });
 });

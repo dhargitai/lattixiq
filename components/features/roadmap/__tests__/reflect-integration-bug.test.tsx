@@ -3,6 +3,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ReflectScreen from "../ReflectScreen";
 
+// Mock canvas-confetti first
+vi.mock("canvas-confetti", () => ({
+  default: vi.fn(),
+}));
+
 // Mock next/navigation
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
