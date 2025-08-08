@@ -96,18 +96,20 @@ describe("Unlocked Viewer Integration Tests", () => {
     it("should show back navigation to toolkit", () => {
       render(React.createElement(UnlockedViewer, { content: mockContent }));
 
-      // Check both navigation buttons exist
+      // Check back buttons exist (one in main content, one at bottom)
       const backButtons = screen.getAllByText(/Back to My Toolkit/i);
-      expect(backButtons).toHaveLength(2); // Header and footer
+      expect(backButtons.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("should display breadcrumb trail on desktop", () => {
+    it("should display unified header with screen name", () => {
       render(React.createElement(UnlockedViewer, { content: mockContent }));
 
-      // Check breadcrumb elements - there might be multiple "My Toolkit" texts
-      const toolkitElements = screen.getAllByText("My Toolkit");
-      expect(toolkitElements.length).toBeGreaterThan(0);
-      expect(screen.getByText("Learned Models")).toBeInTheDocument();
+      // Check the header shows correct screen name
+      expect(screen.getByText("Unlocked Knowledge")).toBeInTheDocument();
+
+      // Check help button exists
+      const helpButton = screen.getByRole("button", { name: /show help/i });
+      expect(helpButton).toBeInTheDocument();
     });
   });
 

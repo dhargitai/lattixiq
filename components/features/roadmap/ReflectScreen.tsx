@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useRoadmapStore } from "@/lib/stores/roadmap-store";
@@ -222,10 +223,6 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
       }
     };
 
-    const handleBack = () => {
-      router.push(`/learn/${step.id}?from=reflect`);
-    };
-
     const handleSuccessDialogClose = () => {
       setShowSuccessDialog(false);
       router.push("/roadmap?success=true");
@@ -233,22 +230,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
 
     return (
       <div ref={ref} className="min-h-screen bg-[#FAFBFC]" data-testid="reflect-screen">
-        {/* Header */}
-        <header className="bg-white py-4 px-5 border-b border-gray-200 shadow-sm">
-          <div className="container max-w-2xl mx-auto flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="text-[#4299E1] hover:text-[#3182CE] hover:bg-[#F7FAFC] font-medium text-base flex items-center gap-2 p-2 -ml-2"
-              data-testid="back-button"
-            >
-              <ArrowLeft className="h-[18px] w-[18px]" />
-              Back to Learn
-            </Button>
-            <span className="text-sm text-gray-500">Step {step.order + 1} • Reflect</span>
-          </div>
-        </header>
+        <AppHeader screenName="Reflect" helpContentId="reflect-screen-help" />
 
         {/* Main Content */}
         <div className="container max-w-2xl mx-auto px-5 py-8" data-testid="reflect-content">

@@ -2,9 +2,10 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, KeyRound, Lightbulb } from "lucide-react";
+import { ArrowRight, KeyRound, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { RoadmapStepWithContent, Roadmap } from "@/lib/supabase/types";
 
@@ -15,7 +16,7 @@ interface LearnScreenProps {
 }
 
 const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
-  ({ step, onNavigateToPlan, onNavigateBack }, ref) => {
+  ({ step, onNavigateToPlan }, ref) => {
     const router = useRouter();
 
     // Check if user came from reflect screen via URL params
@@ -41,14 +42,6 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
       }
     };
 
-    const handleNavigateBack = () => {
-      if (onNavigateBack) {
-        onNavigateBack();
-      } else {
-        router.push("/roadmap");
-      }
-    };
-
     const getTypeLabel = () => {
       switch (step.knowledge_content.type) {
         case "mental-model":
@@ -68,20 +61,7 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
         className="min-h-screen bg-gray-50/50 flex flex-col"
         data-testid="learn-screen"
       >
-        {/* Navigation header matching prototype */}
-        <header className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="px-5 py-4">
-            <Button
-              variant="ghost"
-              onClick={handleNavigateBack}
-              data-testid="back-button"
-              className="text-blue-500 hover:text-blue-600 hover:bg-gray-50 font-medium px-2 py-1.5 rounded-lg transition-all duration-200"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Roadmap
-            </Button>
-          </div>
-        </header>
+        <AppHeader screenName="Learn" helpContentId="learn-screen-help" />
 
         {/* Main content with prototype styling */}
         <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">

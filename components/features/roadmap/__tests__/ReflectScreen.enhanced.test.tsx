@@ -337,7 +337,7 @@ describe("ReflectScreen Enhanced Features", () => {
     });
   });
 
-  it("should maintain form state when navigating to learn and back", async () => {
+  it("should display unified header with help button", async () => {
     render(
       <ReflectScreen
         step={mockStep}
@@ -346,20 +346,14 @@ describe("ReflectScreen Enhanced Features", () => {
       />
     );
 
-    const user = userEvent.setup();
+    // Check that header displays "Reflect" screen name
+    expect(screen.getByText("Reflect")).toBeInTheDocument();
 
-    // Fill out form partially
-    await user.type(screen.getByTestId("reflection-text"), "Partial reflection text");
-    await user.type(screen.getByTestId("learning-text"), "Partial learning");
-    await user.click(screen.getByTestId("star-2"));
+    // Check that help button exists
+    const helpButton = screen.getByRole("button", { name: /show help/i });
+    expect(helpButton).toBeInTheDocument();
 
-    // Click back to learn
-    await user.click(screen.getByTestId("back-button"));
-
-    expect(mockRouter.push).toHaveBeenCalledWith(`/learn/${mockStep.id}?from=reflect`);
-
-    // Note: In real app, form state would be lost unless persisted
-    // This test verifies the navigation behavior
+    // Note: Back navigation removed in favor of unified header
   });
 
   it("should show correct character count for situation text", async () => {

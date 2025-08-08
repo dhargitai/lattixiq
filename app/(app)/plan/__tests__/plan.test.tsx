@@ -189,7 +189,7 @@ describe("Plan Screen", () => {
     expect(actionField.validity.valueMissing).toBe(true);
   });
 
-  it("should successfully submit plan and navigate", async () => {
+  it("should successfully submit plan and show modal on first save", async () => {
     const fromMock = vi.fn(() => ({
       update: vi.fn(() => ({
         eq: vi.fn(() =>
@@ -230,10 +230,11 @@ describe("Plan Screen", () => {
     const saveButton = screen.getByText("Save Plan & Take Action");
     await userEvent.click(saveButton);
 
-    // Should update the database and navigate
+    // Should update the database and show modal on first save
     await waitFor(() => {
       expect(mockSupabase.from).toHaveBeenCalledWith("roadmap_steps");
-      expect(mockPush).toHaveBeenCalledWith("/roadmap");
+      // Modal should appear on first save
+      expect(screen.getByText(/Now it's time to put it into action/i)).toBeInTheDocument();
     });
   });
 
@@ -276,7 +277,7 @@ describe("Plan Screen", () => {
     });
   });
 
-  it("should navigate back to learn screen", async () => {
+  it("should display unified header with help button", async () => {
     render(
       <PlanScreen
         step={mockStep}
@@ -285,11 +286,12 @@ describe("Plan Screen", () => {
       />
     );
 
-    // Click back button
-    const backButton = screen.getByText(/back to learn/i);
-    await userEvent.click(backButton);
+    // Check that header displays "Plan" screen name
+    expect(screen.getByText("Plan")).toBeInTheDocument();
 
-    expect(mockPush).toHaveBeenCalledWith("/learn/step-1");
+    // Check that help button exists
+    const helpButton = screen.getByRole("button", { name: /show help/i });
+    expect(helpButton).toBeInTheDocument();
   });
 
   it("should be mobile responsive", async () => {

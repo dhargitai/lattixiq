@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { HelpCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AppHeader } from "@/components/ui/AppHeader";
 import RoadmapStep from "./RoadmapStep";
 import RoadmapConnector from "./RoadmapConnector";
 import { cn } from "@/lib/utils";
@@ -20,15 +19,7 @@ export default function RoadmapView({ roadmap, showSuccess = false }: RoadmapVie
 
   return (
     <>
-      {/* Header */}
-      <header className="bg-background border-b">
-        <div className="flex items-center justify-between px-5 py-4">
-          <h1 className="text-xl font-semibold tracking-tight">LattixIQ</h1>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" aria-label="Help">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+      <AppHeader screenName="Your Roadmap" helpContentId="roadmap-screen-help" />
 
       <div
         data-testid="roadmap-container"

@@ -296,7 +296,7 @@ describe("Reflect Page", () => {
     });
   });
 
-  it("should allow back navigation to learn screen", async () => {
+  it("should display unified header with help button", async () => {
     const stepQuery = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -307,13 +307,12 @@ describe("Reflect Page", () => {
     render(await ReflectPage({ params: Promise.resolve({ stepId: "test-step-id" }) }));
 
     await waitFor(() => {
-      expect(screen.getByTestId("back-button")).toBeInTheDocument();
+      expect(screen.getByText("Reflect")).toBeInTheDocument();
     });
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTestId("back-button"));
-
-    expect(mockRouter.push).toHaveBeenCalledWith("/learn/test-step-id?from=reflect");
+    // Check that help button exists
+    const helpButton = screen.getByRole("button", { name: /show help/i });
+    expect(helpButton).toBeInTheDocument();
   });
 
   it("should display success feedback", async () => {

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, ArrowLeft, Lightbulb, ArrowRight } from "lucide-react";
+import { ChevronDown, Lightbulb, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
@@ -121,10 +122,6 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
       }
     };
 
-    const handleBack = () => {
-      router.push(`/learn/${step.id}`);
-    };
-
     const handleModalClose = () => {
       setShowApplicationModal(false);
       router.push("/roadmap");
@@ -156,19 +153,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
         className={cn("min-h-screen bg-gray-50/50 flex flex-col", className)}
         {...props}
       >
-        {/* Navigation header matching prototype */}
-        <header className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="px-5 py-4">
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              className="text-blue-500 hover:text-blue-600 hover:bg-gray-50 font-medium px-2 py-1.5 rounded-lg transition-all duration-200"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Learn
-            </Button>
-          </div>
-        </header>
+        <AppHeader screenName="Plan" helpContentId="plan-screen-help" />
 
         {/* Main content with prototype styling */}
         <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">

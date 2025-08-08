@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import HowItWorks from "./HowItWorks";
@@ -99,12 +100,7 @@ export default function NewRoadmapForm() {
   return (
     <>
       <div data-testid="new-roadmap-container" className="min-h-screen bg-[#FAFBFC] flex flex-col">
-        {/* Header */}
-        <header className="bg-white py-6 px-5 border-b border-[#E1E4E8] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold text-[#1A202C] tracking-tight">LattixIQ</h1>
-          </div>
-        </header>
+        <AppHeader screenName="Create New Roadmap" helpContentId="new-roadmap-screen-help" />
 
         {/* Content */}
         <div className="flex-1 px-5 py-8 pb-20">

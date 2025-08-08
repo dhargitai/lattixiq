@@ -14,6 +14,7 @@ import { TestimonialPromptWrapper } from "@/components/features/toolkit/Testimon
 import { getToolkitData } from "@/lib/db/toolkit";
 import { getUserInfo } from "@/lib/db/users";
 import { getTestimonialMilestone } from "@/lib/utils/testimonial-milestones";
+import { AppHeader } from "@/components/ui/AppHeader";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -48,12 +49,7 @@ export default async function ToolkitPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-gray-200 px-5 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900 tracking-tight">My Toolkit</h1>
-        <button className="text-gray-500 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-50">
-          <span className="text-lg">❓</span>
-        </button>
-      </header>
+      <AppHeader screenName="My Toolkit" helpContentId="toolkit-screen-help" />
 
       <main className="flex-1 px-5 py-6 max-w-xl mx-auto w-full space-y-8">
         <HeaderGreeting userName="Achiever" />

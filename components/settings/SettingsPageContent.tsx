@@ -9,6 +9,7 @@ import LogoutButton from "@/components/settings/LogoutButton";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import BottomNav from "@/components/features/shared/BottomNav";
+import { AppHeader } from "@/components/ui/AppHeader";
 
 interface SettingsPageContentProps {
   userId: string;
@@ -83,12 +84,7 @@ export default function SettingsPageContent({
 
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
-      {/* Header */}
-      <header className="bg-white py-4 px-5 border-b border-[#E1E4E8] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-        <h1 className="text-xl font-semibold text-[#1A202C] text-center tracking-[-0.5px]">
-          Settings
-        </h1>
-      </header>
+      <AppHeader screenName="Settings" helpContentId="settings-screen-help" />
 
       {/* Content */}
       <main className="flex-1 px-5 py-6 pb-20 max-w-[600px] mx-auto w-full">

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, KeyRound, Lightbulb, Home } from "lucide-react";
@@ -33,44 +34,21 @@ export default function UnlockedViewer({ content }: UnlockedViewerProps) {
 
   return (
     <div className="min-h-screen bg-gray-50/50 flex flex-col">
-      {/* Navigation header with breadcrumb */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-5 py-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={handleNavigateBack}
-              className="text-blue-500 hover:text-blue-600 hover:bg-gray-50 font-medium px-2 py-1.5 rounded-lg transition-all duration-200"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to My Toolkit
-            </Button>
-
-            {/* Breadcrumb trail */}
-            <div className="hidden md:flex items-center text-sm text-gray-500">
-              <span
-                className="hover:text-gray-700 cursor-pointer"
-                onClick={() => router.push("/toolkit")}
-              >
-                My Toolkit
-              </span>
-              <span className="mx-2">/</span>
-              <span
-                className="hover:text-gray-700 cursor-pointer"
-                onClick={() => router.push("/toolkit")}
-              >
-                Learned Models
-              </span>
-              <span className="mx-2">/</span>
-              <span className="text-gray-900 font-medium">{content.title}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader screenName="Unlocked Knowledge" helpContentId="unlocked-screen-help" />
 
       {/* Main content - reusing Learn screen layout */}
       <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">
         <div className="mx-auto max-w-2xl">
+          {/* Back navigation */}
+          <Button
+            variant="ghost"
+            onClick={handleNavigateBack}
+            className="mb-6 text-blue-500 hover:text-blue-600 hover:bg-gray-50 font-medium px-2 py-1.5 rounded-lg transition-all duration-200"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to My Toolkit
+          </Button>
+
           {/* Content card with enhanced styling */}
           <Card className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-8 md:p-14 animate-in fade-in slide-in-from-bottom-3 duration-500">
             <CardContent className="p-0 space-y-8">
