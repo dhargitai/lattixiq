@@ -164,7 +164,7 @@ Implement basic premium gating that allows users to complete their first roadmap
 
 ---
 
-### Story 4.3: Implement Testimonial Reward System
+### Story 4.3: Implement Testimonial Reward System (Senja.io Integration)
 
 **As a** user  
 **I want** to get an additional roadmap for leaving a testimonial  
@@ -172,41 +172,43 @@ Implement basic premium gating that allows users to complete their first roadmap
 
 **Acceptance Criteria:**
 
-- [ ] Testimonial modal appears after first roadmap completion
+- [ ] Testimonial card appears at top of My Toolkit screen after first roadmap completion
 - [ ] Clearly states this is a one-time offer
-- [ ] Grants one additional roadmap upon testimonial submission
-- [ ] Modal can be dismissed (offer expires)
-- [ ] Testimonial stored in database
+- [ ] Embeds Senja.io form for testimonial collection
+- [ ] Instructs users to use same email for identification
+- [ ] Card can be dismissed (offer expires)
+- [ ] Manual process grants bonus roadmap within ~1 day
 - [ ] Can't be exploited for multiple bonuses
 
 **Technical Tasks:**
 
-1. Create testimonials table:
-   ```sql
-   testimonials:
-   - id
-   - user_id
-   - content
-   - rating (1-5)
-   - roadmap_id (which roadmap they completed)
-   - created_at
-   - published (boolean for moderation)
-   ```
-2. Create `/components/features/testimonial/TestimonialModal.tsx`:
-   - Appears on roadmap completion (first roadmap only)
-   - Form with rating and text feedback
-   - "One-time offer" messaging
-   - Submit or skip buttons
-3. Implement `/app/api/testimonials/route.ts`:
-   - POST endpoint to save testimonial
-   - Grant additional roadmap credit
-   - Mark testimonial_bonus_used in user record
-4. Update roadmap completion flow:
+1. Create `/components/features/testimonial/TestimonialCard.tsx`:
+   - Appears at top of My Toolkit screen (first roadmap completion)
+   - Embeds Senja.io form using provided iframe code
+   - "One-time offer" messaging with manual process explanation
+   - Close button for dismissal
+   - Uses gradient background from prototypes
+2. Update roadmap completion flow:
    - Check if first roadmap
-   - Show testimonial modal before toolkit redirect
+   - Set flag to show testimonial card on My Toolkit
    - Track if user dismissed offer
-5. Add testimonial bonus check to roadmap creation limits
-6. Create admin view for testimonial moderation (basic list view)
+3. Integrate Senja.io embed:
+   ```html
+   <script src="https://widget.senja.io/js/iframeResizer.min.js"></script>
+   <iframe
+     src="https://senja.io/p/lattixiq/r/eOsaq7?mode=embed&nostyle=true"
+     allow="camera;microphone"
+     width="100%"
+     height="700"
+   ></iframe>
+   ```
+4. Add testimonial bonus check to roadmap creation limits:
+   - Check existing testimonial_url field (manually updated)
+   - Honor testimonial_bonus_used flag
+5. Manual admin process:
+   - Check Senja.io for new testimonials
+   - Update user.testimonial_url field in database
+   - Process within ~1 day as communicated
 
 **Story Points:** 8
 
