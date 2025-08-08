@@ -125,13 +125,12 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
 }
 
 export async function getTestimonialBonus(userId: string): Promise<boolean> {
-  // Placeholder for future implementation
-  // Will check if user has provided testimonial and not used bonus yet
+  // Check if user has provided testimonial and not used bonus yet
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("users")
-    .select("testimonial_bonus_used")
+    .select("testimonial_url, testimonial_bonus_used")
     .eq("id", userId)
     .single();
 
@@ -139,8 +138,8 @@ export async function getTestimonialBonus(userId: string): Promise<boolean> {
     return false;
   }
 
-  // For now, return false as testimonial bonus is not yet implemented
-  return false;
+  // User has testimonial bonus if they have a testimonial URL and haven't used the bonus
+  return !!(data.testimonial_url && !data.testimonial_bonus_used);
 }
 
 export async function getUserSubscriptionStatus(userId: string): Promise<{

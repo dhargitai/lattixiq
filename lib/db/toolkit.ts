@@ -35,54 +35,64 @@ export interface ToolkitData {
     text: string;
     date: string;
   } | null;
+  shouldShowTestimonialCard: boolean;
+  testimonialTrigger: "first-completion" | "sustained-success" | null;
 }
 
 export async function getToolkitData(userId: string): Promise<ToolkitData> {
   const supabase = await createClient();
 
-  const [activeRoadmapResult, completedRoadmapsResult, applicationLogsResult, learnedStepsResult] =
-    await Promise.all([
-      supabase
-        .from("roadmaps")
-        .select(
-          `
+  const [
+    activeRoadmapResult,
+    completedRoadmapsResult,
+    applicationLogsResult,
+    learnedStepsResult,
+    userResult,
+  ] = await Promise.all([
+    supabase
+      .from("roadmaps")
+      .select(
+        `
         *,
         steps:roadmap_steps(
           *,
           knowledge_content(*)
         )
       `
-        )
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .single(),
+      )
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .single(),
 
-      supabase.from("roadmaps").select("id").eq("user_id", userId).eq("status", "completed"),
+    supabase.from("roadmaps").select("id").eq("user_id", userId).eq("status", "completed"),
 
-      supabase
-        .from("application_logs")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(10),
+    supabase
+      .from("application_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10),
 
-      supabase
-        .from("roadmap_steps")
-        .select(
-          `
+    supabase
+      .from("roadmap_steps")
+      .select(
+        `
         id,
         roadmap_id,
         roadmaps!inner(user_id)
       `
-        )
-        .eq("status", "completed")
-        .eq("roadmaps.user_id", userId),
-    ]);
+      )
+      .eq("status", "completed")
+      .eq("roadmaps.user_id", userId),
+
+    supabase.from("users").select("testimonial_state").eq("id", userId).single(),
+  ]);
 
   const activeRoadmap = activeRoadmapResult.data;
   const completedRoadmaps = completedRoadmapsResult.data || [];
   const applicationLogs = applicationLogsResult.data || [];
   const learnedSteps = learnedStepsResult.data || [];
+  const userData = userResult.data;
 
   let activeRoadmapData: ActiveRoadmapData | null = null;
   let hasActivePlan = false;
@@ -156,6 +166,41 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
       }
     : null;
 
+  // Determine testimonial card display logic
+  let shouldShowTestimonialCard = false;
+  let testimonialTrigger: "first-completion" | "sustained-success" | null = null;
+
+  const testimonialState = userData?.testimonial_state || "not_asked";
+
+  // Only show if not already submitted and not dismissed twice
+  if (testimonialState !== "submitted" && testimonialState !== "dismissed_second") {
+    // Trigger 1: First roadmap completion
+    if (completedRoadmaps.length === 1 && testimonialState === "not_asked") {
+      // Check if we just completed our first roadmap (active roadmap is null or new)
+      if (
+        !activeRoadmap ||
+        (activeRoadmap && !activeRoadmap.steps?.some((s: RoadmapStep) => s.status === "unlocked"))
+      ) {
+        shouldShowTestimonialCard = true;
+        testimonialTrigger = "first-completion";
+      }
+    }
+
+    // Trigger 2: Sustained success (3+ roadmaps with high ratings)
+    if (completedRoadmaps.length >= 3 && testimonialState === "dismissed_first") {
+      // Check for high ratings in recent application logs
+      const highRatedLogsCount = applicationLogs.filter(
+        (log: ApplicationLog) => (log.effectiveness_rating ?? 0) >= 4
+      ).length;
+
+      // If we have multiple high ratings, show the sustained success trigger
+      if (highRatedLogsCount >= 3) {
+        shouldShowTestimonialCard = true;
+        testimonialTrigger = "sustained-success";
+      }
+    }
+  }
+
   return {
     activeRoadmap: activeRoadmapData,
     stats: {
@@ -167,6 +212,8 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
     hasActivePlan,
     currentStepId,
     recentLogEntry,
+    shouldShowTestimonialCard,
+    testimonialTrigger,
   };
 }
 

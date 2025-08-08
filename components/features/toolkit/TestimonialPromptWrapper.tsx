@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TestimonialPrompt } from "./TestimonialPrompt";
+import { TestimonialCard } from "../testimonial/TestimonialCard";
 import type { Database } from "@/lib/supabase/database.types";
 
 type TestimonialState = Database["public"]["Enums"]["testimonial_state"];
@@ -52,10 +52,6 @@ export function TestimonialPromptWrapper({
     await updateTestimonialState(newState);
   };
 
-  const handleSubmit = async (testimonialUrl?: string) => {
-    await updateTestimonialState("submitted", testimonialUrl);
-  };
-
   // Don't show if already handled
   if (
     testimonialState === "dismissed_first" ||
@@ -66,11 +62,9 @@ export function TestimonialPromptWrapper({
   }
 
   return (
-    <TestimonialPrompt
-      testimonialState={testimonialState}
-      triggerType={triggerType}
+    <TestimonialCard
+      trigger={triggerType === "first_roadmap" ? "first-completion" : "sustained-success"}
       onDismiss={handleDismiss}
-      onSubmit={handleSubmit}
     />
   );
 }
