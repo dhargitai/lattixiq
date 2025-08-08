@@ -21,6 +21,18 @@ vi.mock("next/headers", () => ({
   ),
 }));
 
+// Mock Stripe env validation
+vi.mock("@/lib/stripe/env-validation", () => ({
+  validateStripeEnv: vi.fn(),
+  stripeConfig: {
+    secretKey: "test_secret_key",
+    publishableKey: "test_publishable_key",
+    monthlyProductId: "price_monthly",
+    annualProductId: "price_annual",
+    webhookSecret: "test_webhook_secret",
+  },
+}));
+
 // Mock Stripe utilities
 vi.mock("@/lib/stripe/utils", () => ({
   createCheckoutSession: vi.fn(),
@@ -74,7 +86,7 @@ describe("Stripe API Endpoints", () => {
 
       const request = new NextRequest("http://localhost:3000/api/checkout", {
         method: "POST",
-        body: JSON.stringify({ priceId: process.env.STRIPE_MONTHLY_PRODUCT_ID || "price_monthly" }),
+        body: JSON.stringify({ priceId: "price_monthly" }),
       });
 
       const response = await checkoutPOST(request);
