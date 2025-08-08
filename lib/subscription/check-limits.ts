@@ -65,16 +65,37 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
   return false;
 }
 
+export async function getTestimonialBonus(userId: string): Promise<boolean> {
+  // Placeholder for future implementation
+  // Will check if user has provided testimonial and not used bonus yet
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("testimonial_bonus_used")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data) {
+    return false;
+  }
+
+  // For now, return false as testimonial bonus is not yet implemented
+  return false;
+}
+
 export async function getUserSubscriptionStatus(userId: string): Promise<{
   isSubscribed: boolean;
   status: string;
   canCreateRoadmap: boolean;
   completedFreeRoadmap: boolean;
+  hasTestimonialBonus: boolean;
 }> {
-  const [isSubscribed, completedFree, canCreate] = await Promise.all([
+  const [isSubscribed, completedFree, canCreate, testimonialBonus] = await Promise.all([
     hasActiveSubscription(userId),
     hasCompletedFreeRoadmap(userId),
     checkCanCreateRoadmap(userId),
+    getTestimonialBonus(userId),
   ]);
 
   const supabase = await createClient();
@@ -89,5 +110,6 @@ export async function getUserSubscriptionStatus(userId: string): Promise<{
     status: data?.subscription_status || "free",
     canCreateRoadmap: canCreate,
     completedFreeRoadmap: completedFree,
+    hasTestimonialBonus: testimonialBonus,
   };
 }

@@ -64,6 +64,9 @@ vi.mock("@/lib/db/users", () => ({
     stripe_customer_id: null,
     testimonial_state: null,
     testimonial_url: null,
+    free_roadmaps_used: false,
+    roadmap_count: 0,
+    testimonial_bonus_used: false,
   })),
 }));
 
@@ -129,6 +132,9 @@ describe("Settings Page", () => {
       subscription_current_period_end: "2024-02-01",
       testimonial_state: null,
       testimonial_url: null,
+      free_roadmaps_used: false,
+      roadmap_count: 0,
+      testimonial_bonus_used: false,
     });
 
     const Page = await SettingsPage();

@@ -1,7 +1,7 @@
 import { getStripeClient } from "./client";
-import { createClient } from "@supabase/supabase-js";
+import type { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 
 const stripe = getStripeClient();
 

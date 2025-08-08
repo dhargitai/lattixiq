@@ -79,6 +79,36 @@ export type Database = {
           },
         ];
       };
+      content_blocks: {
+        Row: {
+          content: string;
+          content_id: string;
+          created_at: string;
+          id: string;
+          metadata: Json | null;
+          published: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          content: string;
+          content_id: string;
+          created_at?: string;
+          id?: string;
+          metadata?: Json | null;
+          published?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          content?: string;
+          content_id?: string;
+          created_at?: string;
+          id?: string;
+          metadata?: Json | null;
+          published?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       goal_examples: {
         Row: {
           goal: string;
@@ -296,45 +326,54 @@ export type Database = {
         Row: {
           created_at: string | null;
           email: string | null;
+          free_roadmaps_used: boolean | null;
           id: string;
           reminder_enabled: boolean | null;
           reminder_last_sent: string | null;
           reminder_time: string | null;
           reminder_timezone: string | null;
+          roadmap_count: number | null;
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
           subscription_current_period_end: string | null;
           subscription_status: string | null;
+          testimonial_bonus_used: boolean | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url: string | null;
         };
         Insert: {
           created_at?: string | null;
           email?: string | null;
+          free_roadmaps_used?: boolean | null;
           id: string;
           reminder_enabled?: boolean | null;
           reminder_last_sent?: string | null;
           reminder_time?: string | null;
           reminder_timezone?: string | null;
+          roadmap_count?: number | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
           subscription_current_period_end?: string | null;
           subscription_status?: string | null;
+          testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
         };
         Update: {
           created_at?: string | null;
           email?: string | null;
+          free_roadmaps_used?: boolean | null;
           id?: string;
           reminder_enabled?: boolean | null;
           reminder_last_sent?: string | null;
           reminder_time?: string | null;
           reminder_timezone?: string | null;
+          roadmap_count?: number | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
           subscription_current_period_end?: string | null;
           subscription_status?: string | null;
+          testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
         };

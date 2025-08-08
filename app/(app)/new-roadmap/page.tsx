@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth/supabase";
+import { checkCanCreateRoadmap } from "@/lib/subscription/check-limits";
 import NewRoadmapForm from "@/components/features/new-roadmap/NewRoadmapForm";
 
 export const metadata: Metadata = {
@@ -13,6 +14,14 @@ export default async function NewRoadmapPage() {
 
   if (!user) {
     redirect("/login");
+  }
+
+  // Check if user can create a new roadmap
+  const canCreate = await checkCanCreateRoadmap(user.id);
+
+  if (!canCreate) {
+    // Redirect to toolkit with blocked parameter if not allowed
+    redirect("/toolkit?blocked=true");
   }
 
   return <NewRoadmapForm />;

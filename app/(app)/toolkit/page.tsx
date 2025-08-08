@@ -82,6 +82,8 @@ export default async function ToolkitPage() {
               hasActiveRoadmap={!!toolkitData.activeRoadmap}
               hasActivePlan={toolkitData.hasActivePlan}
               currentStepId={toolkitData.currentStepId}
+              userId={user.id}
+              hasCompletedRoadmap={toolkitData.completedRoadmapsCount > 0}
             />
 
             <ToolkitClient
