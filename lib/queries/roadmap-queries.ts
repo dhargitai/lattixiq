@@ -13,7 +13,8 @@ import type {
 export async function getActiveRoadmapWithSteps(userId: string) {
   const supabase = await createClient();
 
-  const result = await supabase
+  // First get the roadmap with steps
+  const roadmapResult = await supabase
     .from("roadmaps")
     .select(
       `
@@ -28,9 +29,35 @@ export async function getActiveRoadmapWithSteps(userId: string) {
     .eq("status", "active")
     .single();
 
+  if (roadmapResult.error || !roadmapResult.data) {
+    return {
+      data: null,
+      error: roadmapResult.error,
+    };
+  }
+
+  // Then get application logs to check for reflections
+  const stepIds = roadmapResult.data.steps.map((step) => step.id);
+  const logsResult = await supabase
+    .from("application_logs")
+    .select("roadmap_step_id")
+    .in("roadmap_step_id", stepIds);
+
+  // Create a set of step IDs that have reflections
+  const stepsWithReflections = new Set(logsResult.data?.map((log) => log.roadmap_step_id) || []);
+
+  // Add has_reflection field to each step
+  const roadmapWithReflectionData = {
+    ...roadmapResult.data,
+    steps: roadmapResult.data.steps.map((step) => ({
+      ...step,
+      has_reflection: stepsWithReflections.has(step.id),
+    })),
+  };
+
   return {
-    data: result.data as RoadmapWithStepsRenamed | null,
-    error: result.error,
+    data: roadmapWithReflectionData as RoadmapWithStepsRenamed | null,
+    error: null,
   };
 }
 

@@ -22,7 +22,9 @@ export function transformRoadmapForView(roadmap: RoadmapWithStepsRenamed) {
  * Maps 'order' to 'order_index' for UI components
  * Includes plan data for navigation logic
  */
-export function transformStepForView(step: RoadmapStep & { knowledge_content: KnowledgeContent }) {
+export function transformStepForView(
+  step: RoadmapStep & { knowledge_content: KnowledgeContent; has_reflection?: boolean }
+) {
   return {
     id: step.id,
     order_index: step.order, // Map 'order' to 'order_index' for UI components
@@ -30,6 +32,8 @@ export function transformStepForView(step: RoadmapStep & { knowledge_content: Kn
     plan_situation: step.plan_situation,
     plan_trigger: step.plan_trigger,
     plan_action: step.plan_action,
+    has_reflection: ("has_reflection" in step ? step.has_reflection : false) as boolean,
+    plan_created_at: step.plan_created_at,
     knowledge_content: {
       id: step.knowledge_content.id,
       title: step.knowledge_content.title,

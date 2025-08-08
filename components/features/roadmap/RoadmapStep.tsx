@@ -16,16 +16,29 @@ interface RoadmapStepProps {
 export default function RoadmapStep({ step, index, isAvailable, isCompleted }: RoadmapStepProps) {
   const router = useRouter();
 
+  // Detect applying state (has plan but no reflection)
+  const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
+  const hasReflection = step.has_reflection;
+  const isApplying = isAvailable && hasPlan && !hasReflection && !isCompleted;
+
   const handleClick = () => {
     if (isAvailable) {
-      // Check if plan exists - if so, navigate to reflect screen, otherwise to learn screen
-      const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
-      if (hasPlan) {
+      // Navigate based on step state
+      if (!hasPlan) {
+        router.push(`/learn/${step.id}`);
+      } else if (!hasReflection) {
         router.push(`/reflect/${step.id}`);
       } else {
         router.push(`/learn/${step.id}`);
       }
     }
+  };
+
+  const getCtaText = () => {
+    if (!isAvailable || isCompleted) return null;
+    if (!hasPlan) return "Start Learning";
+    if (!hasReflection) return "Reflect On What You Learned";
+    return "View Step";
   };
 
   const getStepIndicator = () => {
@@ -61,7 +74,11 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
     );
   };
 
-  const stepLabel = isAvailable ? `Step ${index + 1} • Current` : `Step ${index + 1}`;
+  const stepLabel = isAvailable
+    ? isApplying
+      ? `Step ${index + 1} • Applying`
+      : `Step ${index + 1} • Current`
+    : `Step ${index + 1}`;
 
   return (
     <div
@@ -99,12 +116,24 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
         >
           {step.knowledge_content.title}
         </h2>
-        {isAvailable && index === 0 && (
+
+        {/* Applying State Indicator */}
+        {isApplying && (
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-xl">⏳</span>
+            <p className="text-sm text-gray-600">
+              You&apos;re on a mission to apply what you learned
+            </p>
+          </div>
+        )}
+
+        {/* CTA Button */}
+        {isAvailable && !isCompleted && (
           <button
             onClick={handleClick}
             className="mt-3 text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors"
           >
-            Start Learning →
+            {getCtaText()} →
           </button>
         )}
       </div>

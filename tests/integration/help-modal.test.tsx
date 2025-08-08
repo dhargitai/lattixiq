@@ -52,7 +52,6 @@ describe("HelpModal Integration", () => {
 
   it("loads and displays content from Supabase", async () => {
     const mockContent = {
-      title: "Test Help Title",
       content: "This is test help content",
     };
 
@@ -71,14 +70,15 @@ describe("HelpModal Integration", () => {
 
     // Wait for content to load
     await waitFor(() => {
-      expect(screen.getByText("Test Help Title")).toBeInTheDocument();
+      expect(screen.getByText("This is test help content")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("This is test help content")).toBeInTheDocument();
+    // Should show fallback title for unknown contentId (in the content area, not dialog title)
+    expect(screen.getAllByText("Help & Guidance")).toHaveLength(2); // Dialog title + content title
 
     // Verify Supabase was called correctly
     expect(mockSupabase.from).toHaveBeenCalledWith("content_blocks");
-    expect(mockSupabase.from().select).toHaveBeenCalledWith("title, content");
+    expect(mockSupabase.from().select).toHaveBeenCalledWith("content");
   });
 
   it("displays error message when Supabase query fails", async () => {
@@ -120,7 +120,6 @@ describe("HelpModal Integration", () => {
 
   it("calls onClose when dialog is closed", async () => {
     const mockContent = {
-      title: "Test Help",
       content: "Test content",
     };
 
@@ -135,7 +134,7 @@ describe("HelpModal Integration", () => {
     const { rerender } = render(<HelpModal contentId="test-help" onClose={mockOnClose} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Test Help")).toBeInTheDocument();
+      expect(screen.getByText("Test content")).toBeInTheDocument();
     });
 
     // Simulate dialog close
@@ -178,7 +177,6 @@ describe("HelpModal Integration", () => {
 
   it("handles markdown content rendering", async () => {
     const mockContent = {
-      title: "Markdown Test",
       content: "## Heading\n\n- Item 1\n- Item 2\n\n**Bold text**",
     };
 
@@ -192,8 +190,9 @@ describe("HelpModal Integration", () => {
 
     render(<HelpModal contentId="test-help" onClose={mockOnClose} />);
 
+    // Wait for content to load
     await waitFor(() => {
-      expect(screen.getByText("Markdown Test")).toBeInTheDocument();
+      expect(screen.getByText(/## Heading/)).toBeInTheDocument();
     });
 
     // ReactMarkdown is mocked to just render the content as text
@@ -204,7 +203,6 @@ describe("HelpModal Integration", () => {
 
   it("fetches content only once on mount", async () => {
     const mockContent = {
-      title: "Test",
       content: "Content",
     };
 
@@ -219,7 +217,7 @@ describe("HelpModal Integration", () => {
     const { rerender } = render(<HelpModal contentId="test-help" onClose={mockOnClose} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Test")).toBeInTheDocument();
+      expect(screen.getByText("Content")).toBeInTheDocument();
     });
 
     // Rerender with same props
@@ -231,12 +229,10 @@ describe("HelpModal Integration", () => {
 
   it("re-fetches content when contentId changes", async () => {
     const mockContent1 = {
-      title: "Help 1",
       content: "Content 1",
     };
 
     const mockContent2 = {
-      title: "Help 2",
       content: "Content 2",
     };
 
@@ -259,16 +255,39 @@ describe("HelpModal Integration", () => {
     const { rerender } = render(<HelpModal contentId="help-1" onClose={mockOnClose} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Help 1")).toBeInTheDocument();
+      expect(screen.getByText("Content 1")).toBeInTheDocument();
     });
 
     // Change contentId
     rerender(<HelpModal contentId="help-2" onClose={mockOnClose} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Help 2")).toBeInTheDocument();
+      expect(screen.getByText("Content 2")).toBeInTheDocument();
     });
 
     expect(mockSupabase.from).toHaveBeenCalledTimes(2);
+  });
+
+  it("displays correct static title for known contentIds", async () => {
+    const mockContent = {
+      content: "Toolkit help content",
+    };
+
+    mockSupabase.from.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: mockContent, error: null }),
+        }),
+      }),
+    });
+
+    render(<HelpModal contentId="toolkit-screen-help" onClose={mockOnClose} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Toolkit help content")).toBeInTheDocument();
+    });
+
+    // Should show the static title from HELP_TITLES
+    expect(screen.getByText("My Toolkit Guide")).toBeInTheDocument();
   });
 });
