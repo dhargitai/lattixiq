@@ -29,7 +29,6 @@ describe("UnlockedKnowledgeModal", () => {
         name: "Activation Energy",
         type: "mental-model" as const,
         category: "Productivity",
-        slug: "activation-energy",
         completed_at: "2024-01-01",
       },
     ];
@@ -61,7 +60,6 @@ describe("UnlockedKnowledgeModal", () => {
         name: "Activation Energy",
         type: "mental-model" as const,
         category: "Productivity",
-        slug: "activation-energy",
         completed_at: "2024-01-01",
       },
       {
@@ -69,7 +67,6 @@ describe("UnlockedKnowledgeModal", () => {
         name: "Confirmation Bias",
         type: "cognitive-bias" as const,
         category: "Decision Making",
-        slug: "confirmation-bias",
         completed_at: "2024-01-02",
       },
     ];
@@ -94,11 +91,10 @@ describe("UnlockedKnowledgeModal", () => {
   it("navigates to detail page when item is clicked", async () => {
     const mockData = [
       {
-        id: "1",
+        id: "activation-energy",
         name: "Activation Energy",
         type: "mental-model" as const,
         category: "Productivity",
-        slug: "activation-energy",
         completed_at: "2024-01-01",
       },
     ];
@@ -114,7 +110,7 @@ describe("UnlockedKnowledgeModal", () => {
     });
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
-    // Note: router.push is mocked globally, actual navigation test would be in e2e
+    expect(mockPush).toHaveBeenCalledWith("/unlocked/activation-energy");
   });
 
   it("closes modal via X button", async () => {

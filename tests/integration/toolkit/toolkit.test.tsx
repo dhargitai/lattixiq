@@ -14,6 +14,19 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  useSearchParams: () => ({
+    get: vi.fn().mockReturnValue(null),
+  }),
+}));
+
+vi.mock("@/lib/subscription/check-limits", () => ({
+  getUserSubscriptionStatus: vi.fn().mockResolvedValue({
+    isSubscribed: false,
+    status: "free",
+    canCreateRoadmap: true,
+    completedFreeRoadmap: false,
+    hasTestimonialBonus: false,
+  }),
 }));
 
 describe("Toolkit Components", () => {

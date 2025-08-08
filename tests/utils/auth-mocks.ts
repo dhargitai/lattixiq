@@ -36,6 +36,9 @@ export const mockUsers = {
 };
 
 export function createMockSupabaseClient(user: User | null = mockUsers.authenticated) {
+  // Track query state for proper mocking
+  let currentTable = "";
+
   return {
     auth: {
       getUser: async () => ({
@@ -122,9 +125,17 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
           error: null,
         };
       }
+      // Mock for create_roadmap_with_tracking RPC
+      if (functionName === "create_roadmap_with_tracking") {
+        return {
+          data: `test-roadmap-${Date.now()}`,
+          error: null,
+        };
+      }
       return { data: null, error: null };
     },
     from: (table: string) => {
+      currentTable = table;
       const queryBuilder: {
         select: (_query?: string) => typeof queryBuilder;
         eq: (_column: string, _value: unknown) => typeof queryBuilder;
@@ -158,11 +169,32 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
         in: (_column: string, _values: unknown[]) => queryBuilder,
         order: (_column: string, _options?: unknown) => queryBuilder,
         single: async () => {
+          // Mock for user_subscriptions table (for subscription checking)
+          if (currentTable === "user_subscriptions") {
+            // Return no subscription by default (free user)
+            return { data: null, error: { code: "PGRST116" } };
+          }
+          // Mock for users table (for free roadmap limits)
+          if (currentTable === "users") {
+            // Return user with no roadmaps used (allow first free roadmap)
+            return {
+              data: {
+                id: user?.id || "test-user-123",
+                roadmap_count: 0,
+                free_roadmaps_used: false,
+                testimonial_bonus_used: false,
+                testimonial_url: null,
+                subscription_status: "free",
+                subscription_current_period_end: null,
+              },
+              error: null,
+            };
+          }
           // Mock for checking existing active roadmap
-          if (table === "roadmaps") {
+          if (currentTable === "roadmaps") {
             return { data: null, error: { code: "PGRST116" } }; // No active roadmap
           }
-          if (table === "knowledge_content") {
+          if (currentTable === "knowledge_content") {
             // Return mock knowledge content
             return {
               data: {
@@ -185,11 +217,11 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
         },
         then: async (resolve: (value: { data: unknown; error: unknown }) => void) => {
           // Mock for getUserLearningHistory and other multi-row queries
-          if (table === "application_logs") {
+          if (currentTable === "application_logs") {
             resolve({ data: [], error: null });
-          } else if (table === "roadmap_steps") {
+          } else if (currentTable === "roadmap_steps") {
             resolve({ data: [], error: null });
-          } else if (table === "knowledge_content") {
+          } else if (currentTable === "knowledge_content") {
             // Return multiple knowledge content items for queries
             resolve({
               data: [
@@ -285,10 +317,10 @@ export function createMockSupabaseClient(user: User | null = mockUsers.authentic
         insert: (_data: unknown) => ({
           select: () => ({
             single: async () => {
-              if (table === "roadmaps") {
+              if (currentTable === "roadmaps") {
                 return { data: { id: `test-roadmap-${Date.now()}` }, error: null };
               }
-              if (table === "roadmap_steps") {
+              if (currentTable === "roadmap_steps") {
                 return { data: { id: `test-step-${Date.now()}` }, error: null };
               }
               return { data: { id: "mock-id" }, error: null };

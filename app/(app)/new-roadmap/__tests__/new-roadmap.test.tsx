@@ -5,7 +5,9 @@ import { redirect } from "next/navigation";
 import NewRoadmapPage from "../page";
 
 vi.mock("next/navigation", () => ({
-  redirect: vi.fn(),
+  redirect: vi.fn(() => {
+    throw new Error("NEXT_REDIRECT");
+  }),
   useRouter: vi.fn(() => ({
     push: vi.fn(),
     replace: vi.fn(),
@@ -20,7 +22,14 @@ vi.mock("@/lib/auth/supabase", () => ({
   getUser: vi.fn(),
 }));
 
+vi.mock("@/lib/subscription/check-limits", () => ({
+  checkCanCreateRoadmap: vi.fn(),
+}));
+
 const mockGetUser = vi.mocked(await import("@/lib/auth/supabase").then((m) => m.getUser));
+const mockCheckCanCreateRoadmap = vi.mocked(
+  await import("@/lib/subscription/check-limits").then((m) => m.checkCanCreateRoadmap)
+);
 
 // Mock fetch globally with proper typing
 const mockFetch = vi.fn<typeof fetch>();
@@ -37,9 +46,9 @@ describe("New Roadmap Page", () => {
   describe("Authentication", () => {
     it("should redirect to login when user is unauthenticated", async () => {
       mockGetUser.mockResolvedValue(null);
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
 
-      render(await NewRoadmapPage());
-
+      await expect(NewRoadmapPage()).rejects.toThrow("NEXT_REDIRECT");
       expect(redirect).toHaveBeenCalledWith("/login");
     });
 
@@ -48,10 +57,22 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
 
       render(await NewRoadmapPage());
 
       expect(redirect).not.toHaveBeenCalled();
+    });
+
+    it("should redirect to toolkit when user cannot create roadmap", async () => {
+      mockGetUser.mockResolvedValue({
+        id: "test-user-id",
+        email: "test@example.com",
+      });
+      mockCheckCanCreateRoadmap.mockResolvedValue(false);
+
+      await expect(NewRoadmapPage()).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirect).toHaveBeenCalledWith("/toolkit?blocked=true");
     });
   });
 
@@ -61,6 +82,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it('should show expanded "How this works" section for new users', async () => {
@@ -111,6 +133,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it('should show "What is your single biggest challenge right now?" for new users', async () => {
@@ -136,6 +159,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it('should populate starter text when "Stop Procrastinating" is clicked', async () => {
@@ -211,6 +235,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it("should show gray hint when input is empty", async () => {
@@ -279,6 +304,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it("should show loading state when form is submitted", async () => {
@@ -355,6 +381,7 @@ describe("New Roadmap Page", () => {
         id: "test-user-id",
         email: "test@example.com",
       });
+      mockCheckCanCreateRoadmap.mockResolvedValue(true);
     });
 
     it("should render correctly on mobile viewport", async () => {

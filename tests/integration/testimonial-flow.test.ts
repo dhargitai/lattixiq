@@ -48,6 +48,9 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         testimonial_url: null,
       })
       .eq("id", testUserId);
+
+    // Clean up any roadmaps from previous tests
+    await supabase.from("roadmaps").delete().eq("user_id", testUserId);
   });
 
   describe("Testimonial State Transitions", () => {
@@ -190,20 +193,34 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
       expect(user).not.toBeNull();
       expect(user?.testimonial_state).toBe("not_asked");
 
-      // Clean up
+      // Clean up - explicitly delete the roadmap
       if (roadmap) {
-        await supabase.from("roadmaps").delete().eq("id", roadmap.id);
+        const { error: deleteError } = await supabase
+          .from("roadmaps")
+          .delete()
+          .eq("id", roadmap.id);
+
+        // Verify deletion succeeded
+        expect(deleteError).toBeNull();
       }
     });
 
     it("detects sustained success milestone", async () => {
+      // Get count of existing roadmaps before test
+      const { count: initialCount } = await supabase
+        .from("roadmaps")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", testUserId);
+
+      const existingRoadmapCount = initialCount || 0;
+
       // First mark user as asked_first
       await supabase
         .from("users")
         .update({ testimonial_state: "asked_first" })
         .eq("id", testUserId);
 
-      // Create 3 completed roadmaps
+      // Create exactly 3 completed roadmaps
       const roadmapIds: string[] = [];
 
       for (let i = 0; i < 3; i++) {
@@ -225,14 +242,18 @@ describe.skipIf(SKIP_INTEGRATION)("Testimonial Flow Integration", () => {
         }
       }
 
-      // Count completed roadmaps
-      const { count } = await supabase
+      // Verify we created exactly 3 roadmaps
+      expect(roadmapIds.length).toBe(3);
+
+      // Count completed roadmaps for this specific user
+      const { count: finalCount } = await supabase
         .from("roadmaps")
         .select("*", { count: "exact", head: true })
         .eq("user_id", testUserId)
         .eq("status", "completed");
 
-      expect(count).toBe(3);
+      // Should have initial count + 3 new roadmaps
+      expect(finalCount).toBe(existingRoadmapCount + 3);
 
       // Clean up
       for (const id of roadmapIds) {

@@ -1,7 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { GET } from "@/app/api/content-blocks/[contentId]/route";
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+
+// Mock the LRU cache to prevent interference
+const mockCache = new Map<string, unknown>();
+vi.mock("lru-cache", () => ({
+  LRUCache: vi.fn().mockImplementation(() => ({
+    get: vi.fn((key: string) => mockCache.get(key)),
+    set: vi.fn((key: string, value: unknown) => mockCache.set(key, value)),
+  })),
+}));
 
 // Mock Supabase client
 vi.mock("@/lib/supabase/server", () => ({
@@ -20,6 +29,8 @@ describe("Content Blocks API", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules(); // Reset module state to prevent interference
+    mockCache.clear(); // Clear the cache between tests
 
     mockSupabase = {
       from: vi.fn().mockReturnThis(),
@@ -29,6 +40,10 @@ describe("Content Blocks API", () => {
     };
 
     (createClient as ReturnType<typeof vi.fn>).mockResolvedValue(mockSupabase);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("should return content for valid content_id", async () => {
@@ -83,6 +98,7 @@ describe("Content Blocks API", () => {
   });
 
   it("should return 500 for database errors", async () => {
+    // Test database error (not "no rows found" error)
     mockSupabase.single.mockResolvedValue({
       data: null,
       error: { code: "42P01", message: "Database error" },

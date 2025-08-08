@@ -121,7 +121,7 @@ describe("Settings Page", () => {
     vi.mocked(getUserInfo).mockResolvedValueOnce({
       id: "test-user-id",
       email: "test@example.com",
-      subscription_status: "active",
+      subscription_status: "premium",
       reminder_enabled: true,
       reminder_time: "09:00",
       created_at: "2024-01-01",

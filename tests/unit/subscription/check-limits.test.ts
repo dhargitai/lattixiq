@@ -122,8 +122,8 @@ describe("Subscription Limit Checking", () => {
 
   describe("checkCanCreateRoadmap", () => {
     it("should allow creation with active subscription", async () => {
-      // Mock active subscription
-      mockSupabase.single.mockResolvedValue({
+      // First call: user_subscriptions table
+      mockSupabase.single.mockResolvedValueOnce({
         data: {
           subscription_status: "active",
           subscription_current_period_end: new Date(Date.now() + 86400000).toISOString(),
@@ -136,18 +136,20 @@ describe("Subscription Limit Checking", () => {
     });
 
     it("should allow first roadmap without subscription", async () => {
-      // Mock no subscription
-      mockSupabase.single.mockResolvedValue({
-        data: {
-          subscription_status: "free",
-          subscription_current_period_end: null,
-        },
-        error: null,
+      // First call: user_subscriptions table (no subscription)
+      mockSupabase.single.mockResolvedValueOnce({
+        data: null,
+        error: { code: "PGRST116" }, // No rows found
       });
 
-      // Mock no completed roadmaps
-      mockSupabase.limit.mockResolvedValue({
-        data: [],
+      // Second call: users table
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          roadmap_count: 0,
+          free_roadmaps_used: false,
+          testimonial_bonus_used: false,
+          testimonial_url: null,
+        },
         error: null,
       });
 
@@ -156,18 +158,20 @@ describe("Subscription Limit Checking", () => {
     });
 
     it("should block second roadmap without subscription", async () => {
-      // Mock no subscription
-      mockSupabase.single.mockResolvedValue({
-        data: {
-          subscription_status: "free",
-          subscription_current_period_end: null,
-        },
-        error: null,
+      // First call: user_subscriptions table (no subscription)
+      mockSupabase.single.mockResolvedValueOnce({
+        data: null,
+        error: { code: "PGRST116" }, // No rows found
       });
 
-      // Mock completed roadmap exists
-      mockSupabase.limit.mockResolvedValue({
-        data: [{ id: "roadmap-1" }],
+      // Second call: users table (already used free roadmap)
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          roadmap_count: 1,
+          free_roadmaps_used: true,
+          testimonial_bonus_used: false,
+          testimonial_url: null,
+        },
         error: null,
       });
 

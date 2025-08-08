@@ -56,6 +56,16 @@ npm run build-storybook
 
 Tests are configured with Vitest and integrate with Storybook for component testing. The browser-based testing uses Playwright.
 
+#### Console Output Management
+
+The test suite uses a hybrid console capture approach (configured in `tests/setup.ts`):
+
+- **Normal test runs**: Console outputs (log, warn, error) are suppressed for cleaner output
+- **Failed tests**: Captured console outputs are displayed to help with debugging
+- **Verbose mode**: Set `VERBOSE_TEST_LOGS=true` to also show console.log outputs for failed tests
+
+This approach keeps test output clean while preserving debugging information when needed.
+
 ```bash
 # Run all tests
 npm run test
