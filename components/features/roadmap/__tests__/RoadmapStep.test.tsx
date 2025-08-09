@@ -17,7 +17,6 @@ describe("RoadmapStep", () => {
     id: "step-1",
     order_index: 0,
     status: "unlocked",
-    plan_situation: null,
     plan_trigger: null,
     plan_action: null,
     has_reflection: false,
@@ -42,7 +41,6 @@ describe("RoadmapStep", () => {
   describe("Applying State Detection", () => {
     it("should detect applying state when step has plan but no reflection", () => {
       const step = createMockStep({
-        plan_situation: "Test situation",
         plan_trigger: "Test trigger",
         plan_action: "Test action",
         has_reflection: false,
@@ -65,7 +63,6 @@ describe("RoadmapStep", () => {
 
     it("should not show applying state when step has no plan", () => {
       const step = createMockStep({
-        plan_situation: null,
         plan_trigger: null,
         plan_action: null,
         has_reflection: false,
@@ -88,7 +85,6 @@ describe("RoadmapStep", () => {
 
     it("should not show applying state when step has reflection", () => {
       const step = createMockStep({
-        plan_situation: "Test situation",
         plan_trigger: "Test trigger",
         plan_action: "Test action",
         has_reflection: true,
@@ -108,7 +104,6 @@ describe("RoadmapStep", () => {
 
     it("should not show applying state when step is completed", () => {
       const step = createMockStep({
-        plan_situation: "Test situation",
         plan_trigger: "Test trigger",
         plan_action: "Test action",
         has_reflection: false,
@@ -131,7 +126,6 @@ describe("RoadmapStep", () => {
 
     it("should not show applying state when step is locked", () => {
       const step = createMockStep({
-        plan_situation: "Test situation",
         plan_trigger: "Test trigger",
         plan_action: "Test action",
         has_reflection: false,
@@ -159,7 +153,6 @@ describe("RoadmapStep", () => {
 
     it("should show 'Reflect On What You Learned' when plan exists but no reflection", () => {
       const step = createMockStep({
-        plan_situation: "Test",
         plan_trigger: "Test",
         plan_action: "Test",
         has_reflection: false,
@@ -172,7 +165,6 @@ describe("RoadmapStep", () => {
 
     it("should show 'View Step' when both plan and reflection exist", () => {
       const step = createMockStep({
-        plan_situation: "Test",
         plan_trigger: "Test",
         plan_action: "Test",
         has_reflection: true,
@@ -220,7 +212,6 @@ describe("RoadmapStep", () => {
 
     it("should navigate to reflect screen when plan exists but no reflection", () => {
       const step = createMockStep({
-        plan_situation: "Test",
         plan_trigger: "Test",
         plan_action: "Test",
         has_reflection: false,
@@ -236,7 +227,6 @@ describe("RoadmapStep", () => {
 
     it("should navigate to learn screen when both plan and reflection exist", () => {
       const step = createMockStep({
-        plan_situation: "Test",
         plan_trigger: "Test",
         plan_action: "Test",
         has_reflection: true,

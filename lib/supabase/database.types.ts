@@ -235,7 +235,6 @@ export type Database = {
           order: number;
           plan_action: string | null;
           plan_created_at: string | null;
-          plan_situation: string | null;
           plan_trigger: string | null;
           roadmap_id: string;
           status: Database["public"]["Enums"]["roadmap_step_status"] | null;
@@ -248,7 +247,6 @@ export type Database = {
           order: number;
           plan_action?: string | null;
           plan_created_at?: string | null;
-          plan_situation?: string | null;
           plan_trigger?: string | null;
           roadmap_id: string;
           status?: Database["public"]["Enums"]["roadmap_step_status"] | null;
@@ -261,7 +259,6 @@ export type Database = {
           order?: number;
           plan_action?: string | null;
           plan_created_at?: string | null;
-          plan_situation?: string | null;
           plan_trigger?: string | null;
           roadmap_id?: string;
           status?: Database["public"]["Enums"]["roadmap_step_status"] | null;
@@ -506,9 +503,9 @@ export type Database = {
         Returns: {
           user_id: string;
           roadmap_count: number;
+          has_testimonial: boolean;
           free_roadmaps_used: boolean;
           testimonial_bonus_used: boolean;
-          has_testimonial: boolean;
         }[];
       };
       vector_avg: {

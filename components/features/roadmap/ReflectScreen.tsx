@@ -251,7 +251,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
             <div className="h-[3px] bg-gradient-to-r from-[#48BB78] to-[#38A169] w-[60px] rounded-sm mb-6"></div>
 
             {/* Plan Reminder */}
-            {step.plan_situation && step.plan_trigger && step.plan_action && (
+            {step.plan_trigger && step.plan_action && (
               <div
                 className="bg-gradient-to-br from-[#F0FFF4] to-[#E6FFFA] border-l-4 border-l-[#48BB78] p-5 mb-8 rounded-lg relative overflow-hidden animate-slide-in-left"
                 data-testid="plan-reminder"
@@ -261,7 +261,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                   Your Plan:{" "}
                 </div>
                 <p className="text-base text-[#2F855A] italic leading-relaxed relative z-10">
-                  IF: {step.plan_situation} {step.plan_trigger} → THEN: {step.plan_action}
+                  IF: {step.plan_trigger} → THEN: {step.plan_action}
                 </p>
               </div>
             )}

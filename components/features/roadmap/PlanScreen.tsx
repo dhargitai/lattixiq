@@ -77,8 +77,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
       try {
         const supabase = createClient();
         const updates: RoadmapStepUpdate = {
-          plan_situation: formData.situation,
-          plan_trigger: formData.situation, // Using situation as trigger for IF-THEN pattern
+          plan_trigger: formData.situation,
           plan_action: formData.action,
           plan_created_at: new Date().toISOString(),
         };

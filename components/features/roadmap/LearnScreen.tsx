@@ -27,7 +27,7 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
     }, []);
 
     // Check if plan exists
-    const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
+    const hasPlan = step.plan_trigger && step.plan_action;
 
     const handleNavigateToPlan = () => {
       if (onNavigateToPlan) {

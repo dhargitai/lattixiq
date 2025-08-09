@@ -105,11 +105,7 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
 
     if (currentStep) {
       currentStepId = currentStep.id;
-      hasActivePlan = !!(
-        currentStep.plan_situation ||
-        currentStep.plan_trigger ||
-        currentStep.plan_action
-      );
+      hasActivePlan = !!(currentStep.plan_trigger || currentStep.plan_action);
     }
 
     const lastActivity = applicationLogs.find((log: ApplicationLog) =>

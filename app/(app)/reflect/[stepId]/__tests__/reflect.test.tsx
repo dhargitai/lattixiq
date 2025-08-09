@@ -69,8 +69,7 @@ describe("Reflect Page", () => {
     knowledge_content_id: "test-content-id",
     order: 1,
     status: "in_progress",
-    plan_situation: "When I feel overwhelmed",
-    plan_trigger: "at work",
+    plan_trigger: "When I feel overwhelmed at work",
     plan_action: "Take 5 deep breaths",
     plan_created_at: "2025-01-01T10:00:00Z",
     knowledge_content: {
@@ -144,7 +143,7 @@ describe("Reflect Page", () => {
       const planReminder = screen.getByTestId("plan-reminder");
       expect(planReminder).toBeInTheDocument();
       expect(planReminder).toHaveTextContent(
-        `🎯 Your Plan: IF: ${mockStep.plan_situation} ${mockStep.plan_trigger} → THEN: ${mockStep.plan_action}`
+        `🎯 Your Plan: IF: ${mockStep.plan_trigger} → THEN: ${mockStep.plan_action}`
       );
     });
   });

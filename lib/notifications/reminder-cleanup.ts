@@ -9,14 +9,14 @@ export async function logReminderCleanup(stepId: string, userId: string) {
   try {
     const supabase = createClient();
 
-    // Check if the step had a plan (check for plan_situation/plan_action fields)
+    // Check if the step had a plan (check for plan_trigger/plan_action fields)
     const { data: step } = await supabase
       .from("roadmap_steps")
-      .select("plan_situation, plan_trigger, plan_action, roadmap_id")
+      .select("plan_trigger, plan_action, roadmap_id")
       .eq("id", stepId)
       .single();
 
-    if (!step?.plan_situation && !step?.plan_action) {
+    if (!step?.plan_trigger && !step?.plan_action) {
       // No plan to clean up
       return;
     }
@@ -42,15 +42,15 @@ export async function logReminderCleanup(stepId: string, userId: string) {
     // Status "unlocked" means in progress, "completed" means done
     const { data: activePlans } = await supabase
       .from("roadmap_steps")
-      .select("id, plan_situation, plan_action")
+      .select("id, plan_trigger, plan_action")
       .eq("status", "unlocked")
-      .or("plan_situation.not.is.null,plan_action.not.is.null");
+      .or("plan_trigger.not.is.null,plan_action.not.is.null");
 
     // Filter to only steps that actually have plans
     const plansWithContent =
       activePlans?.filter(
-        (plan: { plan_situation: string | null; plan_action: string | null }) =>
-          plan.plan_situation || plan.plan_action
+        (plan: { plan_trigger: string | null; plan_action: string | null }) =>
+          plan.plan_trigger || plan.plan_action
       ) || [];
 
     if (plansWithContent.length === 0) {

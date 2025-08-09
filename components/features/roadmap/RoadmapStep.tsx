@@ -17,7 +17,7 @@ export default function RoadmapStep({ step, index, isAvailable, isCompleted }: R
   const router = useRouter();
 
   // Detect applying state (has plan but no reflection)
-  const hasPlan = step.plan_situation && step.plan_trigger && step.plan_action;
+  const hasPlan = step.plan_trigger && step.plan_action;
   const hasReflection = step.has_reflection;
   const isApplying = isAvailable && hasPlan && !hasReflection && !isCompleted;
 

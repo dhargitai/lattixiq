@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
             )
             .eq("roadmap.user_id", user.id)
             .eq("roadmap.status", "active")
-            .not("plan_situation", "is", null)
+            .not("plan_trigger", "is", null)
             .not("plan_action", "is", null)
             .eq("status", "unlocked")
             .order("order", { ascending: true })
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
           // For now, just log the notification
           console.log(`Would send notification to user ${user.id}:`, {
             title: "Time to practice your plan",
-            body: `${activeStep.knowledge_content?.title}: ${activeStep.plan_situation} → ${activeStep.plan_action}`,
+            body: `${activeStep.knowledge_content?.title}: ${activeStep.plan_trigger} → ${activeStep.plan_action}`,
             stepId: activeStep.id,
           });
 

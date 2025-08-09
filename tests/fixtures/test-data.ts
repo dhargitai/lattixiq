@@ -207,7 +207,6 @@ export function createTestRoadmap(options?: {
       order: i,
       status,
       plan_created_at: status === "completed" ? new Date().toISOString() : null,
-      plan_situation: status === "completed" ? "Test situation" : null,
       plan_trigger: null,
       plan_action: status === "completed" ? "Test action" : null,
       completed_at: status === "completed" ? new Date().toISOString() : null,

@@ -45,7 +45,7 @@ export default async function ReflectPage({ params }: { params: Promise<{ stepId
   }
 
   // Verify plan exists
-  if (!step.plan_situation || !step.plan_trigger || !step.plan_action) {
+  if (!step.plan_trigger || !step.plan_action) {
     redirect(`/plan/${stepId}`);
     return; // This return won't execute, but TypeScript needs it
   }
