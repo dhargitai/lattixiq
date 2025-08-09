@@ -16,9 +16,11 @@ export const testUsers = {
     reminder_time: "09:00",
     reminder_timezone: "America/New_York",
     reminder_last_sent: null,
-    subscription_status: "free" as const,
-    stripe_customer_id: null,
+    free_roadmaps_used: false,
+    roadmap_count: 0,
+    testimonial_bonus_used: false,
     testimonial_state: "not_asked" as const,
+    testimonial_url: null,
   } as User,
 
   secondary: {
@@ -29,9 +31,11 @@ export const testUsers = {
     reminder_time: null,
     reminder_timezone: "Europe/London",
     reminder_last_sent: null,
-    subscription_status: "premium" as const,
-    stripe_customer_id: "cus_test123",
+    free_roadmaps_used: true,
+    roadmap_count: 2,
+    testimonial_bonus_used: false,
     testimonial_state: "not_asked" as const,
+    testimonial_url: null,
   } as User,
 };
 

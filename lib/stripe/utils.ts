@@ -5,12 +5,21 @@ import type Stripe from "stripe";
 
 const stripe = getStripeClient();
 
+export async function getCustomerSubscriptions(customerId: string): Promise<Stripe.Subscription[]> {
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    status: "active",
+  });
+  return subscriptions.data;
+}
+
 export async function createCheckoutSession(
   userId: string,
   priceId: string,
-  customerEmail?: string
+  customerEmail?: string,
+  customerId?: string
 ): Promise<string> {
-  const session = await stripe.checkout.sessions.create({
+  const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode: "subscription",
     payment_method_types: ["card"],
     line_items: [
@@ -21,7 +30,6 @@ export async function createCheckoutSession(
     ],
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/checkout/callback?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/toolkit?canceled=true`,
-    customer_email: customerEmail,
     client_reference_id: userId,
     metadata: {
       userId,
@@ -31,7 +39,16 @@ export async function createCheckoutSession(
         userId,
       },
     },
-  });
+  };
+
+  // If we have a customer ID, use it; otherwise use email
+  if (customerId) {
+    sessionParams.customer = customerId;
+  } else {
+    sessionParams.customer_email = customerEmail;
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionParams);
 
   if (!session.url) {
     throw new Error("Failed to create checkout session URL");
@@ -76,8 +93,7 @@ export async function updateUserSubscription(
   subscriptionStatus: string,
   currentPeriodEnd?: Date
 ): Promise<void> {
-  // Try to update user_subscriptions table first (service role only)
-  // Using type assertion until types are regenerated after migration
+  // Update user_subscriptions table (service role only)
   const { error: subscriptionError } = await supabase
     .from("user_subscriptions")
     .upsert({
@@ -91,29 +107,7 @@ export async function updateUserSubscription(
     .eq("user_id", userId);
 
   if (subscriptionError) {
-    // If user_subscriptions doesn't exist yet, fall back to users table
-    if (
-      subscriptionError.code === "42P01" ||
-      subscriptionError.message?.includes("user_subscriptions")
-    ) {
-      console.log("user_subscriptions table not available, updating users table");
-      // Fallback to users table for backward compatibility
-      const { error: userError } = await supabase
-        .from("users")
-        .update({
-          stripe_customer_id: stripeCustomerId,
-          stripe_subscription_id: stripeSubscriptionId,
-          subscription_status: subscriptionStatus,
-          subscription_current_period_end: currentPeriodEnd?.toISOString(),
-        })
-        .eq("id", userId);
-
-      if (userError) {
-        throw new Error(`Failed to update user subscription: ${userError.message}`);
-      }
-    } else {
-      throw new Error(`Failed to update user subscription: ${subscriptionError.message}`);
-    }
+    throw new Error(`Failed to update user subscription: ${subscriptionError.message}`);
   }
 }
 
@@ -122,6 +116,32 @@ export async function handleWebhookEvent(
   supabase: ReturnType<typeof createClient<Database>>
 ): Promise<void> {
   switch (event.type) {
+    case "customer.created": {
+      const customer = event.data.object as Stripe.Customer;
+      const userId = customer.metadata?.userId;
+
+      if (!userId) {
+        console.warn("No userId found in customer metadata");
+        return;
+      }
+
+      // Create initial user_subscriptions entry with just the customer ID
+      const { error } = await supabase
+        .from("user_subscriptions")
+        .upsert({
+          user_id: userId,
+          stripe_customer_id: customer.id,
+          subscription_status: "free",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Failed to create user_subscriptions entry:", error);
+      }
+      break;
+    }
+
     case "customer.subscription.created":
     case "customer.subscription.updated": {
       // Type assertion needed as Stripe types don't include all webhook properties

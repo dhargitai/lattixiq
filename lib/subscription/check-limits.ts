@@ -72,50 +72,34 @@ export async function hasCompletedFreeRoadmap(userId: string): Promise<boolean> 
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
-  // Check user_subscriptions table first
-  const { data: subscription } = await supabase
+  // Check user_subscriptions table
+  const { data: subscription, error } = await supabase
     .from("user_subscriptions")
     .select("subscription_status, subscription_current_period_end")
     .eq("user_id", userId)
     .single();
 
-  if (subscription) {
-    // Check if subscription is active and not expired
-    if (
-      subscription.subscription_status === "active" ||
-      subscription.subscription_status === "trialing"
-    ) {
-      // If there's a period end date, check if it's in the future
-      if (subscription.subscription_current_period_end) {
-        const periodEnd = new Date(subscription.subscription_current_period_end);
-        return periodEnd > new Date();
-      }
-      return true;
-    }
-    return false;
-  }
-
-  // Fallback to users table for backward compatibility
-  const { data, error } = await supabase
-    .from("users")
-    .select("subscription_status, subscription_current_period_end")
-    .eq("id", userId)
-    .single();
-
   if (error) {
+    // If no subscription record exists, user has no subscription
+    if (error.code === "PGRST116") {
+      return false;
+    }
     console.error("Error checking subscription status:", error);
     return false;
   }
 
-  if (!data) {
+  if (!subscription) {
     return false;
   }
 
   // Check if subscription is active and not expired
-  if (data.subscription_status === "active" || data.subscription_status === "trialing") {
+  if (
+    subscription.subscription_status === "active" ||
+    subscription.subscription_status === "trialing"
+  ) {
     // If there's a period end date, check if it's in the future
-    if (data.subscription_current_period_end) {
-      const periodEnd = new Date(data.subscription_current_period_end);
+    if (subscription.subscription_current_period_end) {
+      const periodEnd = new Date(subscription.subscription_current_period_end);
       return periodEnd > new Date();
     }
     return true;
@@ -158,26 +142,14 @@ export async function getUserSubscriptionStatus(userId: string): Promise<{
 
   const supabase = await createClient();
 
-  // Check user_subscriptions table first
+  // Check user_subscriptions table
   const { data: subscription } = await supabase
     .from("user_subscriptions")
     .select("subscription_status")
     .eq("user_id", userId)
     .single();
 
-  let status = "free";
-
-  if (subscription) {
-    status = subscription.subscription_status || "free";
-  } else {
-    // Fallback to users table
-    const { data } = await supabase
-      .from("users")
-      .select("subscription_status")
-      .eq("id", userId)
-      .single();
-    status = data?.subscription_status || "free";
-  }
+  const status = subscription?.subscription_status || "free";
 
   return {
     isSubscribed,

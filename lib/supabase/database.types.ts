@@ -371,10 +371,6 @@ export type Database = {
           reminder_time: string | null;
           reminder_timezone: string | null;
           roadmap_count: number | null;
-          stripe_customer_id: string | null;
-          stripe_subscription_id: string | null;
-          subscription_current_period_end: string | null;
-          subscription_status: string | null;
           testimonial_bonus_used: boolean | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url: string | null;
@@ -389,10 +385,6 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           roadmap_count?: number | null;
-          stripe_customer_id?: string | null;
-          stripe_subscription_id?: string | null;
-          subscription_current_period_end?: string | null;
-          subscription_status?: string | null;
           testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
@@ -407,10 +399,6 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           roadmap_count?: number | null;
-          stripe_customer_id?: string | null;
-          stripe_subscription_id?: string | null;
-          subscription_current_period_end?: string | null;
-          subscription_status?: string | null;
           testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
@@ -493,12 +481,12 @@ export type Database = {
           query_embedding: string;
         };
         Returns: {
-          similarity: number;
           id: string;
           title: string;
           category: string;
           type: Database["public"]["Enums"]["knowledge_content_type"];
           summary: string;
+          similarity: number;
         }[];
       };
       sparsevec_out: {

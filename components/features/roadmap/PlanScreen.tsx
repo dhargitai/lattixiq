@@ -308,11 +308,6 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
           </div>
         </main>
 
-        {/* Progress indicator */}
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-lg shadow-gray-300/50 text-sm text-gray-500 font-medium z-10 transition-transform duration-300">
-          Step <span className="text-blue-500 font-semibold">{step.order}</span> • Plan
-        </div>
-
         {/* Application Guidance Modal */}
         <ApplicationGuidanceModal
           isOpen={showApplicationModal}

@@ -188,7 +188,10 @@ describe("PremiumBenefitsDialog", () => {
     fireEvent.click(checkoutButton);
 
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to create checkout session");
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Failed to create checkout session:",
+        "Checkout failed"
+      );
     });
 
     consoleErrorSpy.mockRestore();

@@ -2,8 +2,8 @@ export function validateStripeEnv(): void {
   const requiredEnvVars = {
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    STRIPE_MONTHLY_PRODUCT_ID: process.env.STRIPE_MONTHLY_PRODUCT_ID,
-    STRIPE_ANNUAL_PRODUCT_ID: process.env.STRIPE_ANNUAL_PRODUCT_ID,
+    NEXT_PUBLIC_STRIPE_MONTHLY_PRODUCT_ID: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRODUCT_ID,
+    NEXT_PUBLIC_STRIPE_ANNUAL_PRODUCT_ID: process.env.NEXT_PUBLIC_STRIPE_ANNUAL_PRODUCT_ID,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   };
 
@@ -19,7 +19,7 @@ export function validateStripeEnv(): void {
 export const stripeConfig = {
   secretKey: process.env.STRIPE_SECRET_KEY!,
   publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-  monthlyProductId: process.env.STRIPE_MONTHLY_PRODUCT_ID!,
-  annualProductId: process.env.STRIPE_ANNUAL_PRODUCT_ID!,
+  monthlyProductId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRODUCT_ID!,
+  annualProductId: process.env.NEXT_PUBLIC_STRIPE_ANNUAL_PRODUCT_ID!,
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
 };

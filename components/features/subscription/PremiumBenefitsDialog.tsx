@@ -21,6 +21,8 @@ export function PremiumBenefitsDialog({ open, onOpenChange }: PremiumBenefitsDia
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string>("");
 
   const getDefaultContent = () => `## Unlock Your Full Potential with Premium
 
@@ -59,8 +61,39 @@ export function PremiumBenefitsDialog({ open, onOpenChange }: PremiumBenefitsDia
     }
   }, [open, content, fetchContent]);
 
+  const syncSubscription = async () => {
+    setIsSyncing(true);
+    setSyncMessage("Syncing your subscription...");
+
+    try {
+      const response = await fetch("/api/subscription/sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSyncMessage("✅ Subscription synced successfully! Refreshing...");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        setSyncMessage(`❌ ${data.error || "Failed to sync subscription"}`);
+        setIsSyncing(false);
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+      setSyncMessage("❌ Failed to sync subscription. Please try again.");
+      setIsSyncing(false);
+    }
+  };
+
   const handleCheckout = async () => {
     setIsCheckingOut(true);
+    setSyncMessage("");
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -72,19 +105,46 @@ export function PremiumBenefitsDialog({ open, onOpenChange }: PremiumBenefitsDia
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const { url } = await response.json();
-        if (url) {
-          window.location.href = url;
+        if (data.url) {
+          window.location.href = data.url;
         }
+      } else if (response.status === 409 && data.requiresSync) {
+        // Handle sync scenario with better UX
+        setIsCheckingOut(false);
+        setSyncMessage(
+          "🔄 We detected you already have a subscription. Let's sync it with your account..."
+        );
+
+        // Auto-sync after a short delay for better UX
+        setTimeout(() => {
+          syncSubscription();
+        }, 1000);
+      } else if (
+        response.status === 400 &&
+        data.error?.includes("already have an active subscription")
+      ) {
+        // User already has an active subscription in the database
+        setIsCheckingOut(false);
+        setSyncMessage(
+          "✅ You already have an active subscription! Refreshing page to show your premium status..."
+        );
+
+        // Close modal and refresh after a short delay
+        setTimeout(() => {
+          onOpenChange(false);
+          window.location.reload();
+        }, 2000);
       } else {
-        console.error("Failed to create checkout session");
-        // Could show an error toast here
+        console.error("Failed to create checkout session:", data.error);
+        setSyncMessage(`❌ ${data.error || "Failed to create checkout session"}`);
+        setIsCheckingOut(false);
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      // Could show an error toast here
-    } finally {
+      setSyncMessage("❌ An unexpected error occurred. Please try again.");
       setIsCheckingOut(false);
     }
   };
@@ -116,15 +176,51 @@ export function PremiumBenefitsDialog({ open, onOpenChange }: PremiumBenefitsDia
           )}
         </div>
 
-        <div className="flex justify-center pb-6">
-          <Button
-            onClick={handleCheckout}
-            disabled={isCheckingOut}
-            size="lg"
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+        {/* Show sync status message if present */}
+        {syncMessage && (
+          <div
+            className={`mx-6 mb-4 p-4 rounded-lg border ${
+              syncMessage.includes("✅")
+                ? "bg-green-50 border-green-200"
+                : syncMessage.includes("❌")
+                  ? "bg-red-50 border-red-200"
+                  : "bg-blue-50 border-blue-200"
+            }`}
           >
-            {isCheckingOut ? "Processing..." : "Get Premium Access"}
-          </Button>
+            <p
+              className={`text-center ${
+                syncMessage.includes("✅")
+                  ? "text-green-800"
+                  : syncMessage.includes("❌")
+                    ? "text-red-800"
+                    : "text-blue-800"
+              }`}
+            >
+              {syncMessage}
+            </p>
+          </div>
+        )}
+
+        <div className="flex justify-center gap-3 pb-6">
+          {syncMessage?.includes("✅ You already have") ? (
+            <Button
+              onClick={() => onOpenChange(false)}
+              size="lg"
+              variant="outline"
+              className="px-8 py-3"
+            >
+              Close
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCheckout}
+              disabled={isCheckingOut || isSyncing}
+              size="lg"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              {isSyncing ? "Syncing..." : isCheckingOut ? "Processing..." : "Get Premium Access"}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
