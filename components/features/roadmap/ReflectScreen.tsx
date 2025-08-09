@@ -223,6 +223,10 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
       }
     };
 
+    const handleBack = () => {
+      router.push(`/learn/${step.id}?from=reflect`);
+    };
+
     const handleSuccessDialogClose = () => {
       setShowSuccessDialog(false);
       router.push("/roadmap?success=true");
@@ -230,7 +234,14 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
 
     return (
       <div ref={ref} className="min-h-screen bg-[#FAFBFC]" data-testid="reflect-screen">
-        <AppHeader screenName="Reflect" helpContentId="reflect-screen-help" />
+        <AppHeader
+          screenName="Reflect"
+          helpContentId="reflect-screen-help"
+          backLink={{
+            text: "Back to Learn",
+            onClick: handleBack,
+          }}
+        />
 
         {/* Main Content */}
         <div className="container max-w-2xl mx-auto px-5 py-8" data-testid="reflect-content">

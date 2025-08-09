@@ -337,7 +337,7 @@ describe("ReflectScreen Enhanced Features", () => {
     });
   });
 
-  it("should display unified header with help button", async () => {
+  it("should display unified header with help button and back navigation", async () => {
     render(
       <ReflectScreen
         step={mockStep}
@@ -346,14 +346,14 @@ describe("ReflectScreen Enhanced Features", () => {
       />
     );
 
-    // Check that header displays "Reflect" screen name
-    expect(screen.getByText("Reflect")).toBeInTheDocument();
+    // Check that header displays back navigation instead of "Reflect"
+    const backButton = screen.getByTestId("back-button");
+    expect(backButton).toBeInTheDocument();
+    expect(screen.getByText("Back to Learn")).toBeInTheDocument();
 
     // Check that help button exists
     const helpButton = screen.getByRole("button", { name: /show help/i });
     expect(helpButton).toBeInTheDocument();
-
-    // Note: Back navigation removed in favor of unified header
   });
 
   it("should show correct character count for situation text", async () => {

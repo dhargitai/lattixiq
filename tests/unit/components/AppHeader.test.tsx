@@ -98,4 +98,78 @@ describe("AppHeader", () => {
     expect(helpButton).toHaveClass("hover:bg-accent");
     expect(helpButton).toHaveClass("hover:text-accent-foreground");
   });
+
+  describe("Back Link functionality", () => {
+    it("renders back link when provided", () => {
+      render(
+        <AppHeader
+          screenName="Test Screen"
+          backLink={{ text: "Back to Previous", onClick: vi.fn() }}
+        />
+      );
+
+      const backButton = screen.getByTestId("back-button");
+      expect(backButton).toBeInTheDocument();
+      expect(screen.getByText("Back to Previous")).toBeInTheDocument();
+    });
+
+    it("hides screen name when back link is present", () => {
+      render(
+        <AppHeader
+          screenName="Test Screen"
+          backLink={{ text: "Back to Previous", onClick: vi.fn() }}
+        />
+      );
+
+      expect(screen.queryByText("Test Screen")).not.toBeInTheDocument();
+    });
+
+    it("shows screen name when back link is not present", () => {
+      render(<AppHeader screenName="Test Screen" />);
+
+      expect(screen.getByText("Test Screen")).toBeInTheDocument();
+    });
+
+    it("calls onClick handler when back button is clicked", () => {
+      const mockOnClick = vi.fn();
+      render(
+        <AppHeader
+          screenName="Test Screen"
+          backLink={{ text: "Back to Previous", onClick: mockOnClick }}
+        />
+      );
+
+      const backButton = screen.getByTestId("back-button");
+      fireEvent.click(backButton);
+
+      expect(mockOnClick).toHaveBeenCalledTimes(1);
+    });
+
+    it("renders back link with correct styles", () => {
+      render(
+        <AppHeader
+          screenName="Test Screen"
+          backLink={{ text: "Back to Previous", onClick: vi.fn() }}
+        />
+      );
+
+      const backButton = screen.getByTestId("back-button");
+      expect(backButton).toHaveClass("text-blue-500");
+      expect(backButton).toHaveClass("hover:text-blue-600");
+      expect(backButton).toHaveClass("hover:bg-gray-50");
+    });
+
+    it("can show both back link and help button", () => {
+      render(
+        <AppHeader
+          screenName="Test Screen"
+          helpContentId="test-help"
+          backLink={{ text: "Back to Previous", onClick: vi.fn() }}
+        />
+      );
+
+      expect(screen.getByTestId("back-button")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /show help/i })).toBeInTheDocument();
+    });
+  });
 });

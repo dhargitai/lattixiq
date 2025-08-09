@@ -101,11 +101,13 @@ describe("Unlocked Viewer Integration Tests", () => {
       expect(backButtons.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("should display unified header with screen name", () => {
+    it("should display unified header with back navigation", () => {
       render(React.createElement(UnlockedViewer, { content: mockContent }));
 
-      // Check the header shows correct screen name
-      expect(screen.getByText("Unlocked Knowledge")).toBeInTheDocument();
+      // Check the header shows back navigation instead of screen name
+      const backButton = screen.getByTestId("back-button");
+      expect(backButton).toBeInTheDocument();
+      expect(backButton).toHaveTextContent("Back to My Toolkit");
 
       // Check help button exists
       const helpButton = screen.getByRole("button", { name: /show help/i });

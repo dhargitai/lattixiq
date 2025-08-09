@@ -122,6 +122,10 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
       }
     };
 
+    const handleBack = () => {
+      router.push(`/learn/${step.id}`);
+    };
+
     const handleModalClose = () => {
       setShowApplicationModal(false);
       router.push("/roadmap");
@@ -153,7 +157,14 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
         className={cn("min-h-screen bg-gray-50/50 flex flex-col", className)}
         {...props}
       >
-        <AppHeader screenName="Plan" helpContentId="plan-screen-help" />
+        <AppHeader
+          screenName="Plan"
+          helpContentId="plan-screen-help"
+          backLink={{
+            text: "Back to Learn",
+            onClick: handleBack,
+          }}
+        />
 
         {/* Main content with prototype styling */}
         <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">

@@ -16,7 +16,7 @@ interface LearnScreenProps {
 }
 
 const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
-  ({ step, onNavigateToPlan }, ref) => {
+  ({ step, onNavigateToPlan, onNavigateBack }, ref) => {
     const router = useRouter();
 
     // Check if user came from reflect screen via URL params
@@ -42,6 +42,14 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
       }
     };
 
+    const handleNavigateBack = () => {
+      if (onNavigateBack) {
+        onNavigateBack();
+      } else {
+        router.push("/roadmap");
+      }
+    };
+
     const getTypeLabel = () => {
       switch (step.knowledge_content.type) {
         case "mental-model":
@@ -61,7 +69,14 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
         className="min-h-screen bg-gray-50/50 flex flex-col"
         data-testid="learn-screen"
       >
-        <AppHeader screenName="Learn" helpContentId="learn-screen-help" />
+        <AppHeader
+          screenName="Learn"
+          helpContentId="learn-screen-help"
+          backLink={{
+            text: "Back to Roadmap",
+            onClick: handleNavigateBack,
+          }}
+        />
 
         {/* Main content with prototype styling */}
         <main className="flex-1 px-5 py-8 pb-24 md:px-8 md:py-12">

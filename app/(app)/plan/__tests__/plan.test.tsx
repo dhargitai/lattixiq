@@ -277,7 +277,7 @@ describe("Plan Screen", () => {
     });
   });
 
-  it("should display unified header with help button", async () => {
+  it("should display unified header with help button and back navigation", async () => {
     render(
       <PlanScreen
         step={mockStep}
@@ -286,12 +286,29 @@ describe("Plan Screen", () => {
       />
     );
 
-    // Check that header displays "Plan" screen name
-    expect(screen.getByText("Plan")).toBeInTheDocument();
+    // Check that header displays back navigation
+    const backButton = screen.getByTestId("back-button");
+    expect(backButton).toBeInTheDocument();
+    expect(screen.getByText("Back to Learn")).toBeInTheDocument();
 
     // Check that help button exists
     const helpButton = screen.getByRole("button", { name: /show help/i });
     expect(helpButton).toBeInTheDocument();
+  });
+
+  it("should navigate back to learn screen when back button is clicked", async () => {
+    render(
+      <PlanScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        goalExamples={[mockGoalExample]}
+      />
+    );
+
+    const backButton = screen.getByTestId("back-button");
+    await userEvent.click(backButton);
+
+    expect(mockPush).toHaveBeenCalledWith(`/learn/${mockStep.id}`);
   });
 
   it("should be mobile responsive", async () => {
