@@ -157,6 +157,10 @@ export default function LoginPage() {
     }
   };
 
+  // SOCIAL_LOGIN_TEMPORARILY_DISABLED - Start
+  // Preserving social login functionality for potential future re-enabling
+  // Story 4.1: Simplified Login Interface - Focus on email-only authentication for MVP
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSocialLogin = async (provider: "google" | "apple") => {
     setError(null);
     try {
@@ -174,6 +178,7 @@ export default function LoginPage() {
       setError("Failed to connect with provider");
     }
   };
+  // SOCIAL_LOGIN_TEMPORARILY_DISABLED - End
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F7FAFC] to-[#EDF2F7] p-5">
@@ -200,7 +205,9 @@ export default function LoginPage() {
 
           {step === "email" ? (
             <div>
-              {/* Social login buttons */}
+              {/* SOCIAL_LOGIN_TEMPORARILY_DISABLED - Start */}
+              {/* Social login buttons - Temporarily disabled for MVP (Story 4.1) */}
+              {/* 
               <div className="space-y-3 mb-8">
                 <button
                   onClick={() => handleSocialLogin("google")}
@@ -232,13 +239,17 @@ export default function LoginPage() {
                   <span>Continue with Apple</span>
                 </button>
               </div>
+              */}
 
-              {/* Divider */}
+              {/* Divider - Temporarily disabled with social login */}
+              {/*
               <div className="flex items-center gap-4 my-8">
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#E2E8F0] to-transparent" />
                 <span className="text-sm font-medium text-[#A0AEC0]">or</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#E2E8F0] to-transparent" />
               </div>
+              */}
+              {/* SOCIAL_LOGIN_TEMPORARILY_DISABLED - End */}
 
               {/* Email form */}
               <form onSubmit={handleSendOTP}>
