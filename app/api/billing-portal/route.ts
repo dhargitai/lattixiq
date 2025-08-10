@@ -42,10 +42,47 @@ export async function POST(request: NextRequest) {
 
     try {
       const stripe = getStripeClient();
-      const session = await stripe.billingPortal.sessions.create({
-        customer: subscription.stripe_customer_id,
-        return_url: returnUrl,
-      });
+
+      // Try to create session with default configuration first
+      // If no default exists, create one programmatically
+      let session;
+      try {
+        session = await stripe.billingPortal.sessions.create({
+          customer: subscription.stripe_customer_id,
+          return_url: returnUrl,
+        });
+      } catch (error: any) {
+        // If no default configuration exists, create one
+        if (error.message?.includes("No configuration provided")) {
+          const configuration = await stripe.billingPortal.configurations.create({
+            business_profile: {
+              headline: "Manage your LattixIQ subscription",
+            },
+            features: {
+              invoice_history: {
+                enabled: true,
+              },
+              payment_method_update: {
+                enabled: true,
+              },
+              subscription_cancel: {
+                enabled: true,
+                mode: "at_period_end",
+              },
+            },
+            default_return_url: returnUrl,
+          });
+
+          // Retry with the new configuration
+          session = await stripe.billingPortal.sessions.create({
+            customer: subscription.stripe_customer_id,
+            return_url: returnUrl,
+            configuration: configuration.id,
+          });
+        } else {
+          throw error;
+        }
+      }
 
       // Return portal URL for redirect
       return NextResponse.json({ url: session.url });
