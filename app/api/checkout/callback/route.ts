@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { verifyCheckoutSession, updateUserSubscription } from "@/lib/stripe/utils";
+import { verifyCheckoutSession } from "@/lib/stripe/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,8 +11,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/toolkit?error=missing_session", request.url));
     }
 
-    const supabase = await createClient();
-
     // Verify the checkout session with Stripe
     const sessionData = await verifyCheckoutSession(sessionId);
 
@@ -22,15 +19,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/toolkit?error=invalid_session", request.url));
     }
 
-    // Update user subscription status in database
-    await updateUserSubscription(
-      supabase,
-      sessionData.userId,
-      sessionData.customerId,
-      sessionData.subscriptionId,
-      sessionData.status,
-      undefined // Period end will be updated via webhook
-    );
+    // The webhook will handle updating the database with the subscription details
+    // We just verify the session is valid and redirect with success
+    console.log(`Checkout session verified for user ${sessionData.userId}, redirecting to success`);
 
     // Redirect to toolkit with success message
     return NextResponse.redirect(new URL("/toolkit?subscription=success", request.url));

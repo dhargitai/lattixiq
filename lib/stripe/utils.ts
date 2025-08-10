@@ -116,6 +116,33 @@ export async function handleWebhookEvent(
   supabase: ReturnType<typeof createClient<Database>>
 ): Promise<void> {
   switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const userId = session.metadata?.userId;
+
+      if (!userId) {
+        console.warn("No userId found in checkout session metadata");
+        return;
+      }
+
+      // Get the subscription details from the session
+      if (session.subscription) {
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+
+        await updateUserSubscription(
+          supabase,
+          userId,
+          session.customer as string,
+          subscription.id,
+          subscription.status,
+          new Date((subscription as any).current_period_end * 1000)
+        );
+
+        console.log(`Subscription created for user ${userId} via checkout session`);
+      }
+      break;
+    }
+
     case "customer.created": {
       const customer = event.data.object as Stripe.Customer;
       const userId = customer.metadata?.userId;
