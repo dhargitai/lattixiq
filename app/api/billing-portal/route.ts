@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import Stripe from "stripe";
+import { getStripeClient } from "@/lib/stripe/client";
 
 // Force this API route to run in Node.js runtime (not Edge Runtime)
 export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-07-30.basil",
-});
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,6 +41,7 @@ export async function POST(request: NextRequest) {
     const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/settings`;
 
     try {
+      const stripe = getStripeClient();
       const session = await stripe.billingPortal.sessions.create({
         customer: subscription.stripe_customer_id,
         return_url: returnUrl,
