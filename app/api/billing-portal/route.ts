@@ -51,9 +51,10 @@ export async function POST(request: NextRequest) {
           customer: subscription.stripe_customer_id,
           return_url: returnUrl,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // If no default configuration exists, create one
-        if (error.message?.includes("No configuration provided")) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage?.includes("No configuration provided")) {
           const configuration = await stripe.billingPortal.configurations.create({
             business_profile: {
               headline: "Manage your LattixIQ subscription",

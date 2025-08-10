@@ -5,6 +5,17 @@ import type Stripe from "stripe";
 
 const stripe = getStripeClient();
 
+// Type for webhook subscription structure with items containing period information
+type SubscriptionWebhookPayload = Stripe.Subscription & {
+  items?: {
+    data: Array<{
+      current_period_end?: number;
+      current_period_start?: number;
+      [key: string]: unknown;
+    }>;
+  };
+};
+
 export async function getCustomerSubscriptions(customerId: string): Promise<Stripe.Subscription[]> {
   const subscriptions = await stripe.subscriptions.list({
     customer: customerId,
@@ -127,7 +138,22 @@ export async function handleWebhookEvent(
 
       // Get the subscription details from the session
       if (session.subscription) {
-        const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+        // Fetch subscription with expanded items to get current_period_end
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string, {
+          expand: ["items.data"],
+        });
+
+        // Extract period end from subscription items
+        let periodEnd: Date | undefined;
+        // When fetching via API, the subscription items have the SubscriptionItem type
+        // which includes current_period_end as a property
+        if (subscription.items?.data?.[0]) {
+          const [firstItem] = subscription.items.data;
+          // SubscriptionItem has current_period_end as a number property
+          if ("current_period_end" in firstItem && firstItem.current_period_end) {
+            periodEnd = new Date(firstItem.current_period_end * 1000);
+          }
+        }
 
         await updateUserSubscription(
           supabase,
@@ -135,10 +161,12 @@ export async function handleWebhookEvent(
           session.customer as string,
           subscription.id,
           subscription.status,
-          new Date((subscription as any).current_period_end * 1000)
+          periodEnd
         );
 
-        console.log(`Subscription created for user ${userId} via checkout session`);
+        console.log(
+          `Subscription created for user ${userId} via checkout session, period end: ${periodEnd?.toISOString() || "not set"}`
+        );
       }
       break;
     }
@@ -171,15 +199,27 @@ export async function handleWebhookEvent(
 
     case "customer.subscription.created":
     case "customer.subscription.updated": {
-      // Type assertion needed as Stripe types don't include all webhook properties
-      const subscription = event.data.object as Stripe.Subscription & {
-        current_period_end?: number;
-      };
+      const subscription = event.data.object as SubscriptionWebhookPayload;
       const userId = subscription.metadata?.userId;
 
       if (!userId) {
         console.warn("No userId found in subscription metadata");
         return;
+      }
+
+      // Determine the appropriate period end date
+      let periodEnd: Date | undefined;
+
+      // Priority 1: For canceled subscriptions, use cancel_at
+      if (subscription.cancel_at_period_end && subscription.cancel_at) {
+        periodEnd = new Date(subscription.cancel_at * 1000);
+      }
+      // Priority 2: Get from subscription items (standard location in webhook payloads)
+      else if (subscription.items?.data?.[0]) {
+        const [firstItem] = subscription.items.data;
+        if (firstItem.current_period_end) {
+          periodEnd = new Date(firstItem.current_period_end * 1000);
+        }
       }
 
       await updateUserSubscription(
@@ -188,9 +228,11 @@ export async function handleWebhookEvent(
         subscription.customer as string,
         subscription.id,
         subscription.status,
-        subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000)
-          : undefined
+        periodEnd
+      );
+
+      console.log(
+        `Subscription ${event.type} for user ${userId}, status: ${subscription.status}, period end: ${periodEnd?.toISOString() || "not set"}`
       );
       break;
     }

@@ -132,7 +132,7 @@ describe("Stripe API Endpoints", () => {
   });
 
   describe("GET /api/checkout/callback", () => {
-    it("should verify session and update subscription", async () => {
+    it("should verify session and redirect to success", async () => {
       vi.mocked(stripeUtils.verifyCheckoutSession).mockResolvedValue({
         customerId: "cus_123",
         subscriptionId: "sub_123",
@@ -147,7 +147,8 @@ describe("Stripe API Endpoints", () => {
 
       expect(response.status).toBe(307); // Redirect
       expect(response.headers.get("location")).toContain("/toolkit?subscription=success");
-      expect(stripeUtils.updateUserSubscription).toHaveBeenCalled();
+      expect(stripeUtils.verifyCheckoutSession).toHaveBeenCalledWith("cs_test_123");
+      // Note: updateUserSubscription is handled by the webhook, not the callback
     });
 
     it("should handle missing session_id", async () => {
