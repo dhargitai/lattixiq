@@ -217,4 +217,45 @@ describe("PremiumBenefitsDialog", () => {
       expect(mockOnOpenChange).toBeDefined();
     }
   });
+
+  it("should have sticky CTA footer layout", () => {
+    render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
+
+    // Check for sticky footer container
+    const checkoutButton = screen.getByText("Get Premium Access");
+    const stickyFooter = checkoutButton.closest("div")?.parentElement;
+    expect(stickyFooter).toBeTruthy();
+    expect(stickyFooter).toHaveClass("sticky", "bottom-0");
+    expect(stickyFooter).toHaveClass("bg-gradient-to-r");
+    expect(stickyFooter).toHaveClass("border-t", "border-blue-200");
+    expect(stickyFooter).toHaveClass("p-6");
+  });
+
+  it("should have scrollable content area", () => {
+    render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
+
+    const dialogContent = document.querySelector('[role="dialog"]');
+    const scrollableArea = dialogContent?.querySelector(".flex-1.overflow-y-auto");
+
+    expect(scrollableArea).toBeInTheDocument();
+    expect(scrollableArea).toHaveClass("px-6");
+  });
+
+  it("should have flex column layout", () => {
+    render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
+
+    const dialogContent = document.querySelector('[role="dialog"]');
+    const flexContainer = dialogContent?.querySelector(".flex.flex-col.min-h-0.flex-1");
+
+    expect(flexContainer).toBeInTheDocument();
+  });
+
+  it("should have proper shadow on sticky footer", () => {
+    render(<PremiumBenefitsDialog open={true} onOpenChange={vi.fn()} />);
+
+    const checkoutButton = screen.getByText("Get Premium Access");
+    const stickyFooter = checkoutButton.closest("div")?.parentElement;
+    expect(stickyFooter).toBeTruthy();
+    expect(stickyFooter).toHaveClass("shadow-[0_-2px_10px_rgba(0,0,0,0.1)]");
+  });
 });

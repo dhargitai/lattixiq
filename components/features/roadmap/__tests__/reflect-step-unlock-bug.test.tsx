@@ -244,9 +244,9 @@ describe("ReflectScreen Step Unlock Bug", () => {
       expect(screen.getByText("Congratulations!")).toBeInTheDocument();
     });
 
-    // Click continue to navigate (shows "View Completed Roadmap" for final step)
+    // Click continue to navigate (shows "Back To Your Toolkit" for final step)
     const user2 = userEvent.setup();
-    await user2.click(screen.getByText("View Completed Roadmap"));
+    await user2.click(screen.getByText("Back To Your Toolkit"));
 
     await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith("/roadmap?success=true");

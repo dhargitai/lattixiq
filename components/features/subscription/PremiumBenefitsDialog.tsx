@@ -152,75 +152,86 @@ export function PremiumBenefitsDialog({ open, onOpenChange }: PremiumBenefitsDia
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl max-h-[80vh] overflow-y-auto"
+        className="max-w-2xl max-h-[80vh] p-0 flex flex-col"
         style={{
           background: "linear-gradient(135deg, #EBF4FF 0%, #E6F7FF 100%)",
           border: "1px solid #BEE3F8",
           borderRadius: "16px",
+          overflow: "hidden",
         }}
       >
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Premium Access</DialogTitle>
-          <DialogDescription className="text-center text-gray-600">
-            Take your personal growth journey to the next level
-          </DialogDescription>
-        </DialogHeader>
+        <div className="flex flex-col min-h-0 flex-1">
+          <DialogHeader className="px-6 pt-6 pb-4">
+            <DialogTitle className="text-2xl font-bold text-center">Premium Access</DialogTitle>
+            <DialogDescription className="text-center text-gray-600">
+              Take your personal growth journey to the next level
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="prose prose-lg max-w-none p-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <div className="flex-1 overflow-y-auto px-6 min-h-0">
+            <div className="prose prose-lg max-w-none pb-6">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : (
+                <ReactMarkdown>{content}</ReactMarkdown>
+              )}
             </div>
-          ) : (
-            <ReactMarkdown>{content}</ReactMarkdown>
-          )}
-        </div>
-
-        {/* Show sync status message if present */}
-        {syncMessage && (
-          <div
-            className={`mx-6 mb-4 p-4 rounded-lg border ${
-              syncMessage.includes("✅")
-                ? "bg-green-50 border-green-200"
-                : syncMessage.includes("❌")
-                  ? "bg-red-50 border-red-200"
-                  : "bg-blue-50 border-blue-200"
-            }`}
-          >
-            <p
-              className={`text-center ${
-                syncMessage.includes("✅")
-                  ? "text-green-800"
-                  : syncMessage.includes("❌")
-                    ? "text-red-800"
-                    : "text-blue-800"
-              }`}
-            >
-              {syncMessage}
-            </p>
           </div>
-        )}
 
-        <div className="flex justify-center gap-3 pb-6">
-          {syncMessage?.includes("✅ You already have") ? (
-            <Button
-              onClick={() => onOpenChange(false)}
-              size="lg"
-              variant="outline"
-              className="px-8 py-3"
-            >
-              Close
-            </Button>
-          ) : (
-            <Button
-              onClick={handleCheckout}
-              disabled={isCheckingOut || isSyncing}
-              size="lg"
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              {isSyncing ? "Syncing..." : isCheckingOut ? "Processing..." : "Get Premium Access"}
-            </Button>
-          )}
+          <div className="sticky bottom-0 bg-gradient-to-r from-[#EBF4FF] via-[#E6F7FF] to-[#EBF4FF] border-t border-blue-200 p-6 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
+            {/* Show sync status message if present */}
+            {syncMessage && (
+              <div
+                className={`mb-4 p-4 rounded-lg border ${
+                  syncMessage.includes("✅")
+                    ? "bg-green-50 border-green-200"
+                    : syncMessage.includes("❌")
+                      ? "bg-red-50 border-red-200"
+                      : "bg-blue-50 border-blue-200"
+                }`}
+              >
+                <p
+                  className={`text-center ${
+                    syncMessage.includes("✅")
+                      ? "text-green-800"
+                      : syncMessage.includes("❌")
+                        ? "text-red-800"
+                        : "text-blue-800"
+                  }`}
+                >
+                  {syncMessage}
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-center gap-3">
+              {syncMessage?.includes("✅ You already have") ? (
+                <Button
+                  onClick={() => onOpenChange(false)}
+                  size="lg"
+                  variant="outline"
+                  className="px-8 py-3"
+                >
+                  Close
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut || isSyncing}
+                  size="lg"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {isSyncing
+                    ? "Syncing..."
+                    : isCheckingOut
+                      ? "Processing..."
+                      : "Get Premium Access"}
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

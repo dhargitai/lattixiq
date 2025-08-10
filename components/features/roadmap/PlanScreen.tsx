@@ -222,6 +222,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                       )}
                       aria-label={labels.situationLabel}
                       required
+                      maxLength={250}
                     />
                     <div
                       className={cn(
@@ -258,6 +259,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                       )}
                       aria-label={labels.actionLabel}
                       required
+                      maxLength={250}
                     />
                     <div
                       className={cn(

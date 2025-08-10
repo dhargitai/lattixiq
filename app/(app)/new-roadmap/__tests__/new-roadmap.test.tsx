@@ -72,7 +72,7 @@ describe("New Roadmap Page", () => {
       mockCheckCanCreateRoadmap.mockResolvedValue(false);
 
       await expect(NewRoadmapPage()).rejects.toThrow("NEXT_REDIRECT");
-      expect(redirect).toHaveBeenCalledWith("/toolkit?blocked=true");
+      expect(redirect).toHaveBeenCalledWith("/toolkit");
     });
   });
 

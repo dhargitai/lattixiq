@@ -12,6 +12,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { useRoadmapStore } from "@/lib/stores/roadmap-store";
 import { logReminderCleanup } from "@/lib/notifications/reminder-cleanup";
+import { useDynamicFocusState } from "@/lib/hooks/useDynamicFocusState";
 import confetti from "canvas-confetti";
 import {
   Dialog,
@@ -48,6 +49,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
     const [isRoadmapCompleted, setIsRoadmapCompleted] = useState(false);
     const reflectionTextAreaRef = useRef<HTMLTextAreaElement>(null);
     const learningTextAreaRef = useRef<HTMLTextAreaElement>(null);
+    const reflectionFocusState = useDynamicFocusState();
 
     // Ensure roadmap is loaded for store consistency, but handle gracefully if not available
     useEffect(() => {
@@ -284,19 +286,26 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                   data-testid="reflection-text"
                   placeholder="Share your experience applying this concept. What worked? What didn't? What did you learn?"
                   value={reflectionText}
-                  onChange={(e) => setReflectionText(e.target.value)}
-                  className="min-h-[140px] overflow-hidden transition-all duration-300 border-2 border-gray-200 rounded-[10px] px-4 py-4 text-base leading-relaxed bg-[#FAFBFC] focus:bg-white focus:border-[#48BB78] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(72,187,120,0.1)] placeholder:italic placeholder:text-gray-400"
+                  onChange={(e) => {
+                    setReflectionText(e.target.value);
+                    reflectionFocusState.updateCharacterCount(e.target.value);
+                  }}
+                  className={cn(
+                    "min-h-[140px] overflow-hidden transition-all duration-300 border-2 border-gray-200",
+                    "rounded-[10px] px-4 py-4 text-base leading-relaxed bg-[#FAFBFC] focus:bg-white focus:border-[#48BB78]",
+                    "focus:ring-0 focus:shadow-[0_0_0_3px_rgba(72,187,120,0.1)] placeholder:italic placeholder:text-gray-400",
+                    reflectionFocusState.focusColorClasses
+                  )}
                   disabled={isLoading}
+                  maxLength={1500}
                 />
                 <div
                   className={cn(
                     "text-sm text-right transition-colors duration-200",
-                    reflectionText.length >= minTextLength ? "text-[#48BB78]" : "text-gray-500"
+                    reflectionFocusState.isAboveThreshold ? "text-green-600" : "text-gray-500"
                   )}
                 >
-                  {reflectionText.length >= minTextLength
-                    ? `${reflectionText.length} characters`
-                    : `${reflectionText.length} / ${minTextLength} minimum`}
+                  {reflectionFocusState.displayText}
                 </div>
               </div>
 
@@ -317,6 +326,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                   onChange={(e) => setLearningText(e.target.value)}
                   className="min-h-[120px] overflow-hidden transition-all duration-300 border-2 border-gray-200 rounded-[10px] px-4 py-4 text-base leading-relaxed bg-white focus:border-[#48BB78] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(72,187,120,0.1)] placeholder:italic placeholder:text-gray-400"
                   disabled={isLoading}
+                  maxLength={1500}
                 />
                 <div className="text-sm text-gray-500 italic">
                   Optional but encouraged - deeper reflection leads to better learning
@@ -431,7 +441,7 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
                 className="w-full sm:w-auto mx-auto bg-[#48BB78] hover:bg-[#38A169] text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200"
                 size="lg"
               >
-                {isRoadmapCompleted ? "View Completed Roadmap" : "Continue to Roadmap"}
+                {isRoadmapCompleted ? "Back To Your Toolkit" : "Continue to Roadmap"}
               </Button>
             </DialogFooter>
           </DialogContent>

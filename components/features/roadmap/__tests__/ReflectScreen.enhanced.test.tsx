@@ -433,7 +433,7 @@ describe("ReflectScreen Enhanced Features", () => {
     });
 
     // Verify button text for completed roadmap
-    expect(screen.getByText("View Completed Roadmap")).toBeInTheDocument();
+    expect(screen.getByText("Back To Your Toolkit")).toBeInTheDocument();
   });
 
   it("should NOT trigger confetti when completing a non-final step", async () => {

@@ -88,7 +88,16 @@ export function QuickActions({
     // User has completed free roadmap and needs premium
     return (
       <>
-        <div className="flex justify-center">
+        <div className="flex flex-col justify-center items-center">
+          <h2 className="text-2xl font-bold mb-4">What a ride! Wanna continue?</h2>
+          <p className="mb-4">
+            Upgrade to have the same thinking tools the world's most successful & happiest people
+            use every day.
+          </p>
+          <p className="mb-6">
+            Become a limitless super-thinker through LattixIQ's personalized, science-proven
+            process...
+          </p>
           <Button
             size="lg"
             className="w-full max-w-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"

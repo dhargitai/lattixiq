@@ -52,12 +52,12 @@ export function ApplicationGuidanceModal({
           </DialogTitle>
           <DialogDescription
             id="application-guidance-description"
-            className="text-base md:text-lg text-gray-600 text-center leading-relaxed"
+            className="text-base md:text-lg text-gray-600 leading-relaxed"
           >
             Great plan! Now it&apos;s time to put it into action.
             {conceptName && (
               <span className="block mt-2">
-                Go offline and work on applying{" "}
+                Go offline and work on applying what you learned about{" "}
                 <span className="font-medium text-gray-700">&quot;{conceptName}&quot;</span> in real
                 life.
               </span>

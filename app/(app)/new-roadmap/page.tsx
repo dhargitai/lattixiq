@@ -21,7 +21,8 @@ export default async function NewRoadmapPage() {
 
   if (!canCreate) {
     // Redirect to toolkit with blocked parameter if not allowed
-    redirect("/toolkit?blocked=true");
+    // redirect("/toolkit?blocked=true");
+    redirect("/toolkit");
   }
 
   return <NewRoadmapForm />;
