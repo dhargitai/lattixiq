@@ -2,22 +2,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { POST } from "@/app/api/billing-portal/route";
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import Stripe from "stripe";
+import { getStripeClient } from "@/lib/stripe/client";
+import type Stripe from "stripe";
 
 // Mock dependencies
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(),
 }));
 
-vi.mock("stripe", () => {
-  const mockStripe = vi.fn();
-  mockStripe.prototype.billingPortal = {
-    sessions: {
-      create: vi.fn(),
-    },
-  };
-  return { default: mockStripe };
-});
+vi.mock("@/lib/stripe/client", () => ({
+  getStripeClient: vi.fn(),
+}));
 
 describe("Billing Portal API Route", () => {
   interface MockSupabase {
@@ -49,8 +44,14 @@ describe("Billing Portal API Route", () => {
     (createClient as ReturnType<typeof vi.fn>).mockResolvedValue(mockSupabase);
 
     // Setup mock Stripe instance
-    const MockStripeClass = Stripe as unknown as { new (): typeof mockStripeInstance };
-    mockStripeInstance = new MockStripeClass();
+    mockStripeInstance = {
+      billingPortal: {
+        sessions: {
+          create: vi.fn(),
+        },
+      },
+    };
+    (getStripeClient as ReturnType<typeof vi.fn>).mockReturnValue(mockStripeInstance);
   });
 
   it("returns 401 when user is not authenticated", async () => {
