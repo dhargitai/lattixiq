@@ -94,5 +94,12 @@ jobs:
       - name: Build Check
         run: npm run build
         env:
+          CI: true
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL || 'https://placeholder.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY || 'placeholder-key-for-build-only' }}
+          # Stripe placeholders for build - actual values not needed for build verification
+          STRIPE_SECRET_KEY: 'sk_test_placeholder_for_build_only'
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: 'pk_test_placeholder_for_build_only'
+          NEXT_PUBLIC_STRIPE_MONTHLY_PRODUCT_ID: 'price_placeholder_monthly'
+          NEXT_PUBLIC_STRIPE_ANNUAL_PRODUCT_ID: 'price_placeholder_annual'
+          STRIPE_WEBHOOK_SECRET: 'whsec_placeholder_for_build_only'

@@ -2,6 +2,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { verifyCheckoutSession } from "@/lib/stripe/utils";
 
+// Force Node.js runtime to avoid Edge Runtime limitations with Stripe/Supabase
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
