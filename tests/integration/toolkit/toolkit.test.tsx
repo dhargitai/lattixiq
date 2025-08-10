@@ -162,7 +162,7 @@ describe("Toolkit Components", () => {
   });
 
   describe("NavigationCards", () => {
-    it("should display all navigation cards with counts", () => {
+    it("should display only My Learned Models navigation card for MVP", () => {
       const recentLog = {
         text: "Applied First Principles to a work problem",
         date: new Date().toISOString(),
@@ -179,30 +179,38 @@ describe("Toolkit Components", () => {
       expect(screen.getByText("My Learned Models")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
 
-      expect(screen.getByText("My Completed Roadmaps")).toBeInTheDocument();
-      expect(screen.getByText("2")).toBeInTheDocument();
+      // Hidden for MVP - will be re-enabled post-launch
+      // expect(screen.getByText("My Completed Roadmaps")).toBeInTheDocument();
+      // expect(screen.getByText("2")).toBeInTheDocument();
 
-      expect(screen.getByText("Application Log")).toBeInTheDocument();
-      expect(screen.getByText(/Applied First Principles/)).toBeInTheDocument();
+      // expect(screen.getByText("Application Log")).toBeInTheDocument();
+      // expect(screen.getByText(/Applied First Principles/)).toBeInTheDocument();
     });
 
-    it("should navigate to correct routes on card clicks", async () => {
+    it("should navigate to correct route on My Learned Models card click", async () => {
       render(
         <NavigationCards learnedModelsCount={0} completedRoadmapsCount={0} recentLogEntry={null} />
       );
 
       const cards = screen.getAllByTestId("navigation-card");
 
+      // Only one card should be visible for MVP
+      expect(cards).toHaveLength(1);
+
       await userEvent.click(cards[0]);
       expect(mockPush).toHaveBeenCalledWith("/models");
 
-      await userEvent.click(cards[1]);
-      expect(mockPush).toHaveBeenCalledWith("/roadmaps/completed");
+      // Hidden for MVP - will be re-enabled post-launch
+      // await userEvent.click(cards[1]);
+      // expect(mockPush).toHaveBeenCalledWith("/roadmaps/completed");
 
-      await userEvent.click(cards[2]);
-      expect(mockPush).toHaveBeenCalledWith("/logs");
+      // await userEvent.click(cards[2]);
+      // expect(mockPush).toHaveBeenCalledWith("/logs");
     });
 
+    // Hidden for MVP - will be re-enabled post-launch
+    // This test is for the Application Log card which is currently commented out
+    /*
     it("should truncate long text in recent log entry", () => {
       const longText =
         "This is a very long reflection text that should be truncated after a certain number of characters to maintain the layout";
@@ -223,6 +231,7 @@ describe("Toolkit Components", () => {
       expect(displayedText.textContent).toContain("...");
       expect(displayedText.textContent?.length).toBeLessThan(longText.length);
     });
+    */
   });
 
   describe("EmptyState", () => {

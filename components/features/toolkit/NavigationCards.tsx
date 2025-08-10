@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Brain, Trophy, FileText } from "lucide-react";
+import { ChevronRight, Brain /* , Trophy, FileText */ } from "lucide-react";
 
 interface NavigationCardsProps {
   learnedModelsCount: number;
@@ -18,12 +18,14 @@ interface NavigationCardsProps {
 
 export function NavigationCards({
   learnedModelsCount,
-  completedRoadmapsCount,
-  recentLogEntry,
+  // completedRoadmapsCount,  // Hidden for MVP - will be re-enabled post-launch
+  // recentLogEntry,           // Hidden for MVP - will be re-enabled post-launch
   onLearnedModelsClick,
 }: NavigationCardsProps) {
   const router = useRouter();
 
+  // Hidden for MVP - will be re-enabled post-launch
+  /*
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -40,6 +42,7 @@ export function NavigationCards({
     if (text.length <= maxLength) return text;
     return `${text.slice(0, maxLength)}...`;
   };
+  */
 
   return (
     <div className="space-y-4">
@@ -67,7 +70,8 @@ export function NavigationCards({
           </div>
         </Card>
 
-        <Card
+        {/* Hidden for MVP - will be re-enabled post-launch */}
+        {/* <Card
           className="p-4 hover:shadow-md transition-all cursor-pointer hover:border-gray-300"
           onClick={() => router.push("/roadmaps/completed")}
           data-testid="navigation-card"
@@ -84,9 +88,10 @@ export function NavigationCards({
               <ChevronRight className="h-4 w-4 text-gray-400" />
             </div>
           </div>
-        </Card>
+        </Card> */}
 
-        <Card
+        {/* Hidden for MVP - will be re-enabled post-launch */}
+        {/* <Card
           className="p-4 hover:shadow-md transition-all cursor-pointer hover:border-gray-300"
           onClick={() => router.push("/logs")}
           data-testid="navigation-card"
@@ -105,7 +110,7 @@ export function NavigationCards({
             </div>
             <ChevronRight className="h-4 w-4 text-gray-400" />
           </div>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
