@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Star } from "lucide-react";
@@ -390,22 +391,17 @@ const ReflectScreen = React.forwardRef<HTMLDivElement, ReflectScreenProps>(
               )}
 
               {/* Submit Button */}
-              <Button
+              <StandardCTAButton
                 onClick={handleSubmit}
-                disabled={!isValid || isLoading}
-                className="w-full bg-gradient-to-r from-[#48BB78] to-[#38A169] hover:from-[#38A169] hover:to-[#2F855A] text-white font-semibold text-lg py-7 rounded-[10px] shadow-[0_4px_12px_rgba(72,187,120,0.25)] hover:shadow-[0_6px_20px_rgba(72,187,120,0.35)] transform transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
+                disabled={!isValid}
+                loading={isLoading}
+                variant="secondary"
                 size="lg"
+                fullWidth
                 data-testid="submit-button"
               >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
-                    Saving...
-                  </span>
-                ) : (
-                  "Complete & Unlock Next Step"
-                )}
-              </Button>
+                {isLoading ? "Saving..." : "Complete & Unlock Next Step"}
+              </StandardCTAButton>
             </div>
           </div>
         </div>

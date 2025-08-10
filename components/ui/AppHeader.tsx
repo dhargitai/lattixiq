@@ -57,11 +57,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-accent hover:text-accent-foreground"
+            className="h-11 w-11 p-0 hover:bg-accent hover:text-accent-foreground"
             onClick={() => setShowHelpModal(true)}
             aria-label="Show help"
           >
-            <HelpCircle className="h-5 w-5" />
+            <HelpCircle className="text-gray-500 w-6 h-6 size-6" />
           </Button>
         )}
       </header>

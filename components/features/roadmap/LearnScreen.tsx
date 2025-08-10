@@ -3,10 +3,9 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/ui/AppHeader";
-import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, KeyRound, Lightbulb } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { RoadmapStepWithContent, Roadmap } from "@/lib/supabase/types";
 
 interface LearnScreenProps {
@@ -149,27 +148,21 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
                   </p>
                 </div>
 
-                {/* Continue button with prototype styling */}
+                {/* Continue button with standardized CTA styling */}
                 <div className="flex justify-center pt-8">
-                  <Button
+                  <StandardCTAButton
                     onClick={handleNavigateToPlan}
                     data-testid="continue-to-plan-button"
-                    disabled={false} // Remove disabled state - always allow action
-                    className={cn(
-                      "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
-                      "text-white font-semibold text-lg px-10 py-6 rounded-xl",
-                      "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30",
-                      "transform transition-all duration-300 hover:-translate-y-0.5",
-                      "inline-flex items-center gap-2"
-                    )}
+                    variant="primary"
+                    size="md"
+                    icon={<ArrowRight className="h-5 w-5" />}
                   >
                     {cameFromReflect && hasPlan
                       ? "Back to Reflection"
                       : hasPlan
                         ? "Review Plan"
                         : "Continue to Plan"}
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
+                  </StandardCTAButton>
                 </div>
               </CardContent>
             </Card>

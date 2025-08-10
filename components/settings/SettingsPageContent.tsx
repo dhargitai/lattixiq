@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import BillingSection from "@/components/settings/BillingSection";
 import LogoutButton from "@/components/settings/LogoutButton";
@@ -125,13 +125,14 @@ export default function SettingsPageContent({
           {/* Save Button */}
           {isDirty && (
             <div className="flex justify-center">
-              <Button
+              <StandardCTAButton
                 onClick={handleSave}
-                disabled={isSaving}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3.5 text-base font-semibold rounded-[10px] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(59,130,246,0.35)] active:translate-y-0 active:shadow-[0_2px_6px_rgba(59,130,246,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                loading={isSaving}
+                variant="primary"
+                size="md"
               >
                 {isSaving ? "Saving..." : "Save Settings"}
-              </Button>
+              </StandardCTAButton>
             </div>
           )}
 

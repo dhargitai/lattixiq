@@ -99,6 +99,15 @@ describe("AppHeader", () => {
     expect(helpButton).toHaveClass("hover:text-accent-foreground");
   });
 
+  it("help icon has correct size for accessibility", () => {
+    render(<AppHeader screenName="Test Screen" helpContentId="test-help" />);
+
+    const helpButton = screen.getByRole("button", { name: /show help/i });
+    const helpIcon = helpButton.querySelector("svg");
+
+    expect(helpIcon).toHaveClass("h-6", "w-6");
+  });
+
   describe("Back Link functionality", () => {
     it("renders back link when provided", () => {
       render(

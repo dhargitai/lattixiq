@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/ui/AppHeader";
-import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,7 @@ import { ChevronDown, Lightbulb, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
+import { useDynamicFocusState } from "@/lib/hooks/useDynamicFocusState";
 import { ReminderSettings } from "@/components/shared/ReminderSettings";
 import { ApplicationGuidanceModal } from "@/components/modals/ApplicationGuidanceModal";
 import type {
@@ -40,6 +41,10 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
       situation: "",
       action: "",
     });
+
+    // Dynamic focus state hooks for both textareas
+    const situationFocusState = useDynamicFocusState();
+    const actionFocusState = useDynamicFocusState();
 
     // Initialize reminder settings from global user settings
     useEffect(() => {
@@ -205,11 +210,27 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                       name="situation"
                       placeholder={labels.situationPlaceholder}
                       value={formData.situation}
-                      onChange={(e) => setFormData({ ...formData, situation: e.target.value })}
-                      className="min-h-[100px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 placeholder:italic placeholder:text-gray-400"
+                      onChange={(e) => {
+                        setFormData({ ...formData, situation: e.target.value });
+                        situationFocusState.updateCharacterCount(e.target.value);
+                      }}
+                      className={cn(
+                        "min-h-[100px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base",
+                        "transition-all duration-300 ease-in-out focus:bg-white focus:ring-4",
+                        situationFocusState.focusColorClasses,
+                        "placeholder:italic placeholder:text-gray-400"
+                      )}
                       aria-label={labels.situationLabel}
                       required
                     />
+                    <div
+                      className={cn(
+                        "text-sm text-right transition-colors duration-200",
+                        situationFocusState.isAboveThreshold ? "text-green-600" : "text-gray-500"
+                      )}
+                    >
+                      {situationFocusState.displayText}
+                    </div>
                   </div>
 
                   {/* THEN I WILL Field */}
@@ -225,11 +246,27 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                       name="action"
                       placeholder={labels.actionPlaceholder}
                       value={formData.action}
-                      onChange={(e) => setFormData({ ...formData, action: e.target.value })}
-                      className="min-h-[100px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 placeholder:italic placeholder:text-gray-400"
+                      onChange={(e) => {
+                        setFormData({ ...formData, action: e.target.value });
+                        actionFocusState.updateCharacterCount(e.target.value);
+                      }}
+                      className={cn(
+                        "min-h-[100px] bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base",
+                        "transition-all duration-300 ease-in-out focus:bg-white focus:ring-4",
+                        actionFocusState.focusColorClasses,
+                        "placeholder:italic placeholder:text-gray-400"
+                      )}
                       aria-label={labels.actionLabel}
                       required
                     />
+                    <div
+                      className={cn(
+                        "text-sm text-right transition-colors duration-200",
+                        actionFocusState.isAboveThreshold ? "text-green-600" : "text-gray-500"
+                      )}
+                    >
+                      {actionFocusState.displayText}
+                    </div>
                   </div>
 
                   {/* Reminder Section */}
@@ -252,21 +289,15 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
 
                   {/* Submit Button */}
                   <div className="flex justify-center pt-2">
-                    <Button
+                    <StandardCTAButton
                       type="submit"
-                      disabled={isLoading}
-                      className={cn(
-                        "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
-                        "text-white font-semibold text-lg px-10 py-6 rounded-xl",
-                        "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30",
-                        "transform transition-all duration-300 hover:-translate-y-0.5",
-                        "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
-                        "inline-flex items-center gap-2"
-                      )}
+                      loading={isLoading}
+                      variant="primary"
+                      size="md"
+                      icon={!isLoading ? <ArrowRight className="h-5 w-5" /> : undefined}
                     >
                       {isLoading ? "Saving..." : "Save Plan & Take Action"}
-                      {!isLoading && <ArrowRight className="h-5 w-5" />}
-                    </Button>
+                    </StandardCTAButton>
                   </div>
                 </form>
 

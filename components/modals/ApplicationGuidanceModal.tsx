@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 
 interface ApplicationGuidanceModalProps {
   isOpen: boolean;
@@ -73,12 +73,9 @@ export function ApplicationGuidanceModal({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-6">
-          <Button
-            onClick={onClose}
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold text-lg py-6 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transform transition-all duration-300 hover:-translate-y-0.5"
-          >
+          <StandardCTAButton onClick={onClose} variant="primary" size="md" fullWidth>
             Got it!
-          </Button>
+          </StandardCTAButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

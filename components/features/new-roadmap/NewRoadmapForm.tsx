@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Textarea } from "@/components/ui/textarea";
 import HowItWorks from "./HowItWorks";
 import GeneratingRoadmap from "./GeneratingRoadmap";
@@ -164,21 +165,15 @@ export default function NewRoadmapForm() {
                     </div>
                   )}
 
-                  <Button
+                  <StandardCTAButton
                     type="submit"
                     disabled={goal.length < 10}
-                    className={cn(
-                      "w-full py-4 text-base font-semibold",
-                      "bg-gradient-to-r from-[#48BB78] to-[#38A169]",
-                      "hover:from-[#38A169] hover:to-[#2F855A]",
-                      "disabled:from-gray-400 disabled:to-gray-500",
-                      "transition-all duration-200",
-                      "shadow-sm hover:shadow-md",
-                      "rounded-xl"
-                    )}
+                    variant="secondary"
+                    size="md"
+                    fullWidth
                   >
                     Create My Roadmap
-                  </Button>
+                  </StandardCTAButton>
                 </form>
               </div>
             </div>

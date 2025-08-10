@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export function EmptyState() {
@@ -29,14 +29,14 @@ export function EmptyState() {
         </p>
       </div>
 
-      <Button
-        size="lg"
-        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"
+      <StandardCTAButton
+        variant="primary"
+        size="md"
         onClick={() => router.push("/new-roadmap")}
+        icon={<ArrowRight className="h-5 w-5" />}
       >
         Start Your First Roadmap
-        <ArrowRight className="ml-2 h-5 w-5" />
-      </Button>
+      </StandardCTAButton>
 
       <div className="mt-8 pt-6 border-t border-blue-200">
         <p className="text-sm text-gray-600 mb-3">What you&apos;ll discover:</p>
