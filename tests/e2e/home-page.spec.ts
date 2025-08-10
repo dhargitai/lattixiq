@@ -2,22 +2,61 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Home Page", () => {
   // --- Happy Path ---
-  test("should load the home page successfully", async ({ page }) => {
+  test("should redirect to /toolkit immediately", async ({ page }) => {
+    // Navigate to homepage
     await page.goto("/");
 
-    // Check that the page loads
-    await expect(page).toHaveTitle(/LattixIQ|Next.js/);
+    // Should be redirected to /toolkit (or /login if not authenticated)
+    // The actual URL will depend on authentication state
+    await expect(page.url()).toMatch(/\/(toolkit|login)/);
 
-    // Check for some basic content (this will need to be updated once we have actual content)
+    // Check that the page loads successfully after redirect
     await expect(page.locator("body")).toBeVisible();
   });
 
-  test("should be responsive on mobile viewport", async ({ page }) => {
+  test("should redirect correctly on mobile viewport", async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/");
 
+    // Should still redirect on mobile
+    await expect(page.url()).toMatch(/\/(toolkit|login)/);
+
     // Check that the page is still accessible on mobile
+    await expect(page.locator("body")).toBeVisible();
+  });
+
+  test("should not create redirect loops", async ({ page }) => {
+    // Navigate to homepage
+    await page.goto("/");
+
+    // Store the redirected URL
+    const firstUrl = page.url();
+
+    // The URL should be either /toolkit or /login, not homepage
+    expect(firstUrl).not.toContain("http://localhost:3000/");
+    expect(firstUrl).toMatch(/\/(toolkit|login)/);
+
+    // Navigate away and back
+    await page.goto("/settings");
+    await page.goto("/");
+
+    // Should redirect to same place as before
+    const secondUrl = page.url();
+    expect(secondUrl).toMatch(/\/(toolkit|login)/);
+  });
+
+  test("should handle unauthenticated users correctly", async ({ page, context }) => {
+    // Clear any existing auth cookies to ensure unauthenticated state
+    await context.clearCookies();
+
+    // Navigate to homepage
+    await page.goto("/");
+
+    // Unauthenticated users should be redirected through: / → /toolkit → /login
+    await expect(page.url()).toContain("/login");
+
+    // Login page should be visible
     await expect(page.locator("body")).toBeVisible();
   });
 
