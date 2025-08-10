@@ -124,6 +124,19 @@ export const HelpModal: React.FC<HelpModalProps> = ({ contentId, onClose }) => {
         >
           {content.content}
         </ReactMarkdown>
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <p className="text-sm text-gray-600">
+            If you have any more questions, feel free to{" "}
+            <a
+              href="mailto:support@lattixiq.com"
+              className="text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-sm"
+              aria-label="Contact support via email at support@lattixiq.com"
+            >
+              shoot an email
+            </a>
+            .
+          </p>
+        </div>
       </div>
     );
   };
