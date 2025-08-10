@@ -153,6 +153,16 @@ class MockSupabaseClient {
                 }
                 return { data: null, error: { code: "PGRST116" } }; // No active roadmap
               }
+              // Handle user_subscriptions table for billing portal
+              if (table === "user_subscriptions") {
+                return {
+                  data: {
+                    stripe_customer_id: "cus_test_customer_id",
+                    user_id: "test-user-id",
+                  },
+                  error: null,
+                };
+              }
               return { data: null, error: null };
             },
             order: (_orderColumn: string, _options?: unknown) => ({
@@ -164,6 +174,15 @@ class MockSupabaseClient {
           single: async () => {
             if (table === "roadmaps") {
               return { data: null, error: { code: "PGRST116" } }; // No active roadmap
+            }
+            if (table === "user_subscriptions") {
+              return {
+                data: {
+                  stripe_customer_id: "cus_test_customer_id",
+                  user_id: "test-user-id",
+                },
+                error: null,
+              };
             }
             return { data: null, error: null };
           },
