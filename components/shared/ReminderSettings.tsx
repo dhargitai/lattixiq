@@ -25,7 +25,7 @@ export const ReminderSettings = React.forwardRef<HTMLDivElement, ReminderSetting
       disabled = false,
       variant = "default",
       className,
-      showDescription = true,
+      showDescription = false,
     },
     ref
   ) => {

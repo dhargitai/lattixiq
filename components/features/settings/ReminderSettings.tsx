@@ -108,10 +108,7 @@ export function ReminderSettings({
     <Card>
       <CardHeader>
         <CardTitle>Daily Reminders</CardTitle>
-        <CardDescription>
-          Get reminded to practice your plans at your chosen time. These settings apply globally to
-          all your active plans.
-        </CardDescription>
+        <CardDescription>Get reminded to practice your plans at your chosen time.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
