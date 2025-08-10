@@ -3,7 +3,7 @@
  * Following functional programming patterns - pure functions with no side effects
  */
 
-import type { EmailLogEntry, EmailResult } from "./types";
+import type { EmailResult } from "./types";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -15,7 +15,7 @@ export async function logEmailDelivery(
   emailSubject: string,
   emailBody: string,
   result: EmailResult,
-  metadata?: Record<string, unknown>
+  _metadata?: Record<string, unknown>
 ): Promise<boolean> {
   try {
     const supabase = await createClient();
@@ -86,9 +86,9 @@ export async function getUserEmailStats(
     const successRate = total > 0 ? (totalSent / total) * 100 : 0;
 
     // Find the most recent successful send
-    const lastSent = data
+    const [lastSent] = data
       .filter((log) => log.delivery_status === "sent" && log.delivered_at)
-      .sort((a, b) => new Date(b.delivered_at!).getTime() - new Date(a.delivered_at!).getTime())[0];
+      .sort((a, b) => new Date(b.delivered_at!).getTime() - new Date(a.delivered_at!).getTime());
 
     return {
       totalSent,

@@ -33,7 +33,7 @@ describe("send-email", () => {
     // Setup mock for Resend client
     const { getResendClient } = vi.mocked(await import("@/lib/email/resend-client"));
     mockSend = vi.fn();
-    (getResendClient as any).mockReturnValue({
+    (getResendClient as ReturnType<typeof vi.fn>).mockReturnValue({
       emails: {
         send: mockSend,
       },

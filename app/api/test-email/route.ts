@@ -3,7 +3,8 @@
  * This endpoint should only be available in development environment
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { sendEmailWithRetry, isValidEmail } from "@/lib/email/send-email";
 import { createClient } from "@/lib/supabase/server";
 import type { EmailOptions, EmailLogEntry } from "@/lib/email/types";

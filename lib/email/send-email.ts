@@ -30,21 +30,28 @@ function calculateBackoffDelay(attempt: number, config: EmailRetryConfig): numbe
  * Check if an error is retryable
  * Pure function - no side effects
  */
-function isRetryableError(error: any): boolean {
+function isRetryableError(error: unknown): boolean {
   if (!error) return false;
 
-  // Check statusCode property
-  if (typeof error.statusCode === "number") {
-    return error.statusCode >= 500 || error.statusCode === 429;
+  // Check if error has statusCode property
+  if (typeof error === "object" && error !== null && "statusCode" in error) {
+    const { statusCode } = error as { statusCode: unknown };
+    if (typeof statusCode === "number") {
+      return statusCode >= 500 || statusCode === 429;
+    }
   }
 
   // Check message for network errors
-  const message = String(error.message || error || "").toLowerCase();
+  const message =
+    typeof error === "object" && error !== null && "message" in error
+      ? String((error as { message: unknown }).message)
+      : String(error);
+  const lowerMessage = message.toLowerCase();
   return (
-    message.includes("network") ||
-    message.includes("timeout") ||
-    message.includes("econnrefused") ||
-    message.includes("rate limit")
+    lowerMessage.includes("network") ||
+    lowerMessage.includes("timeout") ||
+    lowerMessage.includes("econnrefused") ||
+    lowerMessage.includes("rate limit")
   );
 }
 
@@ -131,7 +138,7 @@ async function sendEmailInternal(options: EmailOptions): Promise<EmailResult> {
     const client = getResendClient();
 
     // Prepare email data - Resend requires either html or text
-    const emailData: any = {
+    const baseEmailData = {
       from: options.from || config.fromEmail,
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
@@ -143,14 +150,12 @@ async function sendEmailInternal(options: EmailOptions): Promise<EmailResult> {
     };
 
     // Resend requires either html or text, not both
-    if (options.html) {
-      emailData.html = options.html;
-    } else if (options.text) {
-      emailData.text = options.text;
-    } else {
-      // Default to text if neither is provided
-      emailData.text = "";
-    }
+    // Build the final email data with proper typing
+    const emailData = options.html
+      ? { ...baseEmailData, html: options.html }
+      : options.text
+        ? { ...baseEmailData, text: options.text }
+        : { ...baseEmailData, text: "" };
 
     // Send email via Resend
     const response = await client.emails.send(emailData);

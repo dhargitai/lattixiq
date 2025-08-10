@@ -257,7 +257,7 @@ describe("Email Integration Tests", () => {
     it("should handle missing user statistics gracefully", async () => {
       // Mock empty response
       const { createClient } = vi.mocked(await import("@/lib/supabase/server"));
-      (createClient as any).mockResolvedValueOnce({
+      (createClient as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
         from: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({

@@ -3,7 +3,6 @@ import { POST } from "@/app/api/billing-portal/route";
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getStripeClient } from "@/lib/stripe/client";
-import type Stripe from "stripe";
 
 // Mock dependencies
 vi.mock("@/lib/supabase/server", () => ({
