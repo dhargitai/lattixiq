@@ -63,9 +63,7 @@ Integrate Resend email service to complement the existing browser notification s
 - [ ] Integrate email sending into existing reminder cron job
 - [ ] Handle email delivery failures gracefully
 - [ ] Log both notification types for tracking
-- [ ] Ensure no duplicate notifications if one method fails
 - [ ] Respect user's timezone for email sending timing
-- [ ] Allow users to opt out of email notifications independently
 
 ## Technical Details
 
