@@ -119,37 +119,72 @@ export function shouldSendReminder(
   const now = new Date();
   const [hours, minutes] = reminderTime.split(":").map(Number);
 
-  // Create today's reminder time in the user's timezone
-  const nowInTimezone = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
-  const todayReminderTime = new Date(
-    nowInTimezone.getFullYear(),
-    nowInTimezone.getMonth(),
-    nowInTimezone.getDate(),
-    hours,
-    minutes
-  );
+  // Get the current time in the user's timezone
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
 
-  // Check if we're within 5 minutes of the reminder time
-  const timeDiff = Math.abs(nowInTimezone.getTime() - todayReminderTime.getTime());
-  const isWithinWindow = timeDiff <= 5 * 60 * 1000; // 5 minutes
+  // Parse the current time in the user's timezone
+  const parts = formatter.formatToParts(now);
+  const currentYear = parseInt(parts.find((p) => p.type === "year")?.value || "0");
+  const currentMonth = parseInt(parts.find((p) => p.type === "month")?.value || "0") - 1; // 0-indexed
+  const currentDay = parseInt(parts.find((p) => p.type === "day")?.value || "0");
+  const currentHour = parseInt(parts.find((p) => p.type === "hour")?.value || "0");
+  const currentMinute = parseInt(parts.find((p) => p.type === "minute")?.value || "0");
+
+  // Create date objects for comparison (both in the same reference frame)
+  const currentTimeInTz = new Date(
+    currentYear,
+    currentMonth,
+    currentDay,
+    currentHour,
+    currentMinute
+  );
+  const reminderTimeToday = new Date(currentYear, currentMonth, currentDay, hours, minutes);
+
+  // Calculate the time difference in minutes
+  const timeDiffMinutes =
+    Math.abs(currentTimeInTz.getTime() - reminderTimeToday.getTime()) / (1000 * 60);
+  const isWithinWindow = timeDiffMinutes <= 5; // Within 5 minutes
+
+  // Debug logging
+  console.log(`[shouldSendReminder] Checking reminder for timezone: ${timezone}`);
+  console.log(
+    `[shouldSendReminder] Current time in ${timezone}: ${currentHour}:${String(currentMinute).padStart(2, "0")}`
+  );
+  console.log(`[shouldSendReminder] Reminder time: ${hours}:${String(minutes).padStart(2, "0")}`);
+  console.log(`[shouldSendReminder] Time difference: ${timeDiffMinutes} minutes`);
+  console.log(`[shouldSendReminder] Within 5-minute window: ${isWithinWindow}`);
 
   if (!isWithinWindow) return false;
 
   // Check if we've already sent today in the user's timezone
   if (lastSent) {
     const lastSentDate = new Date(lastSent);
-    const lastSentInTimezone = new Date(
-      lastSentDate.toLocaleString("en-US", { timeZone: timezone })
-    );
+
+    // Get the last sent date in the user's timezone
+    const lastSentParts = formatter.formatToParts(lastSentDate);
+    const lastSentDay = parseInt(lastSentParts.find((p) => p.type === "day")?.value || "0");
+    const lastSentMonth = parseInt(lastSentParts.find((p) => p.type === "month")?.value || "0") - 1;
+    const lastSentYear = parseInt(lastSentParts.find((p) => p.type === "year")?.value || "0");
 
     const isSameDay =
-      lastSentInTimezone.getDate() === nowInTimezone.getDate() &&
-      lastSentInTimezone.getMonth() === nowInTimezone.getMonth() &&
-      lastSentInTimezone.getFullYear() === nowInTimezone.getFullYear();
+      lastSentDay === currentDay && lastSentMonth === currentMonth && lastSentYear === currentYear;
+
+    console.log(`[shouldSendReminder] Last sent: ${lastSent}`);
+    console.log(`[shouldSendReminder] Already sent today: ${isSameDay}`);
 
     if (isSameDay) return false;
   }
 
+  console.log(`[shouldSendReminder] ✅ Should send reminder: true`);
   return true;
 }
 
