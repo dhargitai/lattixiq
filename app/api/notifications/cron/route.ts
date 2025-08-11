@@ -1,10 +1,13 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { shouldSendReminder } from "@/lib/notifications/timezone-utils";
 import { sendEmailWithRetry } from "@/lib/email/send-email";
 import { logEmailDelivery } from "@/lib/email/email-logger";
 import type { EmailOptions } from "@/lib/email/types";
+import type { Database } from "@/lib/supabase/database.types";
+
+type User = Database["public"]["Tables"]["users"]["Row"];
 
 // Generate HTML email template for reminders
 function generateReminderEmailHtml(
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const now = new Date();
 
   try {
@@ -108,7 +111,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter users who should receive reminders based on their timezone
-    const usersToNotify = users.filter((user) => {
+    const usersToNotify = users.filter((user: User) => {
       if (!user.reminder_time || !user.reminder_timezone) return false;
 
       return shouldSendReminder(
@@ -128,7 +131,7 @@ export async function GET(request: NextRequest) {
 
     // Process each user to notify
     const results = await Promise.all(
-      usersToNotify.map(async (user) => {
+      usersToNotify.map(async (user: User) => {
         try {
           // Check if user has an active plan
           const { data: activeSteps, error: stepsError } = await supabase
@@ -215,9 +218,9 @@ export async function GET(request: NextRequest) {
 
     const summary = {
       total: results.length,
-      sent: results.filter((r) => r.status === "sent").length,
-      no_active_plan: results.filter((r) => r.status === "no_active_plan").length,
-      errors: results.filter((r) => r.status === "error").length,
+      sent: results.filter((r: any) => r.status === "sent").length,
+      no_active_plan: results.filter((r: any) => r.status === "no_active_plan").length,
+      errors: results.filter((r: any) => r.status === "error").length,
     };
 
     return NextResponse.json({
