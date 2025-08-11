@@ -14,6 +14,12 @@ import { useUserSettings } from "@/lib/hooks/useUserSettings";
 import { useDynamicFocusState } from "@/lib/hooks/useDynamicFocusState";
 import { ReminderSettings } from "@/components/shared/ReminderSettings";
 import { ApplicationGuidanceModal } from "@/components/modals/ApplicationGuidanceModal";
+import {
+  hasShownModalClient,
+  addShownModalClient,
+  generateModalId,
+  migrateLocalStorageModals,
+} from "@/lib/db/user-preferences";
 import type {
   RoadmapStep,
   KnowledgeContent,
@@ -37,6 +43,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
     const [reminderEnabled, setReminderEnabled] = useState(false);
     const [reminderTime, setReminderTime] = useState("09:00");
     const [showApplicationModal, setShowApplicationModal] = useState(false);
+    const [checkingModalStatus, setCheckingModalStatus] = useState(false);
     const [formData, setFormData] = useState({
       situation: "",
       action: "",
@@ -46,11 +53,18 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
     const situationFocusState = useDynamicFocusState({ threshold: 30 });
     const actionFocusState = useDynamicFocusState({ threshold: 30 });
 
-    // Initialize reminder settings from global user settings
+    // Initialize reminder settings from global user settings and migrate localStorage modals
     useEffect(() => {
       if (user) {
         setReminderEnabled(user.reminder_enabled || false);
         setReminderTime(user.reminder_time || "09:00:00");
+
+        // Migrate any existing localStorage modal data (runs once per user session)
+        migrateLocalStorageModals().then((migratedCount) => {
+          if (migratedCount > 0) {
+            console.log(`Migrated ${migratedCount} modal states from localStorage to database`);
+          }
+        });
       }
     }, [user]);
 
@@ -78,6 +92,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
       }
 
       setIsLoading(true);
+      setCheckingModalStatus(true);
 
       try {
         const supabase = createClient();
@@ -107,14 +122,23 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
           });
         }
 
-        // Check if modal has been shown before
-        const modalShownKey = `plan-modal-shown-${step.id}`;
-        const hasShownModal = localStorage.getItem(modalShownKey);
+        // Generate modal ID for this step
+        const modalId = generateModalId("plan", step.id);
+
+        // Check if modal has been shown before using database
+        const hasShownModal = await hasShownModalClient(modalId);
 
         if (!hasShownModal) {
+          // Add modal to shown list in database (optimistic update)
+          try {
+            await addShownModalClient(modalId);
+          } catch (modalError) {
+            // Log error but don't block the flow
+            console.error("Failed to update modal shown status:", modalError);
+          }
+
           // Show the application guidance modal
           setShowApplicationModal(true);
-          localStorage.setItem(modalShownKey, "true");
         } else {
           // Navigate directly to roadmap
           router.push("/roadmap");
@@ -123,6 +147,7 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
         setError(err instanceof Error ? err.message : "Failed to save plan");
       } finally {
         setIsLoading(false);
+        setCheckingModalStatus(false);
       }
     };
 
@@ -298,7 +323,11 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
                       size="md"
                       icon={!isLoading ? <ArrowRight className="h-5 w-5" /> : undefined}
                     >
-                      {isLoading ? "Saving..." : "Save Plan & Take Action"}
+                      {isLoading
+                        ? checkingModalStatus
+                          ? "Checking..."
+                          : "Saving..."
+                        : "Save Plan & Take Action"}
                     </StandardCTAButton>
                   </div>
                 </form>

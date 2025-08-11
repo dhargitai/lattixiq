@@ -5,11 +5,13 @@ import { PlanScreen } from "@/components/features/roadmap/PlanScreen";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
 import { useRouter } from "next/navigation";
+import * as userPreferences from "@/lib/db/user-preferences";
 
 // Mock dependencies
 vi.mock("@/lib/supabase/client");
 vi.mock("@/lib/hooks/useUserSettings");
 vi.mock("next/navigation");
+vi.mock("@/lib/db/user-preferences");
 
 describe("Plan Modal Flow Integration", () => {
   const mockRouter = {
@@ -107,6 +109,14 @@ describe("Plan Modal Flow Integration", () => {
     vi.mocked(useRouter).mockReturnValue(mockRouter);
     vi.mocked(createClient).mockReturnValue(mockSupabaseClient as ReturnType<typeof createClient>);
     vi.mocked(useUserSettings).mockReturnValue(mockUserSettings);
+
+    // Mock database preference functions
+    vi.mocked(userPreferences.hasShownModalClient).mockResolvedValue(false);
+    vi.mocked(userPreferences.addShownModalClient).mockResolvedValue();
+    vi.mocked(userPreferences.generateModalId).mockImplementation(
+      (type, stepId) => `${type}-${stepId}`
+    );
+    vi.mocked(userPreferences.migrateLocalStorageModals).mockResolvedValue(0);
   });
 
   afterEach(() => {
@@ -145,15 +155,16 @@ describe("Plan Modal Flow Integration", () => {
     expect(modalContent).toHaveTextContent("Activation Energy");
     expect(modalContent).toHaveTextContent("Come back when you have some experience to reflect on");
 
-    // Verify localStorage was set
-    expect(localStorage.getItem("plan-modal-shown-step-123")).toBe("true");
+    // Verify database functions were called
+    expect(userPreferences.hasShownModalClient).toHaveBeenCalledWith("plan-step-123");
+    expect(userPreferences.addShownModalClient).toHaveBeenCalledWith("plan-step-123");
   });
 
   it("does not show modal on subsequent saves for same step", async () => {
     const user = userEvent.setup();
 
-    // Set localStorage to indicate modal was already shown
-    localStorage.setItem("plan-modal-shown-step-123", "true");
+    // Mock that modal has already been shown
+    vi.mocked(userPreferences.hasShownModalClient).mockResolvedValue(true);
 
     render(
       <PlanScreen
@@ -181,6 +192,9 @@ describe("Plan Modal Flow Integration", () => {
 
     // Verify modal is not shown
     expect(screen.queryByText("Time to Apply What You've Learned! 🎯")).not.toBeInTheDocument();
+
+    // Verify addShownModalClient was not called since modal was already shown
+    expect(userPreferences.addShownModalClient).not.toHaveBeenCalled();
   });
 
   it("navigates to roadmap after closing modal", async () => {
@@ -284,16 +298,67 @@ describe("Plan Modal Flow Integration", () => {
     await user.type(screen.getByPlaceholderText(/Open the doc/i), "Test");
     await user.click(screen.getByRole("button", { name: /Save Plan & Take Action/i }));
 
-    // Verify modal shown and localStorage set for first step
+    // Verify modal shown and database functions called for first step
     await waitFor(() => {
       expect(screen.getByText("Time to Apply What You've Learned! 🎯")).toBeInTheDocument();
     });
-    expect(localStorage.getItem("plan-modal-shown-step-123")).toBe("true");
+    expect(userPreferences.hasShownModalClient).toHaveBeenCalledWith("plan-step-123");
+    expect(userPreferences.addShownModalClient).toHaveBeenCalledWith("plan-step-123");
 
     // Close modal
     await user.click(screen.getByRole("button", { name: /Got it!/i }));
 
-    // Different step should still show modal
-    expect(localStorage.getItem("plan-modal-shown-step-456")).toBeNull();
+    // Verify separate modal IDs for different steps
+    expect(userPreferences.generateModalId).toHaveBeenCalledWith("plan", "step-123");
+  });
+
+  it("migrates localStorage modal data on component mount", async () => {
+    // Set up localStorage with old modal data
+    localStorage.setItem("plan-modal-shown-step-789", "true");
+    localStorage.setItem("plan-modal-shown-step-101", "true");
+
+    // Mock migration to return 2 migrated modals
+    vi.mocked(userPreferences.migrateLocalStorageModals).mockResolvedValue(2);
+
+    render(
+      <PlanScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        goalExamples={mockGoalExamples}
+      />
+    );
+
+    // Wait for migration to be called
+    await waitFor(() => {
+      expect(userPreferences.migrateLocalStorageModals).toHaveBeenCalled();
+    });
+  });
+
+  it("handles database errors gracefully", async () => {
+    const user = userEvent.setup();
+
+    // Mock database error when adding shown modal
+    vi.mocked(userPreferences.addShownModalClient).mockRejectedValue(new Error("Database error"));
+
+    render(
+      <PlanScreen
+        step={mockStep}
+        knowledgeContent={mockKnowledgeContent}
+        goalExamples={mockGoalExamples}
+      />
+    );
+
+    // Fill and submit form
+    await user.type(screen.getByPlaceholderText(/It's 9 AM/i), "Test");
+    await user.type(screen.getByPlaceholderText(/Open the doc/i), "Test");
+    await user.click(screen.getByRole("button", { name: /Save Plan & Take Action/i }));
+
+    // Modal should still appear despite database error
+    await waitFor(() => {
+      expect(screen.getByText("Time to Apply What You've Learned! 🎯")).toBeInTheDocument();
+    });
+
+    // Verify error was attempted to be logged (through console.error mock)
+    expect(userPreferences.addShownModalClient).toHaveBeenCalled();
   });
 });
