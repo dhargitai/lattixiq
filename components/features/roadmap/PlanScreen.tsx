@@ -43,8 +43,8 @@ export const PlanScreen = React.forwardRef<HTMLDivElement, PlanScreenProps>(
     });
 
     // Dynamic focus state hooks for both textareas
-    const situationFocusState = useDynamicFocusState();
-    const actionFocusState = useDynamicFocusState();
+    const situationFocusState = useDynamicFocusState({ threshold: 30 });
+    const actionFocusState = useDynamicFocusState({ threshold: 30 });
 
     // Initialize reminder settings from global user settings
     useEffect(() => {

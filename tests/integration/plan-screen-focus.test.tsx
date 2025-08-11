@@ -87,7 +87,7 @@ describe("Plan Screen Focus States", () => {
     const situationTextarea = screen.getByLabelText(/IF:/i);
 
     // Initially should show 0 characters - check that there are multiple instances
-    const initialCharCountElements = screen.getAllByText("0 / 50 minimum");
+    const initialCharCountElements = screen.getAllByText("0 / 30 minimum");
     expect(initialCharCountElements).toHaveLength(2); // Both textareas show this initially
 
     // Focus should trigger blue focus styles (this is tested via className)
@@ -128,11 +128,11 @@ describe("Plan Screen Focus States", () => {
 
     // Should show character count
     await waitFor(() => {
-      expect(screen.getByText("12 / 50 minimum")).toBeInTheDocument();
+      expect(screen.getByText("12 / 30 minimum")).toBeInTheDocument();
     });
   });
 
-  it("should switch to green focus and character display when IF textarea reaches 50 characters", async () => {
+  it("should switch to green focus and character display when IF textarea reaches 30 characters", async () => {
     const user = userEvent.setup();
     render(
       <PlanScreen
@@ -144,20 +144,20 @@ describe("Plan Screen Focus States", () => {
 
     const situationTextarea = screen.getByLabelText(/IF:/i);
 
-    // Type exactly 50 characters
-    const fiftyCharText = "12345678901234567890123456789012345678901234567890";
-    await user.type(situationTextarea, fiftyCharText);
+    // Type exactly 30 characters
+    const thirtyCharText = "123456789012345678901234567890";
+    await user.type(situationTextarea, thirtyCharText);
 
     // Should show green character count
     await waitFor(() => {
-      expect(screen.getByText("50 characters")).toBeInTheDocument();
+      expect(screen.getByText("30 characters")).toBeInTheDocument();
     });
 
     // Should have green focus classes
     expect(situationTextarea).toHaveClass("focus:border-green-500", "focus:ring-green-200");
   });
 
-  it("should switch to green focus and character display when THEN textarea reaches 50 characters", async () => {
+  it("should switch to green focus and character display when THEN textarea reaches 30 characters", async () => {
     const user = userEvent.setup();
     render(
       <PlanScreen
@@ -169,20 +169,20 @@ describe("Plan Screen Focus States", () => {
 
     const actionTextarea = screen.getByLabelText(/THEN I WILL:/i);
 
-    // Type exactly 50 characters
-    const fiftyCharText = "12345678901234567890123456789012345678901234567890";
-    await user.type(actionTextarea, fiftyCharText);
+    // Type exactly 30 characters
+    const thirtyCharText = "123456789012345678901234567890";
+    await user.type(actionTextarea, thirtyCharText);
 
     // Should show green character count
     await waitFor(() => {
-      expect(screen.getByText("50 characters")).toBeInTheDocument();
+      expect(screen.getByText("30 characters")).toBeInTheDocument();
     });
 
     // Should have green focus classes
     expect(actionTextarea).toHaveClass("focus:border-green-500", "focus:ring-green-200");
   });
 
-  it("should maintain blue focus state for text under 50 characters", async () => {
+  it("should maintain blue focus state for text under 30 characters", async () => {
     const user = userEvent.setup();
     render(
       <PlanScreen
@@ -194,13 +194,13 @@ describe("Plan Screen Focus States", () => {
 
     const situationTextarea = screen.getByLabelText(/IF:/i);
 
-    // Type 49 characters
-    const fortyNineCharText = "1234567890123456789012345678901234567890123456789";
-    await user.type(situationTextarea, fortyNineCharText);
+    // Type 29 characters
+    const twentyNineCharText = "12345678901234567890123456789";
+    await user.type(situationTextarea, twentyNineCharText);
 
     // Should show minimum count
     await waitFor(() => {
-      expect(screen.getByText("49 / 50 minimum")).toBeInTheDocument();
+      expect(screen.getByText("29 / 30 minimum")).toBeInTheDocument();
     });
 
     // Should still have blue focus classes
@@ -222,13 +222,13 @@ describe("Plan Screen Focus States", () => {
 
     // Type different amounts in each textarea
     await user.type(situationTextarea, "Short text");
-    await user.type(actionTextarea, "12345678901234567890123456789012345678901234567890");
+    await user.type(actionTextarea, "123456789012345678901234567890");
 
     await waitFor(() => {
       // Situation textarea should show blue state
-      expect(screen.getByText("10 / 50 minimum")).toBeInTheDocument();
+      expect(screen.getByText("10 / 30 minimum")).toBeInTheDocument();
       // Action textarea should show green state
-      expect(screen.getByText("50 characters")).toBeInTheDocument();
+      expect(screen.getByText("30 characters")).toBeInTheDocument();
     });
 
     // Check focus classes
