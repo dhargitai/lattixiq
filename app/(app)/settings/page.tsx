@@ -2,6 +2,9 @@ import SettingsPageContent from "@/components/settings/SettingsPageContent";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+// Force dynamic rendering to always fetch fresh data
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const supabase = await createClient();
 
