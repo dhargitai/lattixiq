@@ -49,6 +49,7 @@ describe("Plan Modal Flow Integration", () => {
       testimonial_submission_date: null,
       testimonial_state: null,
       testimonial_url: null,
+      shown_modals: [],
     },
     isLoading: false,
     error: null,

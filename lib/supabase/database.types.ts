@@ -368,6 +368,7 @@ export type Database = {
           reminder_time: string | null;
           reminder_timezone: string | null;
           roadmap_count: number | null;
+          shown_modals: Json | null;
           testimonial_bonus_used: boolean | null;
           testimonial_state: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url: string | null;
@@ -382,6 +383,7 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           roadmap_count?: number | null;
+          shown_modals?: Json | null;
           testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
@@ -396,6 +398,7 @@ export type Database = {
           reminder_time?: string | null;
           reminder_timezone?: string | null;
           roadmap_count?: number | null;
+          shown_modals?: Json | null;
           testimonial_bonus_used?: boolean | null;
           testimonial_state?: Database["public"]["Enums"]["testimonial_state"] | null;
           testimonial_url?: string | null;
@@ -501,11 +504,11 @@ export type Database = {
       sync_user_data: {
         Args: { p_user_id?: string };
         Returns: {
-          user_id: string;
-          roadmap_count: number;
-          has_testimonial: boolean;
-          free_roadmaps_used: boolean;
           testimonial_bonus_used: boolean;
+          has_testimonial: boolean;
+          roadmap_count: number;
+          user_id: string;
+          free_roadmaps_used: boolean;
         }[];
       };
       vector_avg: {
