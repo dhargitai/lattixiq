@@ -8,6 +8,11 @@ import type { EmailOptions } from "@/lib/email/types";
 import type { Database } from "@/lib/supabase/database.types";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
+type NotificationResult = {
+  userId: string;
+  status: "sent" | "no_active_plan" | "error" | "failed";
+  error?: string;
+};
 
 // Generate HTML email template for reminders
 function generateReminderEmailHtml(
@@ -130,8 +135,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Process each user to notify
-    const results = await Promise.all(
-      usersToNotify.map(async (user: User) => {
+    const results: NotificationResult[] = await Promise.all(
+      usersToNotify.map(async (user: User): Promise<NotificationResult> => {
         try {
           // Check if user has an active plan
           const { data: activeSteps, error: stepsError } = await supabase
@@ -218,9 +223,9 @@ export async function GET(request: NextRequest) {
 
     const summary = {
       total: results.length,
-      sent: results.filter((r: any) => r.status === "sent").length,
-      no_active_plan: results.filter((r: any) => r.status === "no_active_plan").length,
-      errors: results.filter((r: any) => r.status === "error").length,
+      sent: results.filter((r) => r.status === "sent").length,
+      no_active_plan: results.filter((r) => r.status === "no_active_plan").length,
+      errors: results.filter((r) => r.status === "error").length,
     };
 
     return NextResponse.json({
