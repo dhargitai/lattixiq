@@ -64,7 +64,12 @@ export async function getToolkitData(userId: string): Promise<ToolkitData> {
       .eq("status", "active")
       .single(),
 
-    supabase.from("roadmaps").select("id").eq("user_id", userId).eq("status", "completed"),
+    supabase
+      .from("roadmaps")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "completed")
+      .order("completed_at", { ascending: false }),
 
     supabase
       .from("application_logs")

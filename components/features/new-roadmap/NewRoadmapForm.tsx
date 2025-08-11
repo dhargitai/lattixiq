@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/ui/AppHeader";
 import { Button } from "@/components/ui/button";
 import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Textarea } from "@/components/ui/textarea";
-import { hasCompletedOnboardingClient } from "@/lib/db/user-preferences";
+import { hasCompletedOnboardingClient } from "@/lib/db/user-preferences-client";
 import HowItWorks from "./HowItWorks";
 import GeneratingRoadmap from "./GeneratingRoadmap";
 

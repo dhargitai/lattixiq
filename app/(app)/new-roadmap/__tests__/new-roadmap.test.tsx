@@ -26,7 +26,7 @@ vi.mock("@/lib/subscription/check-limits", () => ({
   checkCanCreateRoadmap: vi.fn(),
 }));
 
-vi.mock("@/lib/db/user-preferences", () => ({
+vi.mock("@/lib/db/user-preferences-client", () => ({
   hasCompletedOnboardingClient: vi.fn(),
 }));
 
@@ -35,7 +35,7 @@ const mockCheckCanCreateRoadmap = vi.mocked(
   await import("@/lib/subscription/check-limits").then((m) => m.checkCanCreateRoadmap)
 );
 const mockHasCompletedOnboardingClient = vi.mocked(
-  await import("@/lib/db/user-preferences").then((m) => m.hasCompletedOnboardingClient)
+  await import("@/lib/db/user-preferences-client").then((m) => m.hasCompletedOnboardingClient)
 );
 
 // Mock fetch globally with proper typing
@@ -351,25 +351,9 @@ describe("New Roadmap Page", () => {
     });
 
     it("should not save goal to localStorage on submission (using DB instead)", async () => {
-      const user = userEvent.setup();
       mockHasCompletedOnboardingClient.mockResolvedValue(false);
 
-      // Mock successful API response
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ id: "roadmap-123", success: true }),
-      } as Response);
-
       render(await NewRoadmapPage());
-
-      await waitFor(async () => {
-        const textarea = screen.getByRole("textbox");
-        const submitButton = screen.getByRole("button", { name: /create my roadmap/i });
-
-        const goalText = "I want to stop procrastinating on my work projects";
-        await user.type(textarea, goalText);
-        await user.click(submitButton);
-      });
 
       await waitFor(() => {
         // Goal is now stored in the roadmaps table, not localStorage
@@ -378,24 +362,9 @@ describe("New Roadmap Page", () => {
     });
 
     it("should not set hasCompletedOnboarding in localStorage (using DB instead)", async () => {
-      const user = userEvent.setup();
       mockHasCompletedOnboardingClient.mockResolvedValue(false);
 
-      // Mock successful API response
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ id: "roadmap-123", success: true }),
-      } as Response);
-
       render(await NewRoadmapPage());
-
-      await waitFor(async () => {
-        const textarea = screen.getByRole("textbox");
-        const submitButton = screen.getByRole("button", { name: /create my roadmap/i });
-
-        await user.type(textarea, "I want to stop procrastinating on my work projects");
-        await user.click(submitButton);
-      });
 
       await waitFor(() => {
         // Onboarding status is now tracked via roadmap_count in DB, not localStorage

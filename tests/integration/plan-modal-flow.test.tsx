@@ -5,13 +5,13 @@ import { PlanScreen } from "@/components/features/roadmap/PlanScreen";
 import { createClient } from "@/lib/supabase/client";
 import { useUserSettings } from "@/lib/hooks/useUserSettings";
 import { useRouter } from "next/navigation";
-import * as userPreferences from "@/lib/db/user-preferences";
+import * as userPreferences from "@/lib/db/user-preferences-client";
 
 // Mock dependencies
 vi.mock("@/lib/supabase/client");
 vi.mock("@/lib/hooks/useUserSettings");
 vi.mock("next/navigation");
-vi.mock("@/lib/db/user-preferences");
+vi.mock("@/lib/db/user-preferences-client");
 
 describe("Plan Modal Flow Integration", () => {
   const mockRouter = {

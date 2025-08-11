@@ -21,11 +21,25 @@ vi.mock("@/lib/hooks/useUserSettings", () => ({
   useUserSettings: vi.fn(),
 }));
 
+// Mock user-preferences client functions
+vi.mock("@/lib/db/user-preferences-client", () => ({
+  hasShownModalClient: vi.fn().mockResolvedValue(false),
+  addShownModalClient: vi.fn().mockResolvedValue(undefined),
+  generateModalId: vi.fn().mockImplementation((type, stepId) => `${type}-${stepId}`),
+  migrateLocalStorageModals: vi.fn().mockResolvedValue(0),
+}));
+
 describe("Plan Screen", () => {
   const mockPush = vi.fn();
   const mockUpdateReminderSettings = vi.fn();
   const mockSupabase = {
     from: vi.fn(),
+    auth: {
+      getUser: vi.fn().mockResolvedValue({
+        data: { user: { id: "test-user-id" } },
+        error: null,
+      }),
+    },
   };
 
   const mockStep = {
@@ -357,6 +371,10 @@ describe("Plan Screen", () => {
 
     mockSupabase.from.mockImplementation(fromMock);
 
+    // Mock that modal has already been shown for this step
+    const { hasShownModalClient } = await import("@/lib/db/user-preferences-client");
+    vi.mocked(hasShownModalClient).mockResolvedValue(true);
+
     render(
       <PlanScreen
         step={mockStep}
@@ -376,7 +394,7 @@ describe("Plan Screen", () => {
     const saveButton = screen.getByText("Save Plan & Take Action");
     await userEvent.click(saveButton);
 
-    // Should update the database and navigate
+    // Should update the database and navigate (no modal since already shown)
     await waitFor(() => {
       expect(mockSupabase.from).toHaveBeenCalledWith("roadmap_steps");
       expect(mockPush).toHaveBeenCalledWith("/roadmap");

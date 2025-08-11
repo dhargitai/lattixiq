@@ -19,7 +19,7 @@ import {
   addShownModalClient,
   generateModalId,
   migrateLocalStorageModals,
-} from "@/lib/db/user-preferences";
+} from "@/lib/db/user-preferences-client";
 import type {
   RoadmapStep,
   KnowledgeContent,

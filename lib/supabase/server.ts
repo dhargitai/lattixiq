@@ -166,10 +166,13 @@ class MockSupabaseClient {
               return { data: null, error: null };
             },
             order: (_orderColumn: string, _options?: unknown) => ({
-              single: async () =>
-                // This is unused in our mock
-                ({ data: null, error: { code: "PGRST116" } }),
+              limit: (_limitValue: number) => Promise.resolve({ data: [], error: null }),
+              single: async () => ({ data: null, error: { code: "PGRST116" } }),
             }),
+          }),
+          order: (_orderColumn: string, _options?: unknown) => ({
+            limit: (_limitValue: number) => Promise.resolve({ data: [], error: null }),
+            single: async () => ({ data: null, error: { code: "PGRST116" } }),
           }),
           single: async () => {
             if (table === "roadmaps") {
@@ -184,10 +187,20 @@ class MockSupabaseClient {
                 error: null,
               };
             }
+            if (table === "users") {
+              return {
+                data: {
+                  id: "test-user-id",
+                  testimonial_state: "not_asked",
+                },
+                error: null,
+              };
+            }
             return { data: null, error: null };
           },
         }),
-        order: () => ({
+        order: (_orderColumn: string, _options?: unknown) => ({
+          limit: (_limitValue: number) => Promise.resolve({ data: [], error: null }),
           single: async () => ({ data: null, error: { code: "PGRST116" } }),
         }),
       }),

@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useRoadmapStore } from "@/lib/stores/roadmap-store";
+import { useNewRoadmapStore } from "@/lib/stores/new-roadmap-store";
 
 export default function LogoutButton() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -35,9 +37,10 @@ export default function LogoutButton() {
         throw new Error("Failed to logout");
       }
 
-      // Clear local storage and any cached data
-      localStorage.clear();
-      sessionStorage.clear();
+      // Reset all Zustand stores to initial state and clear cache
+      useRoadmapStore.getState().resetState();
+      useRoadmapStore.getState().invalidateCache();
+      useNewRoadmapStore.getState().resetStore();
 
       // Clear any cached data from memory
       if (typeof window !== "undefined" && "caches" in window) {
