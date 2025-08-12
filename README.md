@@ -9,7 +9,7 @@
 
 _Transform passive knowledge into applied wisdom through personalized learning journeys_
 
-[Live Demo](#) • [Documentation](./docs) • [Report Bug](https://github.com/yourusername/lattixiq-app/issues) • [Request Feature](https://github.com/yourusername/lattixiq-app/issues)
+[Live Site](https://lattixiq.com) • [Documentation](./docs) • [Report Bug](https://github.com/yourusername/lattixiq-app/issues) • [Request Feature](https://github.com/yourusername/lattixiq-app/issues)
 
 </div>
 
