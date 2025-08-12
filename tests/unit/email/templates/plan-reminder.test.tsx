@@ -30,9 +30,9 @@ describe("Plan Reminder Email Template", () => {
       expect(html).toContain("width=device-width");
 
       // Check for LattixIQ branding
-      expect(html).toContain("🧠");
+      expect(html).toContain("<svg");
       expect(html).toContain("LattixIQ");
-      expect(html).toContain("Your roadmap to a clearer mind.");
+      expect(html).toContain("Think Better, Today");
 
       // Check for plan content
       expect(html).toContain("IF:");

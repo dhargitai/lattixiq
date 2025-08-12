@@ -44,7 +44,7 @@ describe("HelpModal Support Email", () => {
     });
 
     // Check for support email text
-    const emailText = screen.getByText(/If you have any more questions, feel free to/);
+    const emailText = screen.getByText(/If you have any more questions or feedback, feel free to/);
     expect(emailText).toBeInTheDocument();
 
     // Check for email link
@@ -84,7 +84,7 @@ describe("HelpModal Support Email", () => {
 
     await waitFor(() => {
       // Check for proper text styling
-      const emailText = screen.getByText(/If you have any more questions, feel free to/);
+      const emailText = screen.getByText(/If you have any more questions or feedback, feel free to/);
       expect(emailText).toHaveClass("text-sm", "text-gray-600");
 
       // Check for email link styling
@@ -108,7 +108,7 @@ describe("HelpModal Support Email", () => {
 
     await waitFor(() => {
       // Find the parent div containing the support email section
-      const emailText = screen.getByText(/If you have any more questions, feel free to/);
+      const emailText = screen.getByText(/If you have any more questions or feedback, feel free to/);
       const parentDiv = emailText.parentElement;
 
       expect(parentDiv).toHaveClass("mt-4", "pt-4", "border-t", "border-gray-200");
@@ -130,7 +130,7 @@ describe("HelpModal Support Email", () => {
     });
 
     // Support email should NOT be shown in error state
-    expect(screen.queryByText(/If you have any more questions/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/If you have any more questions or feedback/)).not.toBeInTheDocument();
   });
 
   it("should render support email link for all contentId values", async () => {

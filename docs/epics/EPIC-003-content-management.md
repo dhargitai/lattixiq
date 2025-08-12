@@ -29,7 +29,7 @@ Enhance the help system by adding centralized support contact information and st
 **Acceptance Criteria:**
 
 - [ ] Add support email link to all HelpModal components
-- [ ] Use consistent messaging: "If you have any more questions, feel free to shoot an email"
+- [ ] Use consistent messaging: "If you have any more questions or feedback, feel free to shoot an email"
 - [ ] Email link opens user's default email client
 - [ ] Support email is `support@lattixiq.com`
 - [ ] Link styling is consistent with existing modal design
@@ -92,7 +92,7 @@ Enhance the help system by adding centralized support contact information and st
 ```jsx
 <div className="mt-4 pt-4 border-t border-gray-200">
   <p className="text-sm text-gray-600">
-    If you have any more questions, feel free to{" "}
+    If you have any more questions or feedback, feel free to{" "}
     <a href="mailto:support@lattixiq.com" className="text-blue-600 hover:text-blue-800 underline">
       shoot an email
     </a>

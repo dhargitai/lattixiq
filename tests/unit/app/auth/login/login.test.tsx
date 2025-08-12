@@ -56,7 +56,7 @@ describe("Login Component - Simplified Interface", () => {
       render(<LoginPage />);
 
       expect(screen.getByText("LattixIQ")).toBeInTheDocument();
-      expect(screen.getByText("Your roadmap to a clearer mind.")).toBeInTheDocument();
+      expect(screen.getByText("Think Better, Today")).toBeInTheDocument();
       expect(screen.getByText("Email Address")).toBeInTheDocument();
       expect(screen.getByPlaceholderText("your@email.com")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Continue with Email" })).toBeInTheDocument();
