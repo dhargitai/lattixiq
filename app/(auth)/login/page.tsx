@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Mark } from "@/components/ui/logo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -181,19 +182,21 @@ export default function LoginPage() {
   // SOCIAL_LOGIN_TEMPORARILY_DISABLED - End
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F7FAFC] to-[#EDF2F7] p-5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F7FAFC] to-[#EDF2F7] p-5 overflow-x-hidden">
       <div className="relative w-full max-w-[420px]">
         {/* Decorative background element */}
-        <div className="absolute inset-0 -inset-x-10 -inset-y-10">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-blue-400/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute inset-0">
+          <div className="absolute -top-10 -right-10 w-72 h-72 bg-blue-400/5 rounded-full blur-3xl animate-float" />
         </div>
 
         <div className="relative bg-white rounded-[20px] p-12 shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
           {/* Logo and branding */}
           <div className="text-center mb-12">
-            <div className="text-[56px] mb-4 animate-pulse">🧠</div>
+            <div className="flex justify-center mb-4">
+              <Mark className="w-14 h-14 fill-[#6d3a9c] animate-pulse" />
+            </div>
             <h1 className="text-[32px] font-bold text-[#1A202C] mb-2 tracking-tight">LattixIQ</h1>
-            <p className="text-lg text-[#718096]">Your roadmap to a clearer mind.</p>
+            <p className="text-lg text-[#718096]">Think Better, Today</p>
           </div>
 
           {/* Error display */}
