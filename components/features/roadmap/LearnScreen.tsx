@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { StandardCTAButton } from "@/components/ui/StandardCTAButton";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, KeyRound, Lightbulb } from "lucide-react";
+import { ArrowRight, Lightbulb } from "lucide-react";
+// import { ArrowRight, KeyRound, Lightbulb } from "lucide-react";
 import type { RoadmapStepWithContent, Roadmap } from "@/lib/supabase/types";
 
 interface LearnScreenProps {
@@ -136,7 +137,7 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
                 )}
 
                 {/* Key takeaway section */}
-                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                {/* <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
                     <KeyRound className="h-5 w-5 text-gray-700" />
                     <h3 className="font-semibold text-gray-900">Key Takeaway</h3>
@@ -146,7 +147,7 @@ const LearnScreen = React.forwardRef<HTMLDivElement, LearnScreenProps>(
                     {step.knowledge_content.category?.toLowerCase() || "improve"} by providing a
                     structured approach to understanding and addressing your challenges.
                   </p>
-                </div>
+                </div> */}
 
                 {/* Continue button with standardized CTA styling */}
                 <div className="flex justify-center pt-8">
