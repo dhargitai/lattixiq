@@ -98,8 +98,8 @@ export default async (req) => {
 };
 
 // Configure the function to run on a schedule
-// @every 30m means every 30 minutes
-// You can also use cron syntax like "*/30 * * * *" for every 30 minutes
+// @every 5m means every 5 minutes
+// You can also use cron syntax like "*/5 * * * *" for every 5 minutes
 export const config = {
-  schedule: "@every 30m"
+  schedule: "@every 5m"
 };
