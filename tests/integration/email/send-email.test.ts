@@ -44,8 +44,8 @@ vi.mock("resend", () => ({
 }));
 
 // Mock Supabase for logging tests
-vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn().mockResolvedValue({
+vi.mock("@/lib/supabase/service", () => ({
+  createServiceClient: vi.fn().mockReturnValue({
     from: vi.fn().mockReturnValue({
       insert: vi.fn().mockResolvedValue({ error: null }),
       select: vi.fn().mockReturnValue({
@@ -256,8 +256,8 @@ describe("Email Integration Tests", () => {
 
     it("should handle missing user statistics gracefully", async () => {
       // Mock empty response
-      const { createClient } = vi.mocked(await import("@/lib/supabase/server"));
-      (createClient as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      const { createServiceClient } = vi.mocked(await import("@/lib/supabase/service"));
+      (createServiceClient as ReturnType<typeof vi.fn>).mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({

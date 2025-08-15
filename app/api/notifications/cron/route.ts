@@ -193,13 +193,22 @@ export async function GET(request: NextRequest) {
             ],
           };
 
+          console.log(`📧 Attempting to send email to ${user.email} for user ${user.id}`);
           const emailResult = await sendEmailWithRetry(emailOptions);
+          console.log(`📧 Email send result:`, {
+            success: emailResult.success,
+            error: emailResult.error,
+            messageId: emailResult.messageId,
+          });
 
           // Log email delivery
-          await logEmailDelivery(user.id, emailSubject, emailBody, emailResult, {
+          const logSuccess = await logEmailDelivery(user.id, emailSubject, emailBody, emailResult, {
             stepId: activeStep.id,
             stepTitle: activeStep.knowledge_content?.title,
           });
+          console.log(
+            `📝 Email delivery logging ${logSuccess ? "succeeded" : "failed"} for user ${user.id}`
+          );
 
           // Update last sent timestamp if email was successful
           if (emailResult.success) {

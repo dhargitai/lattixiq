@@ -4,7 +4,7 @@
  */
 
 import type { EmailResult } from "./types";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 
 /**
  * Log email delivery to the notification_logs table
@@ -18,7 +18,7 @@ export async function logEmailDelivery(
   _metadata?: Record<string, unknown>
 ): Promise<boolean> {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     const logEntry = {
       user_id: userId,
@@ -59,7 +59,7 @@ export async function getUserEmailStats(
   lastSentAt: string | null;
 }> {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const sinceDate = new Date();
     sinceDate.setDate(sinceDate.getDate() - days);
 
@@ -119,7 +119,7 @@ export async function getSystemEmailMetrics(hours: number = 24): Promise<{
   failureReasons: Record<string, number>;
 }> {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const sinceDate = new Date();
     sinceDate.setHours(sinceDate.getHours() - hours);
 
@@ -193,7 +193,7 @@ export async function cleanupOldEmailLogs(
   retentionDays: number = 90
 ): Promise<{ deleted: number; error?: string }> {
   try {
-    const supabase = await createClient();
+    const supabase = createServiceClient();
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 

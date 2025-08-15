@@ -154,15 +154,6 @@ export function shouldSendReminder(
     Math.abs(currentTimeInTz.getTime() - reminderTimeToday.getTime()) / (1000 * 60);
   const isWithinWindow = timeDiffMinutes <= 5; // Within 5 minutes
 
-  // Debug logging
-  console.log(`[shouldSendReminder] Checking reminder for timezone: ${timezone}`);
-  console.log(
-    `[shouldSendReminder] Current time in ${timezone}: ${currentHour}:${String(currentMinute).padStart(2, "0")}`
-  );
-  console.log(`[shouldSendReminder] Reminder time: ${hours}:${String(minutes).padStart(2, "0")}`);
-  console.log(`[shouldSendReminder] Time difference: ${timeDiffMinutes} minutes`);
-  console.log(`[shouldSendReminder] Within 5-minute window: ${isWithinWindow}`);
-
   if (!isWithinWindow) return false;
 
   // Check if we've already sent today in the user's timezone
@@ -178,13 +169,8 @@ export function shouldSendReminder(
     const isSameDay =
       lastSentDay === currentDay && lastSentMonth === currentMonth && lastSentYear === currentYear;
 
-    console.log(`[shouldSendReminder] Last sent: ${lastSent}`);
-    console.log(`[shouldSendReminder] Already sent today: ${isSameDay}`);
-
     if (isSameDay) return false;
   }
-
-  console.log(`[shouldSendReminder] ✅ Should send reminder: true`);
   return true;
 }
 
