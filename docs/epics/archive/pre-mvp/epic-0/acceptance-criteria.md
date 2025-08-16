@@ -1,4 +1,5 @@
 # Acceptance Criteria
+
 - [ ] Local development environment is fully functional
 - [ ] All external services are configured and accessible
 - [ ] Database schema is implemented with migrations

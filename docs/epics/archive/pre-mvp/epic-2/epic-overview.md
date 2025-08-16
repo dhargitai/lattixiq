@@ -1,4 +1,5 @@
 # Epic Overview
+
 **Title:** Core Learning Loop Implementation
 **Priority:** High - Essential MVP functionality
 **Estimated Duration:** 2 sprints (4 weeks)

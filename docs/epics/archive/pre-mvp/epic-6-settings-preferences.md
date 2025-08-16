@@ -5,7 +5,7 @@
 **Epic Name:** Settings & User Preferences - MVP
 **Epic ID:** EPIC-6
 **Priority:** High (P1)
-**Status:** Draft
+**Status:** Done
 **Target Release:** MVP 1.0
 
 ## Epic Description

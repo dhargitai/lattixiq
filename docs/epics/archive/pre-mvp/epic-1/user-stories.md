@@ -1,11 +1,13 @@
 # User Stories
 
 ## Story 1.1: Create Onboarding Flow UI
+
 **As a** new user  
 **I want** a welcoming onboarding experience  
 **So that** I feel confident about starting my growth journey
 
 **Acceptance Criteria:**
+
 - [ ] Welcome screen with app value proposition
 - [ ] Goal selection screen with categories and free text
 - [ ] Loading state while roadmap generates
@@ -13,6 +15,7 @@
 - [ ] Mobile-responsive design
 
 **Technical Tasks:**
+
 1. Create `/app/(app)/onboarding/page.tsx`
 2. Design welcome screen with hero message
 3. Implement goal category cards:
@@ -30,11 +33,13 @@
 ---
 
 ## Story 1.2: Implement Mental Models and Biases Data Layer
+
 **As a** system  
 **I want** all mental models and biases stored and indexed  
 **So that** I can match them to user goals
 
 **Acceptance Criteria:**
+
 - [ ] Database tables created for mental models and biases
 - [ ] All 100 mental models imported from source document
 - [ ] All cognitive biases imported from source document
@@ -42,6 +47,7 @@
 - [ ] Data access layer implemented
 
 **Technical Tasks:**
+
 1. Create database migrations:
    ```sql
    - mental_models table
@@ -59,11 +65,13 @@
 ---
 
 ## Story 1.3: Build AI-Powered Roadmap Generation
+
 **As a** user  
 **I want** my roadmap to be relevant to my specific goal  
 **So that** I get personalized learning content
 
 **Acceptance Criteria:**
+
 - [ ] User goal text is converted to embeddings
 - [ ] Semantic matching finds relevant models/biases
 - [ ] Algorithm prioritizes foundational concepts
@@ -71,6 +79,7 @@
 - [ ] Generation completes in under 5 seconds
 
 **Technical Tasks:**
+
 1. Set up Vercel AI SDK with embedding model
 2. Create `/app/api/roadmaps/generate/route.ts`
 3. Implement embedding generation for:
@@ -89,11 +98,13 @@
 ---
 
 ## Story 1.4: Create Roadmap Visualization Component
+
 **As a** user  
 **I want** to see my personalized roadmap visually  
 **So that** I understand my learning journey
 
 **Acceptance Criteria:**
+
 - [ ] Roadmap displays as vertical progression
 - [ ] Current step is highlighted
 - [ ] Future steps are locked/blurred
@@ -102,6 +113,7 @@
 - [ ] Tapping a step shows preview (if unlocked)
 
 **Technical Tasks:**
+
 1. Create `/components/features/roadmap/RoadmapView.tsx`
 2. Design step component with:
    - Step number badge
@@ -118,11 +130,13 @@
 ---
 
 ## Story 1.5: Implement Roadmap Data Management
+
 **As a** user  
 **I want** my roadmap progress to be saved  
 **So that** I can continue where I left off
 
 **Acceptance Criteria:**
+
 - [ ] Roadmap state persists to database
 - [ ] Current step tracking works
 - [ ] Roadmap loads on app return
@@ -130,6 +144,7 @@
 - [ ] Optimistic UI updates
 
 **Technical Tasks:**
+
 1. Create database schema:
    - roadmaps table (user_id, created_at, status)
    - roadmap_steps table (roadmap_id, step_order, content_type, content_id, status)
@@ -147,11 +162,13 @@
 ---
 
 ## Story 1.6: Build Navigation from Onboarding to Roadmap
+
 **As a** user  
 **I want** to seamlessly transition to my roadmap  
 **So that** I can start learning immediately
 
 **Acceptance Criteria:**
+
 - [ ] After goal selection, roadmap generates automatically
 - [ ] User sees brief "Creating your roadmap..." message
 - [ ] Automatic redirect to roadmap view
@@ -159,6 +176,7 @@
 - [ ] Error handling for generation failures
 
 **Technical Tasks:**
+
 1. Implement form submission handler in onboarding
 2. Create loading state management
 3. Add router navigation logic:

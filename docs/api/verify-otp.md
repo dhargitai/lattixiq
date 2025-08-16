@@ -74,7 +74,7 @@ Example:
     "email_confirmed_at": "2024-01-15T10:05:00Z"
   },
   "session": {
-    "access_token": "eyJhbGciOiJIUzI1NiIs...",
+    "access_token": "eXJhbGciOiJIUzI1NiIs...",
     "refresh_token": "v1.MYhl3bG...",
     "expires_in": 3600,
     "expires_at": 1705325100

@@ -5,7 +5,7 @@
 **Epic Name:** UI/UX Refinements & Polish
 **Epic ID:** EPIC-8
 **Priority:** High (P1)
-**Status:** Draft
+**Status:** Done
 **Target Release:** MVP 1.1
 **Created By:** Sarah (Product Owner)
 **Date:** 2025-08-07
@@ -50,7 +50,7 @@ Implement targeted UI/UX refinements to create a more cohesive, celebratory, and
 
 **Priority:** P0 - Must Have
 **Size:** 2 points
-**Status:** To Do
+**Status:** Done
 
 As a user completing my final roadmap step, I want to see a celebration with confetti in the completion modal so that my achievement feels properly recognized.
 
@@ -75,7 +75,7 @@ As a user completing my final roadmap step, I want to see a celebration with con
 
 **Priority:** P0 - Must Have
 **Size:** 3 points
-**Status:** To Do
+**Status:** Done
 
 As a user who just saved a plan, I want to receive guidance to go offline and apply what I learned so that I understand the next step in my learning journey.
 
@@ -106,7 +106,7 @@ As a user who just saved a plan, I want to receive guidance to go offline and ap
 
 **Priority:** P0 - Must Have
 **Size:** 5 points
-**Status:** To Do
+**Status:** Done
 
 As a user navigating the app, I want a consistent header experience across all screens so that I always know where I am and how to get help.
 
@@ -154,7 +154,7 @@ As a user navigating the app, I want a consistent header experience across all s
 
 **Priority:** P1 - Should Have
 **Size:** 3 points
-**Status:** To Do
+**Status:** Done
 
 As a user who has planned but not yet reflected, I want to see a clear indicator that I'm in the application phase so that I understand my current progress status.
 

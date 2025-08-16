@@ -4,7 +4,7 @@
 
 **Epic ID:** UNLOCKED-VIEWER-MVP  
 **Priority:** High (MVP)  
-**Status:** Approved  
+**Status:** Done  
 **Created:** 2025-08-06  
 **Epic Owner:** Product Team
 
