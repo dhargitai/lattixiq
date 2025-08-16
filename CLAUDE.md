@@ -226,3 +226,46 @@ The app is based on Charlie Munger's "Latticework of Mental Models" approach, bu
 - `playwright.config.ts` - E2E test configuration
 - `supabase/config.toml` - Local Supabase configuration
 - `middleware.ts` - Next.js middleware for auth and routing
+
+## Epic and Story Naming Conventions
+
+### Epic Naming Format
+
+Use date-based naming for chronological ordering:
+
+```
+epic-YYYYMMDD-{feature-or-change-in-few-words}
+```
+
+**Examples:**
+
+- `epic-20250816-analytics-monitoring`
+- `epic-20250820-enhance-learning-screen`
+- `epic-20250825-user-onboarding-flow`
+
+### Story Organization
+
+Stories are organized in epic-specific subdirectories:
+
+```
+docs/stories/epic-YYYYMMDD-feature-name/
+├── README.md
+├── story-1.md
+├── story-2.md
+└── story-N.md
+```
+
+**When creating new epics:**
+
+1. Create epic file: `/docs/epics/epic-YYYYMMDD-feature-name.md`
+2. Create story directory: `/docs/stories/epic-YYYYMMDD-feature-name/`
+3. Add README.md to story directory with epic overview
+
+**Benefits:**
+
+- Files naturally sort chronologically
+- Clear epic-story relationships
+- Easy to find all stories for a specific epic
+- Consistent structure for all team members
+
+See `/docs/conventions/epic-naming.md` for detailed guidelines.

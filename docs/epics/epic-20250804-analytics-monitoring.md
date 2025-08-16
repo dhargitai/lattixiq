@@ -1,15 +1,18 @@
 # Epic 5: Analytics and Monitoring (Post-Launch)
 
 ## Epic Overview
+
 **Title:** Analytics, Monitoring, and Observability Setup
 **Priority:** Medium - Important for post-launch optimization
 **Estimated Duration:** 1 sprint (2 weeks)
 **Dependencies:** MVP must be live with real users
 
 ## Epic Description
+
 Implement comprehensive analytics and monitoring to understand user behavior, track performance, and quickly identify/resolve issues. This epic is intentionally scheduled post-launch to focus initial efforts on core functionality and to ensure we're tracking real user data rather than test data.
 
 ## Acceptance Criteria
+
 - [ ] User behavior analytics implemented
 - [ ] Error tracking and monitoring configured
 - [ ] Performance monitoring active
@@ -20,11 +23,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ## User Stories
 
 ### Story 5.1: Implement User Analytics Platform
+
 **As a** product team  
 **I want** to track user behavior and engagement  
 **So that** we can make data-driven improvements
 
 **Acceptance Criteria:**
+
 - [ ] Analytics platform selected and integrated
 - [ ] Key events tracked across user journey
 - [ ] Funnel analysis available
@@ -32,6 +37,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Privacy-compliant implementation
 
 **Technical Tasks:**
+
 1. Evaluate and select analytics platform (Mixpanel, Amplitude, or PostHog)
 2. Install analytics SDK
 3. Implement event tracking for key actions:
@@ -62,11 +68,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.2: Configure Error Tracking and Monitoring
+
 **As a** developer  
 **I want** to know when errors occur in production  
 **So that** I can fix issues before they impact many users
 
 **Acceptance Criteria:**
+
 - [ ] Error tracking service configured
 - [ ] All errors captured with context
 - [ ] Alert system for critical errors
@@ -74,6 +82,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Source maps configured for debugging
 
 **Technical Tasks:**
+
 1. Set up Sentry account and project
 2. Install and configure Sentry SDK:
    ```bash
@@ -93,11 +102,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.3: Implement Performance Monitoring
+
 **As a** development team  
 **I want** to track application performance  
 **So that** we can maintain a fast, responsive experience
 
 **Acceptance Criteria:**
+
 - [ ] Core Web Vitals tracked
 - [ ] API response times monitored
 - [ ] Database query performance visible
@@ -105,6 +116,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Performance budgets established
 
 **Technical Tasks:**
+
 1. Configure Netlify Analytics for basic metrics
 2. Implement Web Vitals tracking:
    - LCP (Largest Contentful Paint)
@@ -123,11 +135,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.4: Set Up Application Monitoring Dashboard
+
 **As a** team member  
 **I want** a centralized monitoring dashboard  
 **So that** I can quickly assess application health
 
 **Acceptance Criteria:**
+
 - [ ] Single dashboard showing key metrics
 - [ ] Real-time data updates
 - [ ] Historical trend analysis
@@ -135,6 +149,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Role-based access control
 
 **Technical Tasks:**
+
 1. Select dashboard solution (Grafana, Datadog, or custom)
 2. Connect data sources:
    - Analytics platform
@@ -155,11 +170,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.5: Implement Custom Business Metrics
+
 **As a** product owner  
 **I want** to track business-specific KPIs  
 **So that** we can measure product success
 
 **Acceptance Criteria:**
+
 - [ ] Custom metrics defined and tracked
 - [ ] Automated reporting configured
 - [ ] Data export capabilities
@@ -167,6 +184,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Historical comparison available
 
 **Technical Tasks:**
+
 1. Define key business metrics:
    - User activation rate
    - Reflection completion rate
@@ -184,11 +202,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.6: Configure Uptime Monitoring
+
 **As a** operations team  
 **I want** to know when the application is down  
 **So that** we can minimize downtime impact
 
 **Acceptance Criteria:**
+
 - [ ] Uptime monitoring active for all endpoints
 - [ ] Status page available
 - [ ] Incident notification system working
@@ -196,6 +216,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Multi-region monitoring configured
 
 **Technical Tasks:**
+
 1. Set up uptime monitoring service (Pingdom, UptimeRobot, or Netlify)
 2. Configure monitors for:
    - Main application URL
@@ -215,11 +236,13 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ### Story 5.7: Add Learning Loop Analytics
+
 **As a** product team  
 **I want** to understand user engagement in the core learning loop  
 **So that** we can improve the learning experience
 
 **Acceptance Criteria:**
+
 - [ ] Track screen views and time spent
 - [ ] Track plan creation rate
 - [ ] Track reflection completion rate
@@ -227,6 +250,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - [ ] Track reminder opt-in rate
 
 **Technical Tasks:**
+
 1. Extend analytics implementation with learning loop events:
    - Screen view tracking with duration
    - Plan type differentiation (implementation vs spotting)
@@ -251,15 +275,18 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 ---
 
 ## Epic Summary
+
 **Total Story Points:** 37
 **Implementation Timeline:** Post-launch (after 1-2 weeks of real usage)
 **Critical Success Factors:**
+
 - Minimal performance impact from tracking
 - GDPR/privacy compliance maintained
 - Actionable insights generated
 - Quick issue detection and resolution
 
 **Success Metrics:**
+
 - < 5 minute detection time for critical errors
 - 99.9% uptime achievement
 - 100% of key user actions tracked
@@ -267,6 +294,7 @@ Implement comprehensive analytics and monitoring to understand user behavior, tr
 - < 100ms performance overhead from monitoring
 
 **Note:** This epic is intentionally scheduled post-launch to:
+
 1. Focus initial development on core features
 2. Avoid tracking test/development data
 3. Base metrics on real user behavior
