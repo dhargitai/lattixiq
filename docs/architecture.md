@@ -4,7 +4,7 @@
 
 ### Technical Summary:
 
-This project will be a modern, serverless fullstack application built on Next.js and hosted on Netlify. User authentication and data persistence will be managed by Supabase, leveraging its Postgres database with Row-Level Security for data isolation. The frontend will be a responsive single-page application built with shadcn/ui and Tailwind CSS. AI-powered personalization for roadmap generation and journal analysis will be handled via the Vercel AI SDK. Stripe will be integrated for premium subscription payments. This architecture is designed for scalability, rapid development, and a seamless developer experience.
+This project is a modern, serverless fullstack application built on Next.js and hosted on Netlify. LattixIQ provides personalized mental models learning through AI-powered roadmap generation, IF-THEN planning systems, and reflection analysis. User authentication and data persistence are managed by Supabase with Postgres and Row-Level Security. The frontend is a responsive application built with shadcn/ui and Tailwind CSS. AI integration via Vercel AI SDK handles semantic matching of user goals to mental models, personalized content generation, and reflection pattern analysis. Stripe provides premium subscription management. This architecture enables scalable, personalized learning experiences with rapid development capabilities.
 
 #### **High-Level Architecture Diagram:**
 
@@ -687,6 +687,7 @@ This section provides the detailed technical guide for all frontend development.
           └── Step.tsx
   ```
 - **Component Template:** All new React components must follow this standard template for consistency.
+
   ```tsx
   // /features/roadmap/components/Step.tsx
 
@@ -738,6 +739,7 @@ Our philosophy is to keep client-side state minimal. We will use a hierarchical 
 3. **Global State (Zustand):** Use Zustand for complex global state that needs to be shared across many components, such as the user's profile or the active roadmap data.
 
 - **Zustand Store Structure:** Stores will be created in `/lib/stores` and organized by domain.
+
   ```tsx
   // /lib/stores/user-store.ts
   import { create } from "zustand";
@@ -762,6 +764,7 @@ Our philosophy is to keep client-side state minimal. We will use a hierarchical 
   - `/(app)`: Contains all protected routes that are part of the main application experience (e.g., `/`, `/toolkit`).
   - `/(auth)`: Contains authentication routes like `/login`.
 - **Protected Route Pattern:** Route protection will be handled by a single `middleware.ts` file at the root of the project. This middleware will check for a valid Supabase session and redirect unauthenticated users to the login page.
+
   ```tsx
   // /middleware.ts
   import { createServerClient } from "@supabase/ssr";
@@ -818,6 +821,7 @@ This section details the patterns for all server-side logic, which will be imple
               └── route.ts // Handles PATCH to update user
   ```
 - **API Route (Function) Template:** All new API routes must adhere to this template to ensure consistency in authentication, error handling, and response formatting.
+
   ```tsx
   // /app/api/roadmaps/route.ts
   import { type NextRequest, NextResponse } from "next/server";
@@ -864,6 +868,7 @@ This section details the patterns for all server-side logic, which will be imple
 
 - **Schema Design:** The PostgreSQL schema is defined in Section 7 of this document. All schema changes must be managed via Supabase CLI migrations, which will be stored in the `/supabase/migrations` directory.
 - **Data Access Layer:** API Routes **must not** contain raw database queries. All database interactions will be abstracted into a dedicated data access layer located in `/lib/db/`. This centralizes our data logic, makes it reusable, and simplifies testing.
+
   ```tsx
   // /lib/db/roadmaps.ts
   import { createServerClient } from "@supabase/ssr"; // Or other server client
@@ -982,6 +987,7 @@ To meet the requirement of running tests securely without sensitive data, we wil
 It is a strict requirement that tests are written for both successful and failure scenarios. Every feature must include tests that verify correct behavior when things go wrong.
 
 - **Test Case Structure:** Test files will be structured to clearly separate these paths.
+
   ```tsx
   // Example for a test file in /tests/integration/api/roadmaps.test.ts
 
@@ -1015,6 +1021,7 @@ This section outlines the mandatory coding standards for the LattixIQ project. T
 As you requested, we will adhere to a functional programming style to minimize bugs and improve code clarity.
 
 - **Immutability:** Data structures must not be mutated directly. Always create new objects or arrays instead of changing existing ones.
+
   ```tsx
   // BAD: Mutates the original object (side effect)
   function addUserRole(user, role) {
@@ -1027,6 +1034,7 @@ As you requested, we will adhere to a functional programming style to minimize b
     return { ...user, role: role };
   }
   ```
+
 - **Pure Functions / No Side Effects:** Functions should be deterministic. Given the same input, a function must always return the same output and have no observable effects on the outside world (like modifying a global variable or writing to a database). Database and API calls will be isolated in our Data Access Layer and API Routes, respectively.
 
 ### **Naming Conventions**
@@ -1095,6 +1103,7 @@ interface ApiError {
 We will use a centralized helper function in the backend to ensure all errors are processed consistently.
 
 - **Custom Error Class:** To better control HTTP status codes.
+
   ```tsx
   // /lib/errors.ts
   export class AppError extends Error {
@@ -1106,7 +1115,9 @@ We will use a centralized helper function in the backend to ensure all errors ar
     }
   }
   ```
+
 - **Error Handling Logic:** API routes will use a `try/catch` block. The `catch` block will log the real error for debugging and return the standardized error format to the client.
+
   ```tsx
   // In an API Route file (/app/api/...)
   // ... inside the POST, GET, etc. function

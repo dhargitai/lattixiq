@@ -131,7 +131,9 @@ npx supabase gen types typescript --local > lib/supabase/database.types.ts
 
 ### Project Purpose
 
-LattixIQ is a "Rationality Toolkit" app that helps users overcome the "knowing-doing gap" in personal development. It creates personalized learning journeys tied to real-world goals, transforming passive knowledge into applied wisdom through mental models and cognitive bias awareness.
+LattixIQ helps you learn mental models through creating a personalized roadmap of the most relevant ones for your current goal or problem. It provides practical, short, and easy-to-consume learning materials with examples—even personalized ones for your specific situation. Built-in scientifically proven methods like spaced repetition, IF-THEN planning, and reflection analysis help you learn faster and for good, while uncovering patterns in your thinking and behavior.
+
+The app is based on Charlie Munger's "Latticework of Mental Models" approach, building a broad, interconnected thinking toolkit drawn from multiple disciplines. The core transformation is from a scattered, overwhelmed thinker to a clear, strategic thinker with automatic recall of the right mental model at the right time.
 
 ### Key Architecture Elements
 
@@ -157,24 +159,24 @@ LattixIQ is a "Rationality Toolkit" app that helps users overcome the "knowing-d
 
 ### Key User Flows
 
-1. **Onboarding**: Goal selection → AI-powered roadmap generation (5-7 mental models)
-2. **Core Learning Loop**: Learn → Plan → Reflect cycle for each concept
-3. **My Toolkit Hub**: Central dashboard with active roadmap, learned models, history
-4. **Application Log**: Journal of all reflections for AI analysis
-5. **Unlocked Knowledge**: Progressive discovery of knowledge content as users complete steps
+1. **Goal-Based Onboarding**: User defines their challenge → AI generates personalized roadmap of 5-7 most relevant mental models
+2. **Core Learning Loop**: Learn (concept) → Plan (IF-THEN application) → Reflect (analyze outcomes) for each mental model
+3. **My Toolkit Hub**: Central dashboard with active roadmap, learned models library, reflection history
+4. **Reflection Analysis**: AI analyzes journal entries to reveal patterns in thinking and behavior
+5. **Evolving Roadmaps**: System adapts recommendations as user goals and challenges change
 
 ### Route Structure
 
-- `/` - Landing page with hero and CTA
-- `/new-roadmap` - AI roadmap generation flow
-- `/roadmap/[id]` - Active roadmap view
-- `/learn/[stepId]` - Learning content for specific step
-- `/plan/[stepId]` - Planning interface for step application
-- `/reflect/[stepId]` - Reflection/journaling for step completion
-- `/toolkit` - Main dashboard showing active and completed roadmaps
-- `/unlocked/[slug]` - Knowledge content viewer for unlocked concepts
+- `/` - Redirects to `/toolkit` (main hub)
+- `/new-roadmap` - Goal input and AI roadmap generation
+- `/roadmap/[id]` - Visual roadmap with step progression
+- `/learn/[stepId]` - Mental model learning interface with practical examples
+- `/plan/[stepId]` - IF-THEN implementation planning for real-world application
+- `/reflect/[stepId]` - Reflection journaling and outcome analysis
+- `/toolkit` - Main dashboard with active roadmap, learned models, and reflection history
+- `/unlocked/[slug]` - Progressive knowledge content discovery
 - `/settings` - User preferences, notifications, billing
-- `/login` - Authentication flow
+- `/login` - Authentication flow with "Think Better, Today" branding
 
 ### Component Development Guidelines
 
@@ -201,8 +203,10 @@ LattixIQ is a "Rationality Toolkit" app that helps users overcome the "knowing-d
 
 ### AI Integration Architecture
 
-- **Vercel AI SDK** for roadmap generation via `/api/roadmaps/route.ts`
-- **OpenAI embeddings** for semantic search in knowledge content
+- **Roadmap Generation**: Vercel AI SDK creates personalized mental model roadmaps based on user goals via `/api/roadmaps/route.ts`
+- **Semantic Matching**: OpenAI embeddings match user challenges to most relevant mental models
+- **Reflection Analysis**: AI analyzes journal entries to identify patterns in thinking and behavior
+- **Personalized Examples**: AI generates context-specific examples for each mental model
 - **Caching layer** in `/lib/ai/roadmap-cache.ts` for AI responses
 - **Error handling** in `/lib/ai/roadmap-error-handler.ts`
 

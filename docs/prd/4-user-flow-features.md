@@ -1,6 +1,6 @@
 # 4. **User Flow & Features**
 
-The LattixIQ application is built around a simple, powerful user flow designed to close the "knowing-doing gap". The user's journey is a cycle through a core learning loop, with the "My Toolkit" screen acting as the central hub for their long-term growth.
+LattixIQ transforms users through a personalized mental models learning system. Users progress through goal-specific roadmaps with custom-fit learning, instant application through IF-THEN planning, and automatic retention via spaced repetition. The "My Toolkit" hub serves as their evolving thinking toolkit library.
 
 ## **Key Screens & Features**
 
@@ -27,7 +27,7 @@ The LattixIQ application is built around a simple, powerful user flow designed t
 - **User Story:** As a learner, I want a simple, repeatable process to learn, apply, and reflect on new concepts so I can make steady progress on my roadmap.
 - **Functional Requirements:**
   1. **Learn Screen:** Provides a concise, actionable summary of the current mental model or cognitive bias.
-  2. **Plan Screen:** A structured form for creating an **Implementation Intention** (for mental models) or a **Spotting Mission** (for biases). The screen displays relevant examples from the `goal_examples` table to help users understand how to create effective plans, showing concrete applications that bridge the knowing-doing gap.
+  2. **Plan Screen:** A structured form for creating an **Implementation Intention** (for mental models) or a **Spotting Mission** (for biases). The screen displays relevant examples from the `goal_examples` table to help users understand how to create effective plans, showing concrete applications for immediate, practical use.
   3. **Integrated Reminder System:** On the Plan screen, the user can enable a global daily reminder and set a preferred time. If a plan is active, a notification will be sent at that time to prompt them.
   4. **Reflect Screen:** To unlock the next step on their roadmap, the user must complete a structured journal entry describing their experience and rating the model's effectiveness.
   5. **Smart Navigation:**

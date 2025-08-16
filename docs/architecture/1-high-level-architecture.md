@@ -2,7 +2,7 @@
 
 ## Technical Summary:
 
-This project will be a modern, serverless fullstack application built on Next.js and hosted on Vercel. User authentication and data persistence will be managed by Supabase, leveraging its Postgres database with Row-Level Security for data isolation. The frontend will be a responsive single-page application built with shadcn/ui and Tailwind CSS. AI-powered personalization for roadmap generation and journal analysis will be handled via the Vercel AI SDK. Stripe will be integrated for premium subscription payments. This architecture is designed for scalability, rapid development, and a seamless developer experience.
+This project is a modern, serverless fullstack application built on Next.js and hosted on Vercel. LattixIQ provides personalized mental models learning through AI-powered roadmap generation, IF-THEN planning systems, and reflection analysis. User authentication and data persistence are managed by Supabase with Postgres and Row-Level Security. The frontend is a responsive application built with shadcn/ui and Tailwind CSS. AI integration via Vercel AI SDK handles semantic matching of user goals to mental models, personalized content generation, and reflection pattern analysis. Stripe provides premium subscription management. This architecture enables scalable, personalized learning experiences with rapid development capabilities.
 
 ### **High-Level Architecture Diagram:**
 

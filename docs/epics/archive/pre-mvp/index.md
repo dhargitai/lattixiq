@@ -1,4 +1,6 @@
-# LattixIQ Epic Overview
+# LattixIQ Epic Overview (Pre-Evolution Archive)
+
+> **Note:** This document contains pre-evolution epics from when LattixIQ was positioned as a "Rationality Toolkit." These have been archived for historical context. Current development follows the evolved positioning as a personalized mental models learning app with "Think Better, Today" messaging.
 
 This document provides a high-level overview of all epics for the LattixIQ application. Epics should be completed in sequence, with Epic 0 being mandatory before any feature development begins.
 

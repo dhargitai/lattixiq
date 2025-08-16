@@ -1,6 +1,6 @@
 # LattixIQ App - Source Tree Architecture
 
-This document provides the comprehensive source tree structure for the LattixIQ "Rationality Toolkit" application, extracted from the architectural planning documentation and current implementation.
+This document provides the comprehensive source tree structure for the LattixIQ personalized mental models learning app, extracted from the architectural planning documentation and current implementation.
 
 ## Overview
 

@@ -18,6 +18,7 @@ This section provides the detailed technical guide for all frontend development.
           └── Step.tsx
   ```
 - **Component Template:** All new React components must follow this standard template for consistency.
+
   ```tsx
   // /features/roadmap/components/Step.tsx
 
@@ -69,6 +70,7 @@ Our philosophy is to keep client-side state minimal. We will use a hierarchical 
 3. **Global State (Zustand):** Use Zustand for complex global state that needs to be shared across many components, such as the user's profile or the active roadmap data.
 
 - **Zustand Store Structure:** Stores will be created in `/lib/stores` and organized by domain.
+
   ```tsx
   // /lib/stores/user-store.ts
   import { create } from "zustand";
@@ -93,6 +95,7 @@ Our philosophy is to keep client-side state minimal. We will use a hierarchical 
   - `/(app)`: Contains all protected routes that are part of the main application experience (e.g., `/`, `/toolkit`).
   - `/(auth)`: Contains authentication routes like `/login`.
 - **Protected Route Pattern:** Route protection will be handled by a single `middleware.ts` file at the root of the project. This middleware will check for a valid Supabase session and redirect unauthenticated users to the login page.
+
   ```tsx
   // /middleware.ts
   import { createServerClient } from "@supabase/ssr";
@@ -139,6 +142,7 @@ When displaying forms that require user input for abstract concepts, provide con
 - **Pattern:** Use expandable cards above form fields to display relevant examples
 - **Data Source:** Fetch examples from related tables (e.g., `goal_examples` for plan forms)
 - **Implementation:**
+
   ```tsx
   // Example: Plan Screen with goal examples
   const { data: step } = await supabase
@@ -177,8 +181,9 @@ When displaying forms that require user input for abstract concepts, provide con
     );
   }
   ```
+
 - **Benefits:**
   - Reduces cognitive load by providing concrete examples
   - Maintains clean form interfaces (examples are collapsible)
   - Improves user engagement with abstract concepts
-  - Directly supports the app's goal of bridging the "knowing-doing gap"
+  - Directly supports the app's goal of personalized mental models learning with instant application

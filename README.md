@@ -1,4 +1,4 @@
-# LattixIQ - Your Personal Rationality Toolkit 🧠
+# LattixIQ - Think Better, Today 🧠
 
 <div align="center">
 
@@ -7,7 +7,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
 
-_Transform passive knowledge into applied wisdom through personalized learning journeys_
+_Learn and remember the exact mental models that solve your current problem → and make them part of your everyday thinking_
 
 [Live Site](https://lattixiq.com) • [Documentation](./docs) • [Report Bug](https://github.com/yourusername/lattixiq-app/issues) • [Request Feature](https://github.com/yourusername/lattixiq-app/issues)
 
@@ -28,15 +28,23 @@ _Transform passive knowledge into applied wisdom through personalized learning j
 
 ## 🌟 Project Overview
 
-**LattixIQ** is your personal rationality toolkit that helps you build a comprehensive framework of mental models and cognitive bias awareness for navigating life's challenges. Rather than consuming passive content, you'll master proven problem-solving and decision-making frameworks through structured application using behavioral science techniques like IF-THEN journaling and spaced repetition.
+**LattixIQ** helps you learn mental models through creating a personalized roadmap of the most relevant ones for your current goal or problem. You get practical, short, and easy-to-consume learning materials with examples—even personalized ones for your specific situation. Built-in scientifically proven methods like spaced repetition, IF-THEN planning, and reflection analysis help you learn faster and for good, while uncovering patterns in your thinking and behavior.
+
+## Why "LattixIQ"?
+
+The name comes from Charlie Munger's _Latticework of Mental Models_, an approach to thinking that has guided the happiest and wealthiest people of all time, world-class investors, executives, and entrepreneurs.
+
+Instead of relying on the same handful of default ways of thinking, Munger advocated building a **broad, interconnected toolkit** drawn from multiple disciplines, so you can approach problems from many angles.
+
+That's exactly what LattixIQ helps you do.
 
 ### Key Features
 
-- **🎯 Personalized Learning Paths**: AI analyzes your specific goals to create custom roadmaps of 5-7 mental models
-- **🔄 Learn-Plan-Reflect Loop**: Structured methodology ensures concepts move from theory to practice
-- **📊 Progress Tracking**: Visual roadmaps and reflection logs show your growth over time
-- **🤖 AI-Powered Insights**: Advanced semantic matching connects the right mental models to your unique challenges
-- **📱 Mobile-First Design**: Learn and reflect anywhere with our responsive, PWA-ready interface
+- **🎯 Custom-fit to your goal**: Learn only what moves the needle right now—no overwhelm, no abstract theory
+- **⚡ Instant application**: IF-THEN prompts guide you to use each model in real-life situations immediately
+- **🧠 Automatic retention**: Built-in spaced repetition locks learning in for good—never forget what you've learned
+- **🔍 Pattern recognition**: Reflection analysis reveals patterns in your thinking and behavior, making you self-aware
+- **📈 Evolving toolkit**: Your roadmap adapts as your challenges and goals change, ensuring lasting value
 
 ## 🛠️ Tech Stack
 
