@@ -65,7 +65,7 @@ CREATE TABLE "public"."user_subscriptions" (
   "updated_at" TIMESTAMPTZ DEFAULT now()
 );
 
--- 3. Knowledge Content table - stores mental models, biases, fallacies with vector embeddings
+-- 3. Knowledge Content table - stores mental models, biases, fallacies with comprehensive learning content
 CREATE TABLE "public"."knowledge_content" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "title" text NOT NULL,
@@ -75,7 +75,24 @@ CREATE TABLE "public"."knowledge_content" (
   "description" text,
   "application" text,
   "keywords" text[],
-  "embedding" vector(1536) -- For OpenAI's text-embedding-ada-002 model
+  "embedding" vector(1536), -- For OpenAI's text-embedding-ada-002 model
+
+  -- "Crystallize & Apply" model fields
+  "hook" text, -- Engaging opener that anchors concepts in familiar experiences
+  "definition" text, -- Crystal-clear, 1-2 sentence explanation
+  "analogy_or_metaphor" text, -- Powerful conceptual tool for understanding
+  "key_takeaway" text, -- Bold, tweet-sized summary
+  "classic_example" text, -- Well-known formal example
+  "modern_example" text, -- Everyday modern life scenario
+  "pitfall" text, -- Negative consequence when concept is ignored
+  "payoff" text, -- Benefit when concept is applied correctly
+  "visual_metaphor" text, -- Text prompt for generating visual representation
+  "visual_metaphor_url" text, -- Optional URL to pre-generated image
+  "dive_deeper_mechanism" text, -- How the concept works cognitively
+  "dive_deeper_origin_story" text, -- Historical development and key figures
+  "dive_deeper_pitfalls_nuances" text, -- Advanced limitations and nuances
+  "super_model" boolean DEFAULT false, -- Whether this is a foundational concept
+  "extra_content" text -- Additional markdown content for complex explanations
 );
 
 -- 4. Goal Examples table - personalized examples for applying knowledge to specific goals
@@ -98,7 +115,7 @@ CREATE TABLE "public"."roadmaps" (
   "completed_at" timestamptz
 );
 
--- 6. Roadmap Steps table - individual steps within a roadmap
+-- 6. Roadmap Steps table - individual steps within a roadmap with personalized content
 -- Note: plan_situation was removed in migration 20250818
 CREATE TABLE "public"."roadmap_steps" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -110,7 +127,11 @@ CREATE TABLE "public"."roadmap_steps" (
   "plan_action" text,
   "plan_created_at" timestamptz,
   "completed_at" timestamptz,
-  "updated_at" timestamptz DEFAULT now()
+  "updated_at" timestamptz DEFAULT now(),
+
+  -- Personalized learning content (generated per user/goal)
+  "personalized_example" text, -- LLM-generated example tailored to user's goal
+  "combine_with_models" text[] -- Array of model names that synergize (for steps 3+)
 );
 
 -- 7. Application Logs table - stores user's journal reflections and AI analysis
@@ -172,6 +193,14 @@ CREATE INDEX idx_content_blocks_published ON content_blocks(published);
 -- Vector search index
 CREATE INDEX knowledge_content_embedding_idx ON knowledge_content
   USING hnsw (embedding vector_cosine_ops);
+
+-- Knowledge content indexes for "Crystallize & Apply" model
+CREATE INDEX idx_knowledge_content_super_model ON knowledge_content(super_model)
+  WHERE super_model = true;
+
+-- Roadmap steps indexes for personalized content
+CREATE INDEX idx_roadmap_steps_personalized_example ON roadmap_steps(roadmap_id)
+  WHERE personalized_example IS NOT NULL;
 ```
 
 ### Constraints
@@ -501,14 +530,36 @@ CREATE POLICY "Authenticated users can read published content blocks"
 -- Table comments
 COMMENT ON TABLE users IS 'User profiles extending auth.users with app-specific fields';
 COMMENT ON TABLE user_subscriptions IS 'Subscription data - write-protected, only service role can modify';
+COMMENT ON TABLE knowledge_content IS 'Mental models, cognitive biases, and fallacies with comprehensive learning content following the Crystallize & Apply methodology';
 COMMENT ON TABLE roadmaps IS 'User roadmaps - deletion not allowed to maintain free limit integrity';
-COMMENT ON TABLE roadmap_steps IS 'Roadmap steps - deletion not allowed to maintain data integrity';
+COMMENT ON TABLE roadmap_steps IS 'Roadmap steps with personalized learning examples - deletion not allowed to maintain data integrity';
 COMMENT ON TABLE content_blocks IS 'Dynamic content blocks for modals, messages, and UI elements';
 COMMENT ON TABLE notification_logs IS 'Push notification history and delivery tracking';
 
--- Column comments
+-- Column comments - Users table
 COMMENT ON COLUMN users.roadmap_count IS 'Total number of roadmaps created by the user';
 COMMENT ON COLUMN users.free_roadmaps_used IS 'Whether the user has used their free roadmap';
 COMMENT ON COLUMN users.testimonial_bonus_used IS 'Whether the user has used their testimonial bonus roadmap';
 COMMENT ON COLUMN user_subscriptions.subscription_status IS 'Current subscription status from Stripe or "free" for non-subscribers';
+
+-- Column comments - Knowledge Content "Crystallize & Apply" fields
+COMMENT ON COLUMN knowledge_content.hook IS 'Engaging opener that anchors abstract concepts in familiar experiences';
+COMMENT ON COLUMN knowledge_content.definition IS 'Crystal-clear, 1-2 sentence explanation in simple language';
+COMMENT ON COLUMN knowledge_content.analogy_or_metaphor IS 'Powerful conceptual tool for understanding';
+COMMENT ON COLUMN knowledge_content.key_takeaway IS 'Bold, tweet-sized summary of the core concept';
+COMMENT ON COLUMN knowledge_content.classic_example IS 'Well-known formal example of the concept';
+COMMENT ON COLUMN knowledge_content.modern_example IS 'Everyday modern life scenario demonstrating the concept';
+COMMENT ON COLUMN knowledge_content.pitfall IS 'Negative consequence when the concept is ignored';
+COMMENT ON COLUMN knowledge_content.payoff IS 'Benefit when the concept is applied correctly';
+COMMENT ON COLUMN knowledge_content.visual_metaphor IS 'Text prompt for generating visual representation of the concept';
+COMMENT ON COLUMN knowledge_content.visual_metaphor_url IS 'Optional URL to pre-generated image for the visual metaphor';
+COMMENT ON COLUMN knowledge_content.dive_deeper_mechanism IS 'Detailed explanation of how the concept works cognitively';
+COMMENT ON COLUMN knowledge_content.dive_deeper_origin_story IS 'Historical development and key figures behind the concept';
+COMMENT ON COLUMN knowledge_content.dive_deeper_pitfalls_nuances IS 'Advanced understanding of limitations and nuances';
+COMMENT ON COLUMN knowledge_content.super_model IS 'Whether this is a foundational "super model" concept';
+COMMENT ON COLUMN knowledge_content.extra_content IS 'Additional arbitrary long markdown content for complex explanations';
+
+-- Column comments - Roadmap Steps personalized content
+COMMENT ON COLUMN roadmap_steps.personalized_example IS 'LLM-generated example tailored to the users specific goal';
+COMMENT ON COLUMN roadmap_steps.combine_with_models IS 'Array of other model names that synergize with this concept (for steps 3+)';
 ```

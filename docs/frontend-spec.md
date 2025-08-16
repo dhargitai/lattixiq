@@ -4,13 +4,13 @@
 
 - **Target User Persona:** "The Stagnant Achiever," who needs a structured, supportive, and non-overwhelming environment.
 - **Usability Goals:**
-    - **High Clarity:** The user should never feel confused about what to do next.
-    - **Low Friction:** The core loop of "Learn, Plan, Act, Reflect" must feel effortless and rewarding.
-    - **Fosters Calm:** The interface should reduce anxiety, not add to it.
+  - **High Clarity:** The user should never feel confused about what to do next.
+  - **Low Friction:** The core loop of "Learn, Plan, Act, Reflect" must feel effortless and rewarding.
+  - **Fosters Calm:** The interface should reduce anxiety, not add to it.
 - **Core Design Principles:**
-    1. **Intentional Simplicity:** Every element on the screen must serve a purpose. We will use generous white space, a limited color palette, and avoid any visual clutter to create a "Serene Minimalist" aesthetic.
-    2. **Celebrate Every Step:** The feeling of being "Accomplished" is paramount. Completing a reflection and unlocking a new model will be met with subtle, elegant, and satisfying feedback (e.g., gentle animations, a visually pleasing update to the roadmap).
-    3. **Supportive Guidance:** The app's tone and interface will be "Calming and Supportive." Language will be encouraging, and interactions will feel gentle, never demanding or urgent.
+  1. **Intentional Simplicity:** Every element on the screen must serve a purpose. We will use generous white space, a limited color palette, and avoid any visual clutter to create a "Serene Minimalist" aesthetic.
+  2. **Celebrate Every Step:** The feeling of being "Accomplished" is paramount. Completing a reflection and unlocking a new model will be met with subtle, elegant, and satisfying feedback (e.g., gentle animations, a visually pleasing update to the roadmap).
+  3. **Supportive Guidance:** The app's tone and interface will be "Calming and Supportive." Language will be encouraging, and interactions will feel gentle, never demanding or urgent.
 
 ---
 
@@ -25,7 +25,7 @@ The core principle of our IA is this: After creating a goal, the user is immedia
 - **Onboarding / Goal Selection:** A flow to capture a user's primary growth goal, which powers the AI roadmap generation.
 - **Roadmap View:** The detailed, visual screen showing the user's current learning path. This is the first thing a user sees after their roadmap is created.
 - **My Toolkit (Primary Home/Hub):** The main landing screen for all returning users. It displays their active roadmap and provides access to all their learned tools and completed journeys.
-- **Learn Screen:** A focused, dedicated view for learning a single mental model or cognitive bias.
+- **Learn Screen:** A comprehensive, engaging view for learning mental models using the "Crystallize & Apply" methodology that transforms abstract concepts into immediately actionable knowledge.
 - **Plan Screen:** The structured form for creating an "Implementation Intention" or "Spotting Mission."
 - **Reflect Screen:** The journal form where a user logs their application of a model to unlock the next step.
 - **Application Log:** A simple, clean list where users can review all their past reflections.
@@ -55,7 +55,7 @@ graph TD
         E --> F[Reflect Screen]
         F --> C
     end
-    
+
     subgraph "User Hub"
        G[My Toolkit]
        H[Application Log]
@@ -65,7 +65,7 @@ graph TD
     B -- Directs to --> C
 
     G -- Start New Roadmap --> A
-    
+
     G -- Nav --> H
     G -- Nav --> I
     G -- View Active Roadmap --> C
@@ -88,8 +88,8 @@ This section details the path a user takes through the app's screens to complete
 
 1. **Guidance Prompt:** The screen presents a clear, open-ended question like "What is your single biggest challenge right now?" to encourage a thoughtful response.
 2. **Contextual Explainer:**
-    - For **new users**, an expandable box detailing the app's value proposition ("How this works") appears open by default. It explains that the user's input will be used to generate a custom roadmap of mental models designed to solve their specific problem. This sets expectations and communicates the app's unique selling point.
-    - For **returning users**, this box is collapsed by default to keep the interface clean, but they can still expand it for a reminder.
+   - For **new users**, an expandable box detailing the app's value proposition ("How this works") appears open by default. It explains that the user's input will be used to generate a custom roadmap of mental models designed to solve their specific problem. This sets expectations and communicates the app's unique selling point.
+   - For **returning users**, this box is collapsed by default to keep the interface clean, but they can still expand it for a reminder.
 3. **Input Field:** A multi-line text area provides ample space. Placeholder text offers examples of well-formed goals (e.g., "I want to stop procrastinating," "I want to think more clearly about business strategy").
 4. **Roadmap Generation:** Upon tapping `[ Create My Roadmap ]`, the app uses the user's text input to perform semantic matching and generate the 5-7 step roadmap. The user is then navigated to their `My Toolkit` hub, where the new active roadmap is displayed.
 
@@ -101,7 +101,7 @@ This section details the path a user takes through the app's screens to complete
 
 ### **The Step-by-Step Journey:**
 
-1. **Learning the Concept:** The user is taken to the `Learn Screen`, which provides a concise, actionable summary of the current mental model or cognitive bias.
+1. **Learning the Concept:** The user is taken to the `Learn Screen`, which provides an immersive "Crystallize & Apply" learning experience that moves from abstract understanding to concrete, personalized application through 8 structured content sections.
 2. **Creating the Plan:** After reading, the user proceeds to the `Plan Screen`. Here, they create a concrete "If-Then" plan or "Spotting Mission". On this same screen, they can set their global preference for a daily reminder, including the specific time. They save the entire plan and reminder setting with a single action.
 3. **Taking Offline Action:** The user closes the app to apply their plan in the real world. If enabled, the Notification Service will send them a reminder at their chosen time, using their own words to prompt them.
 4. **Returning to Reflect:** When the user re-opens the app and navigates to the active step, the system's state persistence logic recognizes a plan has been saved. It takes the user directly to the `Reflect Screen`.
@@ -130,13 +130,13 @@ sequenceDiagram
     %% User returns later to reflect %%
     User->>MyToolkit: Re-opens app, taps active step
     MyToolkit->>ReflectScreen: Bypasses Learn/Plan, opens journal
-    
+
     %% Optional Recap Loop %%
     User->>ReflectScreen: Taps link to recap concept
     ReflectScreen->>LearnScreen: Shows model info again
     User->>LearnScreen: Clicks "Back to Reflection"
     LearnScreen->>ReflectScreen: Returns to journal
-    
+
     %% Completes the process %%
     User->>ReflectScreen: Writes reflection & submits
     ReflectScreen->>Backend: Saves entry, unlocks next step
@@ -191,33 +191,188 @@ This is the user's main dashboard, showing their active journey.
 '-----------------------------------------------------'
 ```
 
-### **Screen 2: Learn Screen**
+### **Screen 2: Learn Screen - "Crystallize & Apply" Model**
 
-This screen is focused purely on learning the concept without distraction. The "Continue" button on this screen will now be dynamic. Its text and action will change based on whether the user has already created a plan for this step.
+The Learn Screen has been completely redesigned to implement the "Crystallize & Apply" learning methodology. This creates a comprehensive, engaging experience that transforms abstract mental model concepts into immediately actionable knowledge through 8 structured content sections.
+
+#### **Desktop Layout**
 
 ```
-.-----------------------------------------------------.
-| < Back to Roadmap                                   |
-|-----------------------------------------------------|
-|                                                     |
-|  Mental Model: Activation Energy                    |
-|  -------------------------------                    |
-|                                                     |
-|  Activation Energy is the minimum energy required   |
-|  to initiate a process. For habits, this means      |
-|  the key is to make the first action as effortless  |
-|  as possible to overcome the initial resistance.    |
-|                                                     |
-|  (More descriptive text here...)                    |
-|                                                     |
-|                                                     |
-|       [ Continue to Plan ] or [ Back to Reflection ]|
-'-----------------------------------------------------'
+┌────────────────────────────────────────────────────────────┐
+│ [<] Learn • Thought Experiments              Step 2 of 5   │
+│ ────────────────────────────────────────────────────────── │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │                    💭 THE HOOK                    │    │
+│   │  "What if you could test your wildest theories   │    │
+│   │   without risking a single dollar or minute?"    │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │                 VISUAL METAPHOR                   │    │
+│   │         [Lightbulb Laboratory Image]              │    │
+│   │              400x300px                            │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │                  UNDERSTAND IT                    │    │
+│   │  Definition: Mental simulations that allow...     │    │
+│   │  🧠 Like a flight simulator for ideas            │    │
+│   │  ╔═══════════════════════════════════════════╗   │    │
+│   │  ║ 🎯 When reality is too risky, your        ║   │    │
+│   │  ║    imagination becomes your laboratory     ║   │    │
+│   │  ╚═══════════════════════════════════════════╝   │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │              SEE IT → USE IT → OWN IT            │    │
+│   │  ┌──────────┬──────────┬────────────────────┐   │    │
+│   │  │ Classic  │  Modern  │  ✨ YOUR SCENARIO  │   │    │
+│   │  └──────────┴──────────┴────────────────────┘   │    │
+│   │                                                   │    │
+│   │  ┌────────────────────────────────────────────┐ │    │
+│   │  │          ✨ MADE FOR YOUR GOAL             │ │    │
+│   │  │  Personalized example based on user goal   │ │    │
+│   │  │  "Since you want to stop procrastinating   │ │    │
+│   │  │  on big projects..."                       │ │    │
+│   │  └────────────────────────────────────────────┘ │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │                 STAKES & REWARDS                  │    │
+│   │  ┌────────────────────┬────────────────────┐    │    │
+│   │  │    ⚠️ PITFALL       │    🎯 PAYOFF       │    │    │
+│   │  │ Learn through       │ Explore scenarios  │    │    │
+│   │  │ costly trial &      │ safely, finding    │    │    │
+│   │  │ error               │ insights           │    │    │
+│   │  └────────────────────┴────────────────────┘    │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │  🔗 POWER COMBO (Step 3+ only)                   │    │
+│   │  Combine with other models for greater impact... │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │         [📖 Dive Deeper] ▼                       │    │
+│   └──────────────────────────────────────────────────┘    │
+│                                                            │
+│   ┌──────────────────────────────────────────────────┐    │
+│   │  Ready to put this into action for your goal?    │    │
+│   │          [ Start Planning → ]                    │    │
+│   └──────────────────────────────────────────────────┘    │
+└────────────────────────────────────────────────────────────┘
 ```
 
-- **Conditional Logic for Button:**
-    - **If** no plan exists for this step, the button reads `[ Continue to Plan ]` and navigates to the Plan Screen.
-    - **If** a plan *does* exist (meaning the user came from the Reflect screen), the button reads `[ Back to Reflection ]` and navigates them back to the Reflect Screen.
+#### **Mobile Layout**
+
+```
+┌─────────────────────┐
+│ [<] Learn  [2 of 5] │
+│ ─────────────────── │
+│  Thought Experiments│
+│                     │
+│ ┌─────────────────┐ │
+│ │   💭 THE HOOK   │ │
+│ │  "What if you   │ │
+│ │  could test..." │ │
+│ └─────────────────┘ │
+│                     │
+│ ┌─────────────────┐ │
+│ │  [Visual Image] │ │
+│ │   (Full width)  │ │
+│ └─────────────────┘ │
+│                     │
+│ ┌─────────────────┐ │
+│ │  UNDERSTAND IT  │ │
+│ │  Definition...  │ │
+│ │  🧠 Analogy...  │ │
+│ │ ┌─────────────┐ │ │
+│ │ │ 🎯 TAKEAWAY │ │ │
+│ │ └─────────────┘ │ │
+│ └─────────────────┘ │
+│                     │
+│ ┌─────────────────┐ │
+│ │ SEE→USE→OWN IT  │ │
+│ │ [Swipeable tabs]│ │
+│ │ ● ○ ○           │ │
+│ │ ✨ YOUR SCENARIO│ │
+│ │ Personalized... │ │
+│ └─────────────────┘ │
+│                     │
+│ ┌─────────────────┐ │
+│ │   ⚠️ PITFALL    │ │
+│ │   Learn through │ │
+│ │   costly errors │ │
+│ └─────────────────┘ │
+│                     │
+│ ┌─────────────────┐ │
+│ │   🎯 PAYOFF     │ │
+│ │   Safe insight  │ │
+│ │   exploration   │ │
+│ └─────────────────┘ │
+│                     │
+│ [📖 Dive Deeper ▼]  │
+│                     │
+│ ┌─────────────────┐ │
+│ │ [Start Planning] │ │
+│ └─────────────────┘ │
+└─────────────────────┘
+```
+
+#### **Content Architecture**
+
+The Learn Screen implements 8 structured content sections based on learning science principles:
+
+**1. The Hook** - Relatable "You Are Here" moment that anchors abstract concepts in familiar experiences
+**2. Visual Metaphor** - Memorable image that reinforces the mental model concept
+**3. Core Concept** - Crystal-clear definition with analogy and key takeaway
+**4. Application Spectrum** - "See It, Use It, Own It" progression:
+
+- Classic Example (well-known formal example)
+- Modern Example (everyday scenario)
+- Personalized Example (LLM-generated based on user's goal)
+  **5. Pitfalls & Payoffs** - Stakes that motivate action (loss aversion + potential gains)
+  **6. Power Combo** - How to combine with other models (steps 3+ only)
+  **7. Dive Deeper** - Optional detailed exploration (expandable sections)
+  **8. Bridge to Action** - Clear transition to planning phase
+
+#### **Responsive Design Patterns**
+
+- **Desktop**: Side-by-side layouts, hover states, tabbed content for examples
+- **Mobile**: Vertical stack, swipeable tabs for examples, accordion for deep dive
+- **Progressive Disclosure**: Core learning content always visible, advanced content expandable
+- **Adaptive Components**: Pitfall/Payoff cards stack vertically on mobile, side-by-side on desktop
+
+#### **Interaction Design**
+
+- **Example Tabs**: Swipeable on mobile, clickable tabs on desktop, with personalized example prominently highlighted
+- **Deep Dive Content**: Expandable accordion on mobile, tabbed interface on desktop
+- **Visual Hierarchy**: Hook (largest) → Personalized Example (highlighted) → Key Takeaway (branded) → Supporting content
+- **Sticky CTA**: "Start Planning" button remains accessible during scroll on mobile
+
+#### **Dynamic Content Features**
+
+- **Personalized Examples**: Generated per user goal via LLM integration
+- **Combining Models**: Only appears on steps 3+ of roadmap, suggests synergistic model combinations
+- **Visual Metaphors**: Support both text prompts and pre-generated images
+
+#### **Conditional Navigation Logic**
+
+The primary action button at the bottom of the Learn Screen adapts based on the user's current state:
+
+- **No Plan Exists**: Button reads `[ Start Planning → ]` and navigates to the Plan Screen
+- **Plan Already Created**: Button reads `[ Back to Reflection → ]` and navigates directly to the Reflect Screen
+
+This maintains the existing flow logic where users who have already created a plan for this step (and are viewing the Learn Screen to refresh their memory) can quickly return to logging their reflection without having to go through the planning process again.
+
+#### **Learning Science Integration**
+
+- **Contextual Learning**: Hook anchors new information to existing memories
+- **Dual Coding**: Combines text with visual metaphors for stronger retention
+- **Concrete Examples**: Progression from abstract to personally relevant scenarios
+- **Chunking**: Information organized in digestible, purposeful sections
+- **Motivation Theory**: Leverages both loss aversion (pitfalls) and potential gains (payoffs)
 
 ### **Screen 3: Plan Screen**
 
@@ -258,11 +413,11 @@ This screen guides the user to create their actionable "If-Then" plan.
 A blank form can be intimidating. We will guide the user with a multi-layered approach to ensure they create effective plans:
 
 - **Contextual Prompts:** The screen will have a single line of dynamic text that changes based on the mental model they're learning.
-    - *For "Activation Energy":* "Your 'IF' should be the moment you usually hesitate. Your 'THEN' should be an action so small it feels easy."
-    - *For "Inversion":* "Your 'IF' should be the moment before a big decision. Your 'THEN' should be the action of listing potential negative outcomes first."
+  - _For "Activation Energy":_ "Your 'IF' should be the moment you usually hesitate. Your 'THEN' should be an action so small it feels easy."
+  - _For "Inversion":_ "Your 'IF' should be the moment before a big decision. Your 'THEN' should be the action of listing potential negative outcomes first."
 - **Smart Placeholder Text:** The input fields themselves will offer clues.
-    - `IF:` will have a placeholder saying, *e.g., "a specific time, place, or feeling."*
-    - `THEN I WILL:` will have a placeholder saying, *e.g., "a tiny, physical first step."*
+  - `IF:` will have a placeholder saying, _e.g., "a specific time, place, or feeling."_
+  - `THEN I WILL:` will have a placeholder saying, _e.g., "a tiny, physical first step."_
 - **Goal-Relevant Examples:** The "(See examples)" link will be a key feature. When clicked, it will show 2-3 high-quality examples that are relevant to the user's overall roadmap goal. If their goal is "Be More Active," the examples for "Activation Energy" will be about fitness, not work projects.
 
 **Will there be validation on the typed-in phrases (e.g., with AI)?**
@@ -270,7 +425,7 @@ A blank form can be intimidating. We will guide the user with a multi-layered ap
 This is a crucial question of balance between guidance and friction.
 
 - **For V1 (No AI validation):** An AI judging a user's personal plan can feel critical and creates a "computer says no" experience, which goes against our "Calming and Supportive" principle. It can also be inaccurate and frustrating. Instead, the real validation happens in the **"Reflect" step**. If the user's plan was ineffective, their own reflection and low star rating will teach them that. They learn by doing and self-assessing, which is more powerful.
-- **For V2 (A Future Enhancement):** We can introduce a non-blocking, **AI-powered "Coach."** After the user saves their plan, a small, optional suggestion could appear. For example, if a user writes, "IF I feel motivated...", the AI Coach could gently suggest: *"That's a good start! For a more powerful trigger, try linking your plan to a specific time or event, like 'IF I pour my morning coffee...'"* This makes the AI a helpful guide, not a gatekeeper.
+- **For V2 (A Future Enhancement):** We can introduce a non-blocking, **AI-powered "Coach."** After the user saves their plan, a small, optional suggestion could appear. For example, if a user writes, "IF I feel motivated...", the AI Coach could gently suggest: _"That's a good start! For a more powerful trigger, try linking your plan to a specific time or event, like 'IF I pour my morning coffee...'"_ This makes the AI a helpful guide, not a gatekeeper.
 
 ### **Screen 4: Reflect Screen (Application Log)**
 
@@ -332,7 +487,7 @@ This wireframe uses the "List Item" and "Toggle Switch" components.
 
 **How will the app handle notifications?**
 
-This is a critical piece of closing the loop. A complex, context-aware system (knowing *when* the user is at the office, for example) is difficult for a simple web app. Therefore, we will use a streamlined, user-controlled approach for V1.
+This is a critical piece of closing the loop. A complex, context-aware system (knowing _when_ the user is at the office, for example) is difficult for a simple web app. Therefore, we will use a streamlined, user-controlled approach for V1.
 
 After the user saves their plan, the app will ask: **"How would you like to be reminded?"**
 
@@ -340,7 +495,7 @@ After the user saves their plan, the app will ask: **"How would you like to be r
 2. **Add to my morning plan:** The app sends a single, consolidated email or push notification each morning (e.g., at 8:00 AM) with the user's active "If-Then" plan for the day. This is a great default to avoid notification fatigue.
 3. **No reminder needed:** The user can opt out if the planning exercise itself is all they need.
 
-The notification itself will be powerful because it's in the user's own words: *"Remember your plan: IF I finish my lunch break, THEN I WILL open my report and write one paragraph."*
+The notification itself will be powerful because it's in the user's own words: _"Remember your plan: IF I finish my lunch break, THEN I WILL open my report and write one paragraph."_
 
 ### **Screen 6: Login Flow**
 
@@ -535,41 +690,41 @@ This is the first screen for a new user, and the screen a returning user sees wh
 
 - **Design System Approach:** For the first version of our product, we will establish a **Core Component Library**. This is a focused collection of essential, reusable UI elements that will define our "Serene Minimalist" aesthetic. This library will ensure a consistent user experience and will serve as the foundation for a more comprehensive design system in the future. 1
 - **Core Components:** Based on our wireframes, we will need to design the following foundational components:
-    1. **Button**
-        - **Purpose:** The primary element for user actions.
-        - **Variants:**
-            - `Primary`: Used for the main call-to-action on a screen (e.g., "[ Complete & Unlock Next Step ]").
-            - `Secondary`: Used for less important actions (e.g., "See examples").
-            - `Text/Link`: Used for navigation (e.g., "< Back to Roadmap").
-        - **States:** `Default`, `Hover`, `Pressed`, `Disabled`.
-    2. **Input Field**
-        - **Purpose:** To capture user text for the Plan and Reflect screens.
-        - **Variants:** `Single-line` (for the "If-Then" plan), `Multi-line Text Area` (for reflections).
-        - **States:** `Default`, `Focused`, `Filled`, `Error`.
-    3. **Roadmap Step**
-        - **Purpose:** The visual indicator for each step in a user's journey.
-        - **Variants:** None.
-        - **States:** `Completed` (e.g., shows a checkmark ✓), `Current` (highlighted, actionable), `Locked` (dimmed, shows a 🔒 icon).
-    4. **Content Card**
-        - **Purpose:** A container for grouping related content, such as on the Learn and Reflect screens.
-        - **Style:** Will have soft, rounded corners and a very subtle border or shadow to create a gentle sense of depth, aligning with our "Serene" aesthetic.
-    5. **Bottom Navigation**
-        - **Purpose:** Persistent, app-level navigation.
-        - **Elements:** Will contain icon-based links to "My Toolkit" and "Settings."
-        - **Style:** Minimalist and unobtrusive.
-    6. **List Item:**
-        - For displaying rows of information. It will have a `simple` variant (for email) and a `navigational` variant that the user can tap (for notification settings).
-    7. **Toggle Switch:**
-        - A simple on/off switch, primarily for the notification settings.
-    8. **Social Login Button:**
-        - A full-width button with a logo and clear text (e.g., "Continue with Google").
+  1. **Button**
+     - **Purpose:** The primary element for user actions.
+     - **Variants:**
+       - `Primary`: Used for the main call-to-action on a screen (e.g., "[ Complete & Unlock Next Step ]").
+       - `Secondary`: Used for less important actions (e.g., "See examples").
+       - `Text/Link`: Used for navigation (e.g., "< Back to Roadmap").
+     - **States:** `Default`, `Hover`, `Pressed`, `Disabled`.
+  2. **Input Field**
+     - **Purpose:** To capture user text for the Plan and Reflect screens.
+     - **Variants:** `Single-line` (for the "If-Then" plan), `Multi-line Text Area` (for reflections).
+     - **States:** `Default`, `Focused`, `Filled`, `Error`.
+  3. **Roadmap Step**
+     - **Purpose:** The visual indicator for each step in a user's journey.
+     - **Variants:** None.
+     - **States:** `Completed` (e.g., shows a checkmark ✓), `Current` (highlighted, actionable), `Locked` (dimmed, shows a 🔒 icon).
+  4. **Content Card**
+     - **Purpose:** A container for grouping related content, such as on the Learn and Reflect screens.
+     - **Style:** Will have soft, rounded corners and a very subtle border or shadow to create a gentle sense of depth, aligning with our "Serene" aesthetic.
+  5. **Bottom Navigation**
+     - **Purpose:** Persistent, app-level navigation.
+     - **Elements:** Will contain icon-based links to "My Toolkit" and "Settings."
+     - **Style:** Minimalist and unobtrusive.
+  6. **List Item:**
+     - For displaying rows of information. It will have a `simple` variant (for email) and a `navigational` variant that the user can tap (for notification settings).
+  7. **Toggle Switch:**
+     - A simple on/off switch, primarily for the notification settings.
+  8. **Social Login Button:**
+     - A full-width button with a logo and clear text (e.g., "Continue with Google").
 
 ## **6. Responsiveness Strategy**
 
 - **Approach:** The application will be designed mobile-first. The core experience will be optimized for a single-column view on a mobile device.
 - **Breakpoints:**
-    - **Mobile (up to 768px):** The standard single-column view as shown in the wireframes.
-    - **Tablet/Desktop (769px and up):** The layout will expand, increasing white space. On screens like "My Toolkit," we may introduce a two-column layout to make better use of the space.
+  - **Mobile (up to 768px):** The standard single-column view as shown in the wireframes.
+  - **Tablet/Desktop (769px and up):** The layout will expand, increasing white space. On screens like "My Toolkit," we may introduce a two-column layout to make better use of the space.
 
 ---
 
